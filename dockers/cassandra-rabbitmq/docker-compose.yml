@@ -1,0 +1,36 @@
+version: "2.1"
+
+services:
+  cassandra:
+    image: "cassandra:latest"
+    hostname: cassandra
+    environment:
+      - CASSANDRA_PASSWORD=jac1cassandra25
+    expose:
+      - 7000
+      - 7001
+      - 7199
+      - 9042
+      - 9160
+    ports:
+      - "7000:7000"
+      - "9042:9042"
+
+  rabbit:
+    image: "rabbitmq:3.6.9-management"
+    hostname: rabbit
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "jac1rabbitmq25"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    expose:
+      - 5672
+      - 15672
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "jactravel_rabbitmq"
+    volumes:
+      - "./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins"

@@ -1,0 +1,42 @@
+version: "2.1"
+
+services:
+  spark-master:
+    image: "dpavlov/spark:latest"
+    hostname: spark-master
+    container_name: spark-master
+    networks:
+      - host
+    environment:
+      - MASTER=0.0.0.0
+      - SPARK_PUBLIC_DNS=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master.servicediscovery.internal
+    expose:
+      - 4040
+      - 7077
+      - 8080
+    ports:
+      - "4040:4040"
+      - "8080:8080"
+      - "7077:7077"
+
+  spark-slave:
+    image: "dpavlov/spark:latest"
+    hostname: spark-slave
+    container_name: spark-slave
+    networks:
+      - host
+    environment:
+      - MASTER=172.31.19.167
+      - SPARK_PUBLIC_DNS=$(curl http://169.254.169.254/latest/meta-data/public-ipv4) bin/spark-class org.apache.spark.deploy.master.Master --ip spark-master.servicediscovery.internal
+    expose:
+      - 4040
+      - 8080
+    ports:
+      - "4040:4041"
+      - "8080:8081"
+    depends_on:
+      - spark-master
+    command: ["/usr/share/slaves_ip.sh"]
+
+networks:
+  host:
