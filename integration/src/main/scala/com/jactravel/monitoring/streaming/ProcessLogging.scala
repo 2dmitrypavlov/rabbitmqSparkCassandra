@@ -10,10 +10,12 @@ import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
   * Created by eugene on 5/30/17.
   */
 
-object ProcessLogging extends LazyLogging with ConfigRabbitmqData with ProcessMonitoringStream {
+object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  //import com.datastax.bdp.spark.writer.BulkTableWriter._
   def main(args: Array[String]): Unit = {
+
+    import com.datastax.spark.connector._
+
     val receiverStream = RabbitMQUtils.createStream[ClientSearch](ssc, Map(
       "hosts" -> hosts
       , "queueName" -> queueName
@@ -31,7 +33,7 @@ object ProcessLogging extends LazyLogging with ConfigRabbitmqData with ProcessMo
     // Start up the receiver.
     receiverStream.start()
 
-    //receiverStream.foreachRDD(rdd => rdd.saveAsObjectFile())
+    receiverStream.foreachRDD(_.saveToCassandra(keyspaceName, tableName))
 
     // Start the computation
     ssc.start()

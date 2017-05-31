@@ -14,7 +14,7 @@ import scala.util.Try
 /**
   * Created by eugene on 5/30/17.
   */
-private[streaming] trait ConfigRabbitmqData {
+private[streaming] trait ConfigService {
   implicit val system = ActorSystem("ActorRabbitMQSystem")
   implicit val mat = ActorMaterializer()
   implicit val timeout = Timeout(10 seconds)
@@ -43,4 +43,10 @@ private[streaming] trait ConfigRabbitmqData {
   val hosts = Try(configRabbit.getString("amqp.addresses[0].host")).getOrElse("127.0.0.1")
   val username = Try(configRabbit.getString("amqp.username")).getOrElse("guest")
   val password = Try(configRabbit.getString("rabbitmq.password")).getOrElse("guest")
+
+  /**
+    * Cassandra Properties
+    */
+  val tableName = Try(configRabbit.getString("db.tableName")).getOrElse("clientsearch")
+  val keyspaceName = Try(configRabbit.getString("db.keyspaceName")).getOrElse("jactravel_monitoring")
 }

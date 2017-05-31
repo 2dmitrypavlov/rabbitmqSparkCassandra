@@ -2,7 +2,7 @@ name := "integration"
 
 version := "1.0"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.8"
 
 lazy val root = (project in file(".")).
   settings(
@@ -20,11 +20,14 @@ lazy val root = (project in file(".")).
 libraryDependencies ++= Seq(
   "org.apache.spark"            %% "spark-core"                % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
   "org.apache.spark"            %% "spark-streaming"           % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
+  "org.apache.spark"            %% "spark-sql"                 % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
+  "com.typesafe.akka"           %% "akka-stream"               % "2.4.12",
   "com.datastax.spark"          %% "spark-cassandra-connector" % "2.0.2",
   "com.google.protobuf"         %  "protobuf-java"             % "2.4.1",
   "com.typesafe.scala-logging"  %% "scala-logging"             % "3.5.0",
   "ch.qos.logback"              %  "logback-classic"           % "1.1.7",
   "com.stratio.receiver"        %  "spark-rabbitmq"            % "0.5.1"
+
 )
 
 assemblyMergeStrategy in assembly := {
