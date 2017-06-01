@@ -33,7 +33,8 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     // Start up the receiver.
     receiverStream.start()
 
-    receiverStream.foreachRDD(_.saveToCassandra(keyspaceName, tableName))
+    receiverStream.foreachRDD(p => p.foreach(_.SearchQueryUUID))
+//    receiverStream.foreachRDD(_.saveToCassandra(keyspaceName, tableName))
 
     // Start the computation
     ssc.start()
