@@ -18,9 +18,9 @@ lazy val root = (project in file(".")).
 ).enablePlugins(AssemblyPlugin)
 
 libraryDependencies ++= Seq(
-  "org.apache.spark"            %% "spark-core"                % "2.1.1" exclude("org.slf4j", "slf4j-log4j12"), // % "provided", //
-  "org.apache.spark"            %% "spark-streaming"           % "2.1.1" exclude("org.slf4j", "slf4j-log4j12"), // % "provided", //
-  "org.apache.spark"            %% "spark-sql"                 % "2.1.1" exclude("org.slf4j", "slf4j-log4j12"), // % "provided", //
+  "org.apache.spark"            %% "spark-core"                % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
+  "org.apache.spark"            %% "spark-streaming"           % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
+  "org.apache.spark"            %% "spark-sql"                 % "2.1.1" % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
   "com.typesafe.akka"           %% "akka-stream"               % "2.4.12",
   "com.datastax.spark"          %% "spark-cassandra-connector" % "2.0.2",
   "com.google.protobuf"         %  "protobuf-java"             % "3.3.0",

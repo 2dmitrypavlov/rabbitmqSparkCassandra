@@ -13,12 +13,12 @@ import scala.collection.JavaConverters._
 trait ProcessMonitoringStream extends LazyLogging {
 
   def messageHandler(delivery: Delivery) : ClientSearch = {
-    logger.info(new String(delivery.getBody))
+
     val clientSearchProto = Clientsearch.clientsearch.parseFrom(delivery.getBody)
 
-    ClientSearch(SearchQueryUUID = "123")
+    //ClientSearch(SearchQueryUUID = "123")
     // return ClientSearch object
-    /*ClientSearch(SearchQueryUUID = clientSearchProto.getSearchQueryUUID
+    val clientSearch = ClientSearch(SearchQueryUUID = clientSearchProto.getSearchQueryUUID
     , ClientIP = clientSearchProto.getClientIP
     , Host = clientSearchProto.getHost
     , ClientRequestTimestamp = clientSearchProto.getClientRequestTimestamp
@@ -46,9 +46,15 @@ trait ProcessMonitoringStream extends LazyLogging {
     , ErroMessage = clientSearchProto.getErroMessage
     , SuppliersSearched = clientSearchProto.getSuppliersSearched
     , RequestXML = clientSearchProto.getRequestXML
-    , ResponseXML = clientSearchProto.getResponseXML)*/
+    , ResponseXML = clientSearchProto.getResponseXML)
 
+    logger.info("-----------------------------------------------------------------------------------")
+    logger.info("-----------------------------------------------------------------------------------")
+    logger.info(s"SearchQueryUUID: ${clientSearch.SearchQueryUUID}")
+    logger.info("-----------------------------------------------------------------------------------")
+    logger.info("-----------------------------------------------------------------------------------")
 
+    clientSearch
   }
 
 }

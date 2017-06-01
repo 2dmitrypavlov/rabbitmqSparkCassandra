@@ -5,7 +5,7 @@ import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.streaming.StreamingContext
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -29,7 +29,6 @@ private[streaming] trait ConfigService {
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
     .setIfMissing("spark.master", "local[*]")
-  var sc: SparkContext = _
   var ssc: StreamingContext = _
 
   /**
@@ -40,7 +39,7 @@ private[streaming] trait ConfigService {
   val exchangeType = Try(configRabbit.getString("amqp.exchangeType")).getOrElse("topic")
   val routingKey = Try(configRabbit.getString("rabbitmq.routingKey")).getOrElse("")
   val vHost = Try(configRabbit.getString("amqp.virtual-host")).getOrElse("/")
-  val hosts = Try(configRabbit.getString("amqp.addresses[0].host")).getOrElse("127.0.0.1")
+  val hosts = Try(configRabbit.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
   val username = Try(configRabbit.getString("amqp.username")).getOrElse("guest")
   val password = Try(configRabbit.getString("rabbitmq.password")).getOrElse("guest")
 
