@@ -30,15 +30,15 @@ trait ProcessMonitoringStream extends LazyLogging {
     , SalesChannelID = clientSearchProto.getSalesChannelID
     , GeographyLevel1ID = clientSearchProto.getGeographyLevel1ID
     , GeographyLevel2ID = clientSearchProto.getGeographyLevel2ID
-    , GeographyLevel3ID = clientSearchProto.getGeographyLevel3IDList.asScala
-    , PropertyID = clientSearchProto.getPropertyIDList.asScala
-    , PropertyReferenceID = clientSearchProto.getPropertyReferenceIDList.asScala
+    , GeographyLevel3ID = clientSearchProto.getGeographyLevel3IDList
+    , PropertyID = clientSearchProto.getPropertyIDList
+    , PropertyReferenceID = clientSearchProto.getPropertyReferenceIDList
     , ArrivalDate = clientSearchProto.getArrivalDate
     , Duration = clientSearchProto.getDuration
     , Rooms = clientSearchProto.getRooms
-    , Adults = clientSearchProto.getAdultsList.asScala
-    , Children = clientSearchProto.getChildrenList.asScala
-    , ChildAges = clientSearchProto.getChildAgesList.asScala
+    , Adults = clientSearchProto.getAdultsList
+    , Children = clientSearchProto.getChildrenList
+    , ChildAges = clientSearchProto.getChildAgesList
     , MealBasisID = clientSearchProto.getMealBasisID
     , MinStarRating = clientSearchProto.getMinStarRating
     , HotelCount = clientSearchProto.getHotelCount
@@ -53,8 +53,8 @@ trait ProcessMonitoringStream extends LazyLogging {
     logger.info(s"SearchQueryUUID: ${clientSearch.SearchQueryUUID}")
     logger.info("-----------------------------------------------------------------------------------")
     logger.info("-----------------------------------------------------------------------------------")
-
     clientSearch
+
   }
 
 }

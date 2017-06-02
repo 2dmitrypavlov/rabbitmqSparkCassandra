@@ -19,7 +19,7 @@ private[streaming] trait ConfigService {
   implicit val mat = ActorMaterializer()
   implicit val timeout = Timeout(10 seconds)
 
-  private lazy val configRabbit : Config = ConfigFactory.load("reference.conf")
+  private lazy val config : Config = ConfigFactory.load("reference.conf")
 
   val totalRegisters = 10000
 
@@ -34,18 +34,21 @@ private[streaming] trait ConfigService {
   /**
     * RabbitMQ Properties
     */
-  val queueName = Try(configRabbit.getString("amqp.queueName")).getOrElse("rabbitmq-queue")
-  val exchangeName = Try(configRabbit.getString("ammq.exchangeName")).getOrElse("rabbitmq-exchange")
-  val exchangeType = Try(configRabbit.getString("amqp.exchangeType")).getOrElse("topic")
-  val routingKey = Try(configRabbit.getString("rabbitmq.routingKey")).getOrElse("")
-  val vHost = Try(configRabbit.getString("amqp.virtual-host")).getOrElse("/")
-  val hosts = Try(configRabbit.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
-  val username = Try(configRabbit.getString("amqp.username")).getOrElse("guest")
-  val password = Try(configRabbit.getString("rabbitmq.password")).getOrElse("guest")
+  val queueName = Try(config.getString("amqp.queueName")).getOrElse("rabbitmq-queue")
+  val exchangeName = Try(config.getString("ammq.exchangeName")).getOrElse("rabbitmq-exchange")
+  val exchangeType = Try(config.getString("amqp.exchangeType")).getOrElse("topic")
+  val routingKey = Try(config.getString("rabbitmq.routingKey")).getOrElse("")
+  val vHost = Try(config.getString("amqp.virtual-host")).getOrElse("/")
+  val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
+  val username = Try(config.getString("amqp.username")).getOrElse("guest")
+  val password = Try(config.getString("rabbitmq.password")).getOrElse("guest")
+  val dbServer = Try(config.getString("db.server")).getOrElse("localhost")
+
+  conf.setIfMissing("spark.cassandra.connection.host", dbServer)
 
   /**
     * Cassandra Properties
     */
-  val tableName = Try(configRabbit.getString("db.tableName")).getOrElse("clientsearch")
-  val keyspaceName = Try(configRabbit.getString("db.keyspaceName")).getOrElse("jactravel_monitoring")
+  val tableName = Try(config.getString("db.tableName")).getOrElse("clientsearch")
+  val keyspaceName = Try(config.getString("db.keyspaceName")).getOrElse("jactravel_monitoring")
 }

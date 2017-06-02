@@ -15,15 +15,15 @@ case class ClientSearch (SearchQueryUUID: String
                          , SalesChannelID: Int = 0
                          , GeographyLevel1ID: Int = 0
                          , GeographyLevel2ID: Int = 0
-                         , GeographyLevel3ID: Iterable[Integer] = None
-                         , PropertyID: Iterable[Integer] = None
-                         , PropertyReferenceID: Iterable[Integer] = None
+                         , GeographyLevel3ID: java.util.List[Integer]
+                         , PropertyID: java.util.List[Integer]
+                         , PropertyReferenceID: java.util.List[Integer]
                          , ArrivalDate: String = ""
                          , Duration: Int = 0
                          , Rooms: Int = 0
-                         , Adults: Iterable[Integer] = None
-                         , Children: Iterable[Integer] = None
-                         , ChildAges: Iterable[Integer] = None
+                         , Adults: java.util.List[Integer]
+                         , Children: java.util.List[Integer]
+                         , ChildAges: java.util.List[Integer]
                          , MealBasisID: Int = 0
                          , MinStarRating: String = ""
                          , HotelCount: Int = 0
