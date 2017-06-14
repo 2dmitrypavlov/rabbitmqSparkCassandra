@@ -1,7 +1,11 @@
 package com.jactravel.monitoring.streaming
 
-import com.jactravel.monitoring.client.search.Clientsearch
-import com.jactravel.monitoring.model.ClientSearch
+import java.time._
+import java.time.format.DateTimeFormatter
+import java.time.temporal.{ChronoUnit, TemporalUnit}
+import java.util.Date
+
+import com.jactravel.monitoring.model._
 import com.rabbitmq.client.QueueingConsumer.Delivery
 import com.typesafe.scalalogging.LazyLogging
 
@@ -12,49 +16,151 @@ import scala.collection.JavaConverters._
   */
 trait ProcessMonitoringStream extends LazyLogging {
 
-  def messageHandler(delivery: Delivery) : ClientSearch = {
+  def messageBookingHandler(delivery: Delivery): BookRequest = {
 
-    val clientSearchProto = Clientsearch.clientsearch.parseFrom(delivery.getBody)
+    val bookRequestProto = com.jactravel.monitoring.BookRequest.PARSER.parseFrom(delivery.getBody)
 
-    //ClientSearch(SearchQueryUUID = "123")
-    // return ClientSearch object
-    val clientSearch = ClientSearch(SearchQueryUUID = clientSearchProto.getSearchQueryUUID
-    , ClientIP = clientSearchProto.getClientIP
-    , Host = clientSearchProto.getHost
-    , ClientRequestTimestamp = clientSearchProto.getClientRequestTimestamp
-    , ClientResponseTimestamp = clientSearchProto.getClientResponseTimestamp
-    , ForwardedRequestTimestamp = clientSearchProto.getForwardedRequestTimestamp
-    , ForwardedResponseTimestamp = clientSearchProto.getForwardedResponseTimestamp
-    , TradeID = clientSearchProto.getTradeID
-    , BrandID = clientSearchProto.getBrandID
-    , SalesChannelID = clientSearchProto.getSalesChannelID
-    , GeographyLevel1ID = clientSearchProto.getGeographyLevel1ID
-    , GeographyLevel2ID = clientSearchProto.getGeographyLevel2ID
-    , GeographyLevel3ID = clientSearchProto.getGeographyLevel3IDList
-    , PropertyID = clientSearchProto.getPropertyIDList
-    , PropertyReferenceID = clientSearchProto.getPropertyReferenceIDList
-    , ArrivalDate = clientSearchProto.getArrivalDate
-    , Duration = clientSearchProto.getDuration
-    , Rooms = clientSearchProto.getRooms
-    , Adults = clientSearchProto.getAdultsList
-    , Children = clientSearchProto.getChildrenList
-    , ChildAges = clientSearchProto.getChildAgesList
-    , MealBasisID = clientSearchProto.getMealBasisID
-    , MinStarRating = clientSearchProto.getMinStarRating
-    , HotelCount = clientSearchProto.getHotelCount
-    , Success = clientSearchProto.getSuccess
-    , ErroMessage = clientSearchProto.getErroMessage
-    , SuppliersSearched = clientSearchProto.getSuppliersSearched
-    , RequestXML = clientSearchProto.getRequestXML
-    , ResponseXML = clientSearchProto.getResponseXML)
+    BookRequest(
+      bookRequestProto.getQueryUUID
+      , bookRequestProto.getSearchQueryUUID
+      , bookRequestProto.getPreBookQueryUUID
+      , bookRequestProto.getSearchProcessor.getNumber
+      , bookRequestProto.getHost
+      , bookRequestProto.getStartUtcTimestamp
+      , bookRequestProto.getEndUtcTimestamp
+      , bookRequestProto.getTradeID
+      , bookRequestProto.getBrandID
+      , bookRequestProto.getSalesChannelID
+      , bookRequestProto.getPropertyID
+      , bookRequestProto.getArrivalDate
+      , bookRequestProto.getDuration
+      , getRoomsInfo(bookRequestProto.getRoomsList)
+      , bookRequestProto.getCurrencyID
+      , bookRequestProto.getPreBookingToken)
 
-    logger.info("-----------------------------------------------------------------------------------")
-    logger.info("-----------------------------------------------------------------------------------")
-    logger.info(s"SearchQueryUUID: ${clientSearch.SearchQueryUUID}")
-    logger.info("-----------------------------------------------------------------------------------")
-    logger.info("-----------------------------------------------------------------------------------")
-    clientSearch
+  }
 
+  def messagePreBookingHandler(delivery: Delivery): PreBookRequest = {
+
+    val preBookRequestProto = com.jactravel.monitoring.PreBookRequest.PARSER.parseFrom(delivery.getBody)
+
+    PreBookRequest(
+      preBookRequestProto.getQueryUUID
+      , preBookRequestProto.getSearchQueryUUID
+      , preBookRequestProto.getSearchProcessor.getNumber
+      , preBookRequestProto.getHost
+      , preBookRequestProto.getStartUtcTimestamp
+      , preBookRequestProto.getEndUtcTimestamp
+      , preBookRequestProto.getTradeID
+      , preBookRequestProto.getBrandID
+      , preBookRequestProto.getSalesChannelID
+      , preBookRequestProto.getPropertyID
+      , preBookRequestProto.getArrivalDate
+      , preBookRequestProto.getDuration
+      , getRoomsInfo(preBookRequestProto.getRoomsList)
+      , preBookRequestProto.getCurrencyID
+      , preBookRequestProto.getPreBookingToken)
+
+  }
+
+  def messageQueryProxyHandler(delivery: Delivery): QueryProxyRequest = {
+
+    val queryProxyRequest = com.jactravel.monitoring.QueryProxyRequest.PARSER.parseFrom(delivery.getBody)
+
+    QueryProxyRequest(
+      queryProxyRequest.getQueryUUID
+      , toDate(parseDateTime(queryProxyRequest.getClientRequestUtcTimestamp, ChronoUnit.MINUTES))
+      , queryProxyRequest.getClientIP
+      , queryProxyRequest.getSearchQueryType.getNumber
+      , queryProxyRequest.getHost
+      , parseDate(queryProxyRequest.getClientRequestUtcTimestamp)
+      , parseDate(queryProxyRequest.getClientResponseUtcTimestamp)
+      , parseDate(queryProxyRequest.getForwardedRequestUtcTimestamp)
+      , parseDate(queryProxyRequest.getForwardedResponseUtcTimestamp)
+      , queryProxyRequest.getRequestXML
+      , queryProxyRequest.getResponseXML
+      , queryProxyRequest.getXmlBookingLogin
+      , queryProxyRequest.getSuccess
+      , queryProxyRequest.getErrorMessage
+      , queryProxyRequest.getRequestProcessor.getNumber
+      , queryProxyRequest.getRequestURL
+      , queryProxyRequest.getErrorStackTrace
+    )
+
+  }
+
+  def messageSearchRequestHandler(delivery: Delivery): (SearchRequestInfo, SearchResponseInfo) = {
+
+    val searchRequest = com.jactravel.monitoring.SearchRequest.PARSER.parseFrom(delivery.getBody)
+    val searchRequestInfo = searchRequest.getRequestInfo
+    val searchResponseInfo = searchRequest.getResponseInfo
+
+    val searchRequestInfoRes = SearchRequestInfo(
+      searchRequest.getQueryUUID
+      , searchRequest.getHost
+      , searchRequestInfo.getStartUtcTimestamp
+      , searchRequestInfo.getEndUtcTimestamp
+      , searchRequestInfo.getTradeID
+      , searchRequestInfo.getBrandID
+      , searchRequestInfo.getSalesChannelID
+      , searchRequestInfo.getSearchGeoLevel.getNumber
+      , searchRequestInfo.getGeoLevel1ID
+      , searchRequestInfo.getGeoLevel2ID
+      , searchRequestInfo.getGeoLevel3IDsList.asScala.map(_.asInstanceOf[Int]).toList
+      , searchRequestInfo.getPropertyReferenceIDsList.asScala.map(_.asInstanceOf[Int]).toList
+      , searchRequestInfo.getPropertyIDsList.asScala.map(_.asInstanceOf[Int]).toList
+      , searchRequestInfo.getMinStarRating
+      , searchRequestInfo.getArrivalDate
+      , searchRequestInfo.getDuration
+      , searchRequestInfo.getMealBasisID
+      , searchRequestInfo.getRoomsList.asScala.map(rr => RoomRequest(
+        rr.getAdults
+        , rr.getChildren
+        , rr.getChildAgesList.asScala.map(_.asInstanceOf[Int]).toList)).toList
+    )
+
+    val searchResponseInfoRes = SearchResponseInfo(
+      searchRequest.getQueryUUID
+      , searchRequest.getHost
+      , searchResponseInfo.getPropertyReferenceCount
+      , searchResponseInfo.getPropertyCount
+      , searchResponseInfo.getPricedRoomCount
+      , searchResponseInfo.getSuccess
+      , searchResponseInfo.getErrorMessage
+      , searchResponseInfo.getSuppliersSearchedList.asScala.toList
+    )
+
+    (searchRequestInfoRes, searchResponseInfoRes)
+
+  }
+
+  private[streaming] def getRoomsInfo(roomsList: java.util.List[com.jactravel.monitoring.BookRoomInfo]) = {
+    roomsList.asScala.map {
+      roomInfo =>
+        BookRoomInfo(
+          roomInfo.getAdults
+          , roomInfo.getChildren
+          , roomInfo.getChildAgesList.asScala.toList.map(_.asInstanceOf[Int])
+          , roomInfo.getMealBasisID
+          , roomInfo.getBookingToken
+          , roomInfo.getPropertyRoomTypeID
+          , roomInfo.getPriceDiff
+        )
+    }.toList
+  }
+
+  private[streaming] def parseDateTime(dateTime: String, temporalUnit: TemporalUnit = ChronoUnit.SECONDS) = {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+    LocalDateTime.parse(dateTime, formatter).truncatedTo(temporalUnit)
+  }
+
+  private[streaming] def toDate(dateTime: LocalDateTime) = {
+    Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant)
+  }
+
+  private[streaming] def parseDate(date: String) = {
+    toDate(parseDateTime(date))
   }
 
 }

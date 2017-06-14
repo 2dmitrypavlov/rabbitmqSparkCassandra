@@ -42,7 +42,7 @@ private[streaming] trait ConfigService {
   val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
   val username = Try(config.getString("amqp.username")).getOrElse("guest")
   val password = Try(config.getString("rabbitmq.password")).getOrElse("guest")
-  val dbServer = Try(config.getString("db.server")).getOrElse("localhost")
+  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
 
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
 
