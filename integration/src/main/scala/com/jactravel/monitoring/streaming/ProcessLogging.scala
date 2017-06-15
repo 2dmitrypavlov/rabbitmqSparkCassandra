@@ -66,9 +66,10 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
 
 
     // Start up the receiver.
-    bookingStream.start()
-    preBookingStream.start()
-    queryProxyStream.start()
+//    bookingStream.start()
+//    preBookingStream.start()
+//    queryProxyStream.start()
+//    searchRequestStream.start()
 
     bookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "book_request"))
     preBookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "pre_book_request"))
@@ -85,10 +86,10 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     // Termination
     ssc.awaitTermination()
 
-    searchRequestStream.stop()
-    queryProxyStream.stop()
-    preBookingStream.stop()
-    bookingStream.stop()
+//    searchRequestStream.stop()
+//    queryProxyStream.stop()
+//    preBookingStream.stop()
+//    bookingStream.stop()
 
   }
 }

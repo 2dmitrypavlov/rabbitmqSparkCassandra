@@ -1,7 +1,7 @@
 package com.jactravel.monitoring.streaming
 
 import java.time._
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import java.time.temporal.{ChronoUnit, TemporalUnit}
 import java.util.Date
 
@@ -150,7 +150,7 @@ trait ProcessMonitoringStream extends LazyLogging {
   }
 
   private[streaming] def parseDateTime(dateTime: String, temporalUnit: TemporalUnit = ChronoUnit.SECONDS) = {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]")
 
     LocalDateTime.parse(dateTime, formatter).truncatedTo(temporalUnit)
   }
