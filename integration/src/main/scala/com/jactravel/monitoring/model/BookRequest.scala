@@ -1,5 +1,7 @@
 package com.jactravel.monitoring.model
 
+import org.glassfish.jersey.internal.Errors.ErrorMessage
+
 /**
   * Created by admin on 6/10/17.
   */
@@ -19,5 +21,7 @@ case class BookRequest(
                         duration: Int,
                         rooms: List[BookRoomInfo],
                         currencyID: Int,
-                        preBookingToken: String
+                        preBookingToken: String,
+                        errorMessage: String,
+                        errorStackTrace: String
                       )

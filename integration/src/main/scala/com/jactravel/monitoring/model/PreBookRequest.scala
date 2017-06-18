@@ -18,5 +18,7 @@ case class PreBookRequest(
                            duration: Int,
                            rooms: List[BookRoomInfo],
                            currencyID: Int,
-                           preBookingToken: String
+                           preBookingToken: String,
+                           errorMessage: String,
+                           errorStackTrace: String
                          )

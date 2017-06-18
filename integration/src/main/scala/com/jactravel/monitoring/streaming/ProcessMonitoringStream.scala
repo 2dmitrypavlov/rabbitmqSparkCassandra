@@ -1,7 +1,7 @@
 package com.jactravel.monitoring.streaming
 
 import java.time._
-import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.format.DateTimeFormatter
 import java.time.temporal.{ChronoUnit, TemporalUnit}
 import java.util.Date
 
@@ -36,7 +36,9 @@ trait ProcessMonitoringStream extends LazyLogging {
       , bookRequestProto.getDuration
       , getRoomsInfo(bookRequestProto.getRoomsList)
       , bookRequestProto.getCurrencyID
-      , bookRequestProto.getPreBookingToken)
+      , bookRequestProto.getPreBookingToken
+      , bookRequestProto.getErrorMessage
+      , bookRequestProto.getErrorStackTrace)
 
   }
 
@@ -59,7 +61,9 @@ trait ProcessMonitoringStream extends LazyLogging {
       , preBookRequestProto.getDuration
       , getRoomsInfo(preBookRequestProto.getRoomsList)
       , preBookRequestProto.getCurrencyID
-      , preBookRequestProto.getPreBookingToken)
+      , preBookRequestProto.getPreBookingToken
+      , preBookRequestProto.getErrorMessage
+      , preBookRequestProto.getErrorStackTrace)
 
   }
 
@@ -117,6 +121,8 @@ trait ProcessMonitoringStream extends LazyLogging {
         rr.getAdults
         , rr.getChildren
         , rr.getChildAgesList.asScala.map(_.asInstanceOf[Int]).toList)).toList
+      , searchRequestInfo.getErrorMessage
+      , searchRequestInfo.getErrorStackTrace
     )
 
     val searchResponseInfoRes = SearchResponseInfo(

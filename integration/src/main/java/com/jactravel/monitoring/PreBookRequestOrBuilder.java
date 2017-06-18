@@ -205,4 +205,34 @@ public interface PreBookRequestOrBuilder
    */
   com.google.protobuf.ByteString
       getPreBookingTokenBytes();
+
+  // optional string errorMessage = 16;
+  /**
+   * <code>optional string errorMessage = 16;</code>
+   */
+  boolean hasErrorMessage();
+  /**
+   * <code>optional string errorMessage = 16;</code>
+   */
+  java.lang.String getErrorMessage();
+  /**
+   * <code>optional string errorMessage = 16;</code>
+   */
+  com.google.protobuf.ByteString
+      getErrorMessageBytes();
+
+  // optional string errorStackTrace = 17;
+  /**
+   * <code>optional string errorStackTrace = 17;</code>
+   */
+  boolean hasErrorStackTrace();
+  /**
+   * <code>optional string errorStackTrace = 17;</code>
+   */
+  java.lang.String getErrorStackTrace();
+  /**
+   * <code>optional string errorStackTrace = 17;</code>
+   */
+  com.google.protobuf.ByteString
+      getErrorStackTraceBytes();
 }

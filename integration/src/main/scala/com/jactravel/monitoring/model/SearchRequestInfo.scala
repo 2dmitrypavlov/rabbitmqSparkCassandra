@@ -21,5 +21,7 @@ case class SearchRequestInfo(
                               arrivalDate: String,
                               duration: Int,
                               mealBasisID: Int,
-                              rooms: List[RoomRequest]
+                              rooms: List[RoomRequest],
+                              errorMessage: String,
+                              errorStackTrace: String
                             )

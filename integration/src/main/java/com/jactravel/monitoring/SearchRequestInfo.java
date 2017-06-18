@@ -191,6 +191,16 @@ public  final class SearchRequestInfo extends
             rooms_.add(input.readMessage(com.jactravel.monitoring.RoomRequest.PARSER, extensionRegistry));
             break;
           }
+          case 138: {
+            bitField0_ |= 0x00001000;
+            errorMessage_ = input.readBytes();
+            break;
+          }
+          case 146: {
+            bitField0_ |= 0x00002000;
+            errorStackTrace_ = input.readBytes();
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -648,6 +658,92 @@ public  final class SearchRequestInfo extends
     return rooms_.get(index);
   }
 
+  // optional string errorMessage = 17;
+  public static final int ERRORMESSAGE_FIELD_NUMBER = 17;
+  private java.lang.Object errorMessage_;
+  /**
+   * <code>optional string errorMessage = 17;</code>
+   */
+  public boolean hasErrorMessage() {
+    return ((bitField0_ & 0x00001000) == 0x00001000);
+  }
+  /**
+   * <code>optional string errorMessage = 17;</code>
+   */
+  public java.lang.String getErrorMessage() {
+    java.lang.Object ref = errorMessage_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        errorMessage_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string errorMessage = 17;</code>
+   */
+  public com.google.protobuf.ByteString
+      getErrorMessageBytes() {
+    java.lang.Object ref = errorMessage_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      errorMessage_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional string errorStackTrace = 18;
+  public static final int ERRORSTACKTRACE_FIELD_NUMBER = 18;
+  private java.lang.Object errorStackTrace_;
+  /**
+   * <code>optional string errorStackTrace = 18;</code>
+   */
+  public boolean hasErrorStackTrace() {
+    return ((bitField0_ & 0x00002000) == 0x00002000);
+  }
+  /**
+   * <code>optional string errorStackTrace = 18;</code>
+   */
+  public java.lang.String getErrorStackTrace() {
+    java.lang.Object ref = errorStackTrace_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        errorStackTrace_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string errorStackTrace = 18;</code>
+   */
+  public com.google.protobuf.ByteString
+      getErrorStackTraceBytes() {
+    java.lang.Object ref = errorStackTrace_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      errorStackTrace_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private void initFields() {
     startUtcTimestamp_ = "";
     endUtcTimestamp_ = "";
@@ -665,6 +761,8 @@ public  final class SearchRequestInfo extends
     duration_ = 0;
     mealBasisID_ = 0;
     rooms_ = java.util.Collections.emptyList();
+    errorMessage_ = "";
+    errorStackTrace_ = "";
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -725,6 +823,12 @@ public  final class SearchRequestInfo extends
     }
     for (int i = 0; i < rooms_.size(); i++) {
       output.writeMessage(16, rooms_.get(i));
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      output.writeBytes(17, getErrorMessageBytes());
+    }
+    if (((bitField0_ & 0x00002000) == 0x00002000)) {
+      output.writeBytes(18, getErrorStackTraceBytes());
     }
     getUnknownFields().writeTo(output);
   }
@@ -813,6 +917,14 @@ public  final class SearchRequestInfo extends
     for (int i = 0; i < rooms_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(16, rooms_.get(i));
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(17, getErrorMessageBytes());
+    }
+    if (((bitField0_ & 0x00002000) == 0x00002000)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(18, getErrorStackTraceBytes());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -967,6 +1079,10 @@ public  final class SearchRequestInfo extends
       } else {
         roomsBuilder_.clear();
       }
+      errorMessage_ = "";
+      bitField0_ = (bitField0_ & ~0x00010000);
+      errorStackTrace_ = "";
+      bitField0_ = (bitField0_ & ~0x00020000);
       return this;
     }
 
@@ -1067,6 +1183,14 @@ public  final class SearchRequestInfo extends
       } else {
         result.rooms_ = roomsBuilder_.build();
       }
+      if (((from_bitField0_ & 0x00010000) == 0x00010000)) {
+        to_bitField0_ |= 0x00001000;
+      }
+      result.errorMessage_ = errorMessage_;
+      if (((from_bitField0_ & 0x00020000) == 0x00020000)) {
+        to_bitField0_ |= 0x00002000;
+      }
+      result.errorStackTrace_ = errorStackTrace_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -1182,6 +1306,16 @@ public  final class SearchRequestInfo extends
             roomsBuilder_.addAllMessages(other.rooms_);
           }
         }
+      }
+      if (other.hasErrorMessage()) {
+        bitField0_ |= 0x00010000;
+        errorMessage_ = other.errorMessage_;
+        onChanged();
+      }
+      if (other.hasErrorStackTrace()) {
+        bitField0_ |= 0x00020000;
+        errorStackTrace_ = other.errorStackTrace_;
+        onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
@@ -2209,6 +2343,154 @@ public  final class SearchRequestInfo extends
         rooms_ = null;
       }
       return roomsBuilder_;
+    }
+
+    // optional string errorMessage = 17;
+    private java.lang.Object errorMessage_ = "";
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public boolean hasErrorMessage() {
+      return ((bitField0_ & 0x00010000) == 0x00010000);
+    }
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public java.lang.String getErrorMessage() {
+      java.lang.Object ref = errorMessage_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        errorMessage_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public com.google.protobuf.ByteString
+        getErrorMessageBytes() {
+      java.lang.Object ref = errorMessage_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        errorMessage_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public Builder setErrorMessage(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00010000;
+      errorMessage_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public Builder clearErrorMessage() {
+      bitField0_ = (bitField0_ & ~0x00010000);
+      errorMessage_ = getDefaultInstance().getErrorMessage();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string errorMessage = 17;</code>
+     */
+    public Builder setErrorMessageBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00010000;
+      errorMessage_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string errorStackTrace = 18;
+    private java.lang.Object errorStackTrace_ = "";
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public boolean hasErrorStackTrace() {
+      return ((bitField0_ & 0x00020000) == 0x00020000);
+    }
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public java.lang.String getErrorStackTrace() {
+      java.lang.Object ref = errorStackTrace_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        errorStackTrace_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public com.google.protobuf.ByteString
+        getErrorStackTraceBytes() {
+      java.lang.Object ref = errorStackTrace_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        errorStackTrace_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public Builder setErrorStackTrace(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00020000;
+      errorStackTrace_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public Builder clearErrorStackTrace() {
+      bitField0_ = (bitField0_ & ~0x00020000);
+      errorStackTrace_ = getDefaultInstance().getErrorStackTrace();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string errorStackTrace = 18;</code>
+     */
+    public Builder setErrorStackTraceBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00020000;
+      errorStackTrace_ = value;
+      onChanged();
+      return this;
     }
 
     // @@protoc_insertion_point(builder_scope:Jactravel.Monitoring.SearchRequestInfo)
