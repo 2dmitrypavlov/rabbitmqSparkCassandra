@@ -109,6 +109,7 @@ CREATE TABLE jactravel_monitoring.search_response_info (
   priced_room_count int,
   success text,
   error_message text,
+  error_stack_trace text,
   suppliers_searched list<text>,
   PRIMARY KEY (query_uuid)
 );

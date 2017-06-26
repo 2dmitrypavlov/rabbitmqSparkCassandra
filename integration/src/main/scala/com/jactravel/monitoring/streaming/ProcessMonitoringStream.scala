@@ -125,6 +125,7 @@ trait ProcessMonitoringStream extends LazyLogging {
       , queryProxyRequest.getRequestProcessor.getNumber
       , queryProxyRequest.getRequestURL
       , queryProxyRequest.getErrorStackTrace
+      , System.currentTimeMillis()
     )
 
   }
@@ -167,6 +168,7 @@ trait ProcessMonitoringStream extends LazyLogging {
       , searchResponseInfo.getPricedRoomCount
       , searchResponseInfo.getSuccess
       , searchResponseInfo.getErrorMessage
+      , searchResponseInfo.getErrorStackTrace
       , searchResponseInfo.getSuppliersSearchedList.asScala.toList
     )
 

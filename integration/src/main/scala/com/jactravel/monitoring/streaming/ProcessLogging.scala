@@ -16,6 +16,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
   def main(args: Array[String]): Unit = {
 
     import com.datastax.spark.connector._
+    import com.datastax.spark.connector.streaming._
 
     ssc = new StreamingContext(conf, Seconds(1))
 
@@ -26,10 +27,6 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     val preBookingStream = RabbitMQUtils.createStream[PreBookRequest](ssc
       , prepareQueueMap("PreBookRequest")
       , messagePreBookingHandler)
-
-    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
-      , prepareQueueMap("QueryProxyRequest")
-      , messageQueryProxyHandler)
 
     val searchRequestStream = RabbitMQUtils.createStream[(SearchRequestInfo, SearchResponseInfo)](ssc
       , prepareQueueMap("SearchRequest")
@@ -47,19 +44,24 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("SupplierSearchRequest")
       , messageSupplierSearchRequestHandler)
 
+    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
+      , messageQueryProxyHandler)
+
 
     // Start up the receiver.
-    bookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "book_request"))
-    preBookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "pre_book_request"))
-    queryProxyStream.foreachRDD(_.saveToCassandra(keyspaceName, "query_proxy_request"))
+    bookingStream.saveToCassandra(keyspaceName, "book_request")
+    preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
     searchRequestStream.foreachRDD {
       rdd =>
         rdd.map(_._1).saveToCassandra(keyspaceName, "search_request_info")
         rdd.map(_._2).saveToCassandra(keyspaceName, "search_response_info")
     }
-    supplierBookhRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_book_request"))
-    supplierPreBookRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_pre_book_request"))
-    supplierSearchRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_search_request"))
+    supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
+    supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
+    supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
+    queryProxyStream.saveToCassandra(keyspaceName, "query_proxy_request")
+
 
     // Start the computation
     ssc.start()

@@ -22,5 +22,6 @@ case class QueryProxyRequest(
                               errorMessage: String,
                               requestProcessor: Int,
                               requestURL: String,
-                              errorStackTrace: String
+                              errorStackTrace: String,
+                              currentTimeInMillis: Long
                             )

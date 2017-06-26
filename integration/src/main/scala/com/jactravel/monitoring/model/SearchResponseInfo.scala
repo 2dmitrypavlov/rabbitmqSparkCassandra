@@ -11,5 +11,6 @@ case class SearchResponseInfo(
                                pricedRoomCount: Int,
                                success: String,
                                errorMessage: String,
+                               errorStackTrace: String,
                                suppliersSearched: List[String]
                              )
