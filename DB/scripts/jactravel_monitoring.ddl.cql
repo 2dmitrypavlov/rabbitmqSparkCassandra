@@ -112,3 +112,45 @@ CREATE TABLE jactravel_monitoring.search_response_info (
   suppliers_searched list<text>,
   PRIMARY KEY (query_uuid)
 );
+
+CREATE TABLE jactravel_monitoring.supplier_book_request (
+  query_uuid text,
+  host text,
+  source text,
+  start_utc_timestamp text,
+  end_utc_timestamp text,
+  timeout int,
+  property_count int,
+  success text,
+  error_message text,
+  error_stack_trace text,
+  PRIMARY KEY (query_uuid)
+);
+
+CREATE TABLE jactravel_monitoring.supplier_pre_book_request (
+  query_uuid text,
+  host text,
+  source text,
+  start_utc_timestamp text,
+  end_utc_timestamp text,
+  timeout int,
+  property_count int,
+  success text,
+  error_message text,
+  error_stack_trace text,
+  PRIMARY KEY (query_uuid)
+);
+
+CREATE TABLE jactravel_monitoring.supplier_search_request (
+  query_uuid text,
+  host text,
+  source text,
+  start_utc_timestamp text,
+  end_utc_timestamp text,
+  timeout int,
+  property_count int,
+  success text,
+  error_message text,
+  error_stack_trace text,
+  PRIMARY KEY (query_uuid)
+);

@@ -25,3 +25,16 @@ case class BookRequest(
                         errorMessage: String,
                         errorStackTrace: String
                       )
+
+case class SupplierBookRequest(
+                                queryUUID: String,
+                                host: String,
+                                source: String,
+                                startUtcTimestamp: String,
+                                endUtcTimestamp: String,
+                                timeout: Int,
+                                propertyCount: Int,
+                                success: String,
+                                errorMessage: String,
+                                errorStackTrace: String
+                              )

@@ -3,6 +3,7 @@ package com.jactravel.monitoring.model
 /**
   * Created by admin on 6/13/17.
   */
+
 case class SearchRequestInfo(
                               queryUUID: String,
                               host: String,
@@ -21,7 +22,18 @@ case class SearchRequestInfo(
                               arrivalDate: String,
                               duration: Int,
                               mealBasisID: Int,
-                              rooms: List[RoomRequest],
-                              errorMessage: String,
-                              errorStackTrace: String
+                              rooms: List[RoomRequest]
                             )
+
+case class SupplierSearchRequest(
+                                  queryUUID: String,
+                                  host: String,
+                                  source: String,
+                                  startUtcTimestamp: String,
+                                  endUtcTimestamp: String,
+                                  timeout: Int,
+                                  propertyCount: Int,
+                                  success: String,
+                                  errorMessage: String,
+                                  errorStackTrace: String
+                                )

@@ -42,6 +42,24 @@ trait ProcessMonitoringStream extends LazyLogging {
 
   }
 
+  def messageSupplierBookRequestHandler(delivery: Delivery): SupplierBookRequest = {
+
+    val supplierBookRequestProto = com.jactravel.monitoring.SupplierBookRequest.PARSER.parseFrom(delivery.getBody)
+
+    SupplierBookRequest(
+      supplierBookRequestProto.getQueryUUID
+      , supplierBookRequestProto.getHost
+      , supplierBookRequestProto.getSource
+      , supplierBookRequestProto.getStartUtcTimestamp
+      , supplierBookRequestProto.getEndUtcTimestamp
+      , supplierBookRequestProto.getTimeout
+      , supplierBookRequestProto.getPropertyCount
+      , supplierBookRequestProto.getSuccess
+      , supplierBookRequestProto.getErrorMessage
+      , supplierBookRequestProto.getErrorStackTrace)
+
+  }
+
   def messagePreBookingHandler(delivery: Delivery): PreBookRequest = {
 
     val preBookRequestProto = com.jactravel.monitoring.PreBookRequest.PARSER.parseFrom(delivery.getBody)
@@ -64,6 +82,24 @@ trait ProcessMonitoringStream extends LazyLogging {
       , preBookRequestProto.getPreBookingToken
       , preBookRequestProto.getErrorMessage
       , preBookRequestProto.getErrorStackTrace)
+
+  }
+
+  def messageSupplierPreBookRequestHandler(delivery: Delivery): SupplierPreBookRequest = {
+
+    val supplierPreBookRequestProto = com.jactravel.monitoring.SupplierPreBookRequest.PARSER.parseFrom(delivery.getBody)
+
+    SupplierPreBookRequest(
+      supplierPreBookRequestProto.getQueryUUID
+      , supplierPreBookRequestProto.getHost
+      , supplierPreBookRequestProto.getSource
+      , supplierPreBookRequestProto.getStartUtcTimestamp
+      , supplierPreBookRequestProto.getEndUtcTimestamp
+      , supplierPreBookRequestProto.getTimeout
+      , supplierPreBookRequestProto.getPropertyCount
+      , supplierPreBookRequestProto.getSuccess
+      , supplierPreBookRequestProto.getErrorMessage
+      , supplierPreBookRequestProto.getErrorStackTrace)
 
   }
 
@@ -93,15 +129,15 @@ trait ProcessMonitoringStream extends LazyLogging {
 
   }
 
-  def messageSearchRequestHandler(delivery: Delivery): (SearchRequestInfo, SearchResponseInfo) = {
+  def messageSearchReportHandler(delivery: Delivery): (SearchRequestInfo, SearchResponseInfo) = {
 
-    val searchRequest = com.jactravel.monitoring.SearchRequest.PARSER.parseFrom(delivery.getBody)
-    val searchRequestInfo = searchRequest.getRequestInfo
-    val searchResponseInfo = searchRequest.getResponseInfo
+    val searchReport = com.jactravel.monitoring.SearchReport.PARSER.parseFrom(delivery.getBody)
+    val searchRequestInfo = searchReport.getRequestInfo
+    val searchResponseInfo = searchReport.getResponseInfo
 
     val searchRequestInfoRes = SearchRequestInfo(
-      searchRequest.getQueryUUID
-      , searchRequest.getHost
+      searchReport.getQueryUUID
+      , searchReport.getHost
       , searchRequestInfo.getStartUtcTimestamp
       , searchRequestInfo.getEndUtcTimestamp
       , searchRequestInfo.getTradeID
@@ -121,13 +157,11 @@ trait ProcessMonitoringStream extends LazyLogging {
         rr.getAdults
         , rr.getChildren
         , rr.getChildAgesList.asScala.map(_.asInstanceOf[Int]).toList)).toList
-      , searchRequestInfo.getErrorMessage
-      , searchRequestInfo.getErrorStackTrace
     )
 
     val searchResponseInfoRes = SearchResponseInfo(
-      searchRequest.getQueryUUID
-      , searchRequest.getHost
+      searchReport.getQueryUUID
+      , searchReport.getHost
       , searchResponseInfo.getPropertyReferenceCount
       , searchResponseInfo.getPropertyCount
       , searchResponseInfo.getPricedRoomCount
@@ -137,6 +171,24 @@ trait ProcessMonitoringStream extends LazyLogging {
     )
 
     (searchRequestInfoRes, searchResponseInfoRes)
+
+  }
+
+  def messageSupplierSearchRequestHandler(delivery: Delivery): SupplierSearchRequest = {
+
+    val supplierSearchRequestProto = com.jactravel.monitoring.SupplierSearchRequest.PARSER.parseFrom(delivery.getBody)
+
+    SupplierSearchRequest(
+      supplierSearchRequestProto.getQueryUUID
+      , supplierSearchRequestProto.getHost
+      , supplierSearchRequestProto.getSource
+      , supplierSearchRequestProto.getStartUtcTimestamp
+      , supplierSearchRequestProto.getEndUtcTimestamp
+      , supplierSearchRequestProto.getTimeout
+      , supplierSearchRequestProto.getPropertyCount
+      , supplierSearchRequestProto.getSuccess
+      , supplierSearchRequestProto.getErrorMessage
+      , supplierSearchRequestProto.getErrorStackTrace)
 
   }
 

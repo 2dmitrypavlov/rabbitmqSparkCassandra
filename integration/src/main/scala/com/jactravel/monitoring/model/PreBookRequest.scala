@@ -22,3 +22,16 @@ case class PreBookRequest(
                            errorMessage: String,
                            errorStackTrace: String
                          )
+
+case class SupplierPreBookRequest(
+                                queryUUID: String,
+                                host: String,
+                                source: String,
+                                startUtcTimestamp: String,
+                                endUtcTimestamp: String,
+                                timeout: Int,
+                                propertyCount: Int,
+                                success: String,
+                                errorMessage: String,
+                                errorStackTrace: String
+                              )

@@ -4,7 +4,6 @@ import com.jactravel.monitoring.model._
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-;
 
 /**
   * Created by eugene on 5/30/17.
@@ -20,57 +19,36 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
 
     ssc = new StreamingContext(conf, Seconds(1))
 
-    val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc, Map(
-      "hosts" -> hosts
-      , "queueName" -> "BookRequest"
-      , "exchangeName" -> exchangeName
-      , "exchangeType" -> exchangeType
-      , "vHost" -> vHost
-      , "userName" -> username
-      , "password" -> password
-    )
+    val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
+      , prepareQueueMap("BookRequest")
       , messageBookingHandler)
 
-    val preBookingStream = RabbitMQUtils.createStream[PreBookRequest](ssc, Map(
-      "hosts" -> hosts
-      , "queueName" -> "PreBookRequest"
-      , "exchangeName" -> exchangeName
-      , "exchangeType" -> exchangeType
-      , "vHost" -> vHost
-      , "userName" -> username
-      , "password" -> password
-    )
+    val preBookingStream = RabbitMQUtils.createStream[PreBookRequest](ssc
+      , prepareQueueMap("PreBookRequest")
       , messagePreBookingHandler)
 
-    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc, Map(
-      "hosts" -> hosts
-      , "queueName" -> "QueryProxyRequest"
-      , "exchangeName" -> exchangeName
-      , "exchangeType" -> exchangeType
-      , "vHost" -> vHost
-      , "userName" -> username
-      , "password" -> password
-    )
+    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
       , messageQueryProxyHandler)
 
-    val searchRequestStream = RabbitMQUtils.createStream[(SearchRequestInfo, SearchResponseInfo)](ssc, Map(
-      "hosts" -> hosts
-      , "queueName" -> "SearchRequest"
-      , "exchangeName" -> exchangeName
-      , "exchangeType" -> exchangeType
-      , "vHost" -> vHost
-      , "userName" -> username
-      , "password" -> password
-    )
-      , messageSearchRequestHandler)
+    val searchRequestStream = RabbitMQUtils.createStream[(SearchRequestInfo, SearchResponseInfo)](ssc
+      , prepareQueueMap("SearchRequest")
+      , messageSearchReportHandler)
+
+    val supplierBookhRequestStream = RabbitMQUtils.createStream[SupplierBookRequest](ssc
+      , prepareQueueMap("SupplierBookRequest")
+      , messageSupplierBookRequestHandler)
+
+    val supplierPreBookRequestStream = RabbitMQUtils.createStream[SupplierPreBookRequest](ssc
+      , prepareQueueMap("SupplierPreBookRequest")
+      , messageSupplierPreBookRequestHandler)
+
+    val supplierSearchRequestStream = RabbitMQUtils.createStream[SupplierSearchRequest](ssc
+      , prepareQueueMap("SupplierSearchRequest")
+      , messageSupplierSearchRequestHandler)
 
 
     // Start up the receiver.
-//    bookingStream.start()
-//    preBookingStream.start()
-//    queryProxyStream.start()
-//    searchRequestStream.start()
-
     bookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "book_request"))
     preBookingStream.foreachRDD(_.saveToCassandra(keyspaceName, "pre_book_request"))
     queryProxyStream.foreachRDD(_.saveToCassandra(keyspaceName, "query_proxy_request"))
@@ -79,6 +57,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
         rdd.map(_._1).saveToCassandra(keyspaceName, "search_request_info")
         rdd.map(_._2).saveToCassandra(keyspaceName, "search_response_info")
     }
+    supplierBookhRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_book_request"))
+    supplierPreBookRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_pre_book_request"))
+    supplierSearchRequestStream.foreachRDD(_.saveToCassandra(keyspaceName, "supplier_search_request"))
 
     // Start the computation
     ssc.start()
@@ -86,10 +67,17 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     // Termination
     ssc.awaitTermination()
 
-//    searchRequestStream.stop()
-//    queryProxyStream.stop()
-//    preBookingStream.stop()
-//    bookingStream.stop()
+  }
 
+  private[this] def prepareQueueMap(queueName: String) = {
+    Map(
+      "hosts" -> hosts
+      , "queueName" -> queueName
+      , "exchangeName" -> exchangeName
+      , "exchangeType" -> exchangeType
+      , "vHost" -> vHost
+      , "userName" -> username
+      , "password" -> password
+    )
   }
 }
