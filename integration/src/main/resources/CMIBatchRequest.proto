@@ -1,0 +1,26 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+import "PlatformType.proto";
+import "CMIQueryType.proto";
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "CMIBatchRequestProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+
+message CMIBatchRequest {
+	optional string queryUUID = 1;
+	optional string supplierIP = 2;
+	optional CMIQueryType CMIQueryType = 3;
+	optional string host = 5;
+	optional string requestUtcTimestamp = 6;
+	optional string responseUtcTimestamp = 7;
+	optional string requestXML = 10;
+	optional string responseXML = 11;
+	optional string success = 13;
+	optional string errorMessage = 14;
+	optional string errorStackTrace = 17;
+}

@@ -1,0 +1,26 @@
+syntax = "proto2";
+package JacTravel.Bright.Models;
+
+import "LoginDetails.proto";
+
+// [START java_declaration]
+option java_package = "com.jactravel.grid.deltas.model";
+option java_outer_classname = "PreFetchSearchProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+
+message PreFetchSearch {
+	optional string	source = 1;
+	repeated int32	propertyRefId = 2;
+	optional string	arrivalDate = 3;
+	optional int32	Duration = 4;
+	optional int32	Adults = 5;
+	optional int32	Children = 6;
+	optional int32	ChildAge = 7;
+	optional LoginDetails loginDetails = 8;
+}
+
+message PreFetchSearchList {
+    repeated PreFetchSearch preFetchSearches = 1;
+}

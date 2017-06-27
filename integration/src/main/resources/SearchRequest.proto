@@ -1,0 +1,60 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "SearchRequestProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+message SearchRequest {
+	optional string queryUUID = 1;
+	optional string host = 2;
+	optional SearchRequestInfo requestInfo = 4;
+	optional SearchResponseInfo responseInfo = 5;
+}
+
+message SearchRequestInfo {		
+	optional string startUtcTimestamp = 1;
+	optional string endUtcTimestamp = 2;	
+	optional int32 tradeID = 3;
+	optional int32 brandID = 4;
+	optional int32 salesChannelID = 5;
+	optional GeoLevel searchGeoLevel = 6;
+	optional int32 geoLevel1ID = 7;
+	optional int32 geoLevel2ID = 8;
+	repeated int32 geoLevel3IDs = 9;
+	repeated int32 propertyReferenceIDs = 10;
+	repeated int32 propertyIDs = 11;
+	optional string minStarRating = 12;
+	optional string arrivalDate = 13;
+	optional int32 duration = 14;
+	optional int32 mealBasisID = 15;
+	repeated RoomRequest rooms = 16;	// These are rooms specified in the search-request.
+	optional int32 roomCount = 17;
+}
+
+message SearchResponseInfo {
+	optional int32 propertyReferenceCount = 1;	// total number of unique Properties retunred in a search (same as TotalProperties in search response xml)
+	optional int32 propertyCount = 2;			// total number of unique Properties processed for the search. (i.e. Property Count before the deduplication process)
+	optional int32 pricedRoomCount = 3;
+	repeated string suppliersSearched = 4;
+	optional string success = 5;
+	optional string errorMessage = 6;
+	optional string errorStackTrace = 7;	
+}
+
+message RoomRequest {
+	optional int32 adults = 1;
+	optional int32 children = 2;
+	repeated int32 childAges = 3;
+}
+
+enum GeoLevel {
+	UnknownGeoLevel = 0;
+	Country = 1;
+	Region = 2;
+	Resort = 3;
+	PropertyReference = 4;
+	PropertyID = 5;
+}

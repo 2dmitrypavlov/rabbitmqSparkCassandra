@@ -1,0 +1,32 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+import "PlatformType.proto";
+import "BookRoomInfo.proto";
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "PreBookRequestProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+
+message PreBookRequest {  
+	optional string queryUUID = 1;
+	optional string searchQueryUUID = 2;
+	optional PlatformType searchProcessor = 3;
+	optional string host = 4;
+	optional string startUtcTimestamp = 5;
+	optional string endUtcTimestamp = 6;    
+	optional int32 tradeID = 7;
+	optional int32 brandID = 8;
+	optional int32 salesChannelID = 9;
+	optional int32 propertyID = 10;
+	optional string arrivalDate = 11;
+	optional int32 duration = 12;
+	repeated BookRoomInfo rooms = 13;
+	optional int32 currencyID = 14; 
+	optional string success = 15;
+	optional string errorMessage = 16;
+	optional string errorStackTrace = 17;
+}

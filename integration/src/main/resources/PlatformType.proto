@@ -1,0 +1,24 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "PlatformTypeProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+enum PlatformType {
+	UnknownPlatform = 0;
+	Grid = 1;
+	IVector = 2;
+	TravelStudio = 3;
+	TravelStudioAdapter = 4;
+	IVCC = 5;
+	CMIPrice = 6;
+	IVWeb = 7;
+	TSCMQ = 8;
+	IVNative = 9;
+	IVSM = 10;
+	IVOTA = 11;
+}

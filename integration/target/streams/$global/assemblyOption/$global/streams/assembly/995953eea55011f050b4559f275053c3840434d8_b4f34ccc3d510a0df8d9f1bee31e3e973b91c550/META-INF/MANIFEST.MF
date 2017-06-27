@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Implementation-Title: spark-cassandra-connector-shaded
+Implementation-Version: 2.0.2
+Spark-HasRPackage: false
+Specification-Vendor: DataStax
+Specification-Title: spark-cassandra-connector-shaded
+Implementation-Vendor-Id: com.datastax.spark
+Specification-Version: 2.0.2
+Implementation-URL: https://github.com/datastax/spark-cassandra-connec
+ tor
+Main-Class: com.datastax.spark.connector.DocUtil
+Implementation-Vendor: DataStax
+

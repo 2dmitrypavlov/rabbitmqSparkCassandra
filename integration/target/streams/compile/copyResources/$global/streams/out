@@ -1,0 +1,3 @@
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	(/Users/dmitry/rabbitmqSparkCassandra/integration/src/main/resources/logback.xml,/Users/dmitry/rabbitmqSparkCassandra/integration/target/scala-2.11/classes/logback.xml)[0m
+[0m[[0mdebug[0m] [0m	(/Users/dmitry/rabbitmqSparkCassandra/integration/src/main/resources/reference.conf,/Users/dmitry/rabbitmqSparkCassandra/integration/target/scala-2.11/classes/reference.conf)[0m

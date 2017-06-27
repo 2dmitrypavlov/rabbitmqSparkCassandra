@@ -1,0 +1,33 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "CMIQueryTypeProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+
+enum CMIQueryType {	
+	ServiceInfo =1;
+	GetPrices =2;
+	SavePrices =3;
+	GetRooms =4;
+	ManageRooms =5;
+	GetAllocation=6;
+	GetReservations=7;
+	RoomAndRateCode=8;
+	RateAndInventory=9;
+	RateAndInventoryUpdate=10;
+	BulkRateAndInventoryUpdate=11;
+	GetProperty=12;
+	GetRoomType=13;
+	GetReservation=14;
+	SetConfirmationStatus=15;
+	GetSpecialOffers=16;
+	AddSpecialOffer=17;
+	AmendSpecialOffer=18;
+	CancelSpecialOffer=19;
+	OTA_HotelAvailNotif=20;
+	OTA_HotelRateAmountNotif=21;
+}

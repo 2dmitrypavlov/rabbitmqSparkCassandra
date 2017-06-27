@@ -1,0 +1,31 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+import "PlatformType.proto";
+import "CMIQueryType.proto";
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "CMIRequestProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+
+message CMIRequest {
+	optional string queryUUID = 1;
+	optional string supplierIP = 2;
+	optional CMIQueryType CMIQueryType = 3;
+	optional string host = 5;
+	optional string clientRequestUtcTimestamp = 6;
+	optional string clientResponseUtcTimestamp = 7;
+	optional string forwardedRequestUtcTimestamp = 8;
+	optional string forwardedResponseUtcTimestamp = 9;
+	optional string requestXML = 10;
+	optional string responseXML = 11;
+	optional string xmlBookingLogin = 12;
+	optional string success = 13;
+	optional string errorMessage = 14;
+	optional PlatformType requestProcessor = 15;
+	optional string requestURL = 16;
+	optional string errorStackTrace = 17;
+}

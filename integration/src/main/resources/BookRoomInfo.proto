@@ -1,0 +1,21 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "BookRoomInfoProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+message BookRoomInfo {
+	optional int32 adults = 1;
+	optional int32 children = 2;
+	repeated int32 childAges = 3;
+	optional int32 mealBasisID = 4;
+	optional string bookingToken = 5;
+	optional int32 propertyRoomTypeID = 6;
+	optional string priceDiff = 7;
+	optional int32 roomCount = 8;
+	optional string preBookingToken = 9;
+	optional string BookingToken = 10;
+}

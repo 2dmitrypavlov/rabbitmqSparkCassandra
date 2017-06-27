@@ -1,0 +1,24 @@
+syntax = "proto2";
+package Jactravel.Monitoring;
+
+// [START java_declaration]
+option java_package = "com.jactravel.monitoring";
+option java_outer_classname = "SupplierPreBookRequestProto";
+option java_multiple_files = true;
+// [END java_declaration]
+
+message SupplierPreBookRequest {
+	optional string queryUUID = 1;
+	optional string host = 2;
+	optional string source = 3;
+	optional string startUtcTimestamp = 4;
+	optional string endUtcTimestamp = 5;	
+	optional int32 timeout = 6;
+	optional int32 propertyCount = 7;
+	optional string success = 8;
+	optional string errorMessage = 9;
+	optional string errorStackTrace = 10;
+	optional string requestXML = 11;
+	optional string responseXML = 12;
+	optional int32 requestCount = 13;
+}
