@@ -41,8 +41,8 @@ GROUP BY start_utc_timestamp, brand_name, sales_channel_name, trade_group, trade
 
 //time is rounded to 5 min, so every 5 minute we create new data
 val influxSearchCount = spark.sql("
-SELECT	'11:35' as 'timestamp' ,COUNT(query_uuid) AS 'search_count', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name
+SELECT	'11:35' as 'timestamp' ,COUNT(query_uuid) AS 'search_count', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, XMLBookingLogin
 FROM search_request
 JOIN trade_table
 ON search_request.trade_id == trade_table.trade_id
-GROUP BY  brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name")
+GROUP BY  brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, XMLBookingLogin")

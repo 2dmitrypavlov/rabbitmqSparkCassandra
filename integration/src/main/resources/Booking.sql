@@ -1,78 +1,43 @@
+//Booking
+select *
+from BookRequest as br, SalesChannel as s, Brand as b,Trade as t
+LEFT JOIN QueryProxyRequest q
+on br.query_uuid==q.query_uuid
+where br.trade_id == t.trade_id and br.brand_id==b.brand_id and br.sales_channel_id=s.sales_channel_id
+
+
 //count
-
-
-select count(b.queryUUID) from BookRequest
-where b.trade_id==t.trade_id /
+select '11:35' as 'timestamp', COUNT(query_uuid) AS 'booking_count', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
+from Booking
 group by
-tradeID,
-brandID,
-salesChannelID;
+brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
+
+//success
+select '11:35' as 'timestamp', COUNT(query_uuid) AS 'booking_success', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
+from Booking
+where success is not null
+group by
+brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
+
+//error
+select '11:35' as 'timestamp', COUNT(query_uuid) AS 'booking_error', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
+from Booking
+where errorStackTrace is not null
+group by
+brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
 
 
 
-val df = BR
-.join(TC, BR.trade_id == TC.trade_id
-.select(BR.queryUUID,
-	BR.startUtcTimestamp,
-	BR.endUtcTimestamp,
-	mapped(BR.brandID).as(brand_name),
-	mapped(BR.salesChannelID).as(sales_channel_name),
-	(BR.success).as[Boolean],				// if success == "true" true else false
-	(BR.errorStackTrace).as[Boolean],			// if errorStackTrace > 0 true else false
-	TC.trade_group,
-	TC.trade_name,
-	TC.trade_parent_name
-)
-
-// INFLUX ENTITY
- {
-	QueryUUID: UUID,
-	ResponseTime: Timestamp or Long,		// EndUtcTimestamp - StartUtcTimeStamp
-	BrandName: String,
-	SalesChannelName: String,
-	TradeGroup: String,
-	TradeName: String,
-	TradeParentName: String,
-	time: Timestamp,				// Influxd time
-	Success: Boolean,
-	ErrorStackTrace: Boolean
- }
-
-// BOOKING COUNT
-SELECT COUNT (QueryUUID) FROM df
-WHERE time > 'lower_bound' AND time < 'upper_bound'
-AND BrandName = COALESCE("SomeString", BrandName)
-AND SalesChannel = COALESCE("SomeString", SalesChannel)
-AND TradeParentGroup = COALESCE("SomeString", TradeParentGroup)
-AND TradeGroup = COALESCE("SomeString", TradeGroup)
-AND TradeName = COALESCE("SomeString", TradeName);
-
-// BOOK RESPONSE TIME
-SELECT ResponseTime FROM df
-WHERE time > 'lower_bound' AND time < 'upper_bound'
-AND BrandName = COALESCE("SomeString", BrandName)
-AND SalesChannel = COALESCE("SomeString", SalesChannel)
-AND TradeParentGroup = COALESCE("SomeString", TradeParentGroup)
-AND TradeGroup = COALESCE("SomeString", TradeGroup)
-AND TradeName = COALESCE("SomeString", TradeName);
-
-// BOOK SUCCESS COUNT
-SELECT COUNT (QueryUUID) FROM df
-WHERE time > 'lower_bound' AND time < 'upper_bound'
-AND Success == false
-AND ErrorStackTrace == true
-AND BrandName = COALESCE("SomeString", BrandName)
-AND SalesChannel = COALESCE("SomeString", SalesChannel)
-AND TradeParentGroup = COALESCE("SomeString", TradeParentGroup)
-AND TradeGroup = COALESCE("SomeString", TradeGroup)
-AND TradeName = COALESCE("SomeString", TradeName);
-
-// BOOK EXCEPTION COUNT
-SELECT COUNT (QueryUUID) FROM df
-WHERE time > 'lower_bound' AND time < 'upper_bound'
-AND ErrorStackTrace == true
-AND BrandName = COALESCE("SomeString", BrandName)
-AND SalesChannel = COALESCE("SomeString", SalesChannel)
-AND TradeParentGroup = COALESCE("SomeString", TradeParentGroup)
-AND TradeGroup = COALESCE("SomeString", TradeGroup)
-AND TradeName = COALESCE("SomeString", TradeName);
+// BOOKING RESPONSE TIME
+val influxPreBookingResponseTime = spark.sql("
+SELECT	brand_name,
+	sales_channel_name,
+	trade_group,
+	trade_name,
+	trade_parent_name,
+	MIN(DATEDIFF(end_utc_timestamp - start_utc_timestamp)) AS 'min_response_time',
+	MAX(DATEDIFF(end_utc_timestamp - start_utc_timestamp)) AS 'max_response_time,
+	ANG(DATEDIFF(end_utc_timestamp, start_utc_timestamp)) AS 'avg_response_time
+FROM Booking
+GROUP BY brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login")
+.withColumn("time", time)

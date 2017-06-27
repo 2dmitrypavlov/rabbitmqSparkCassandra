@@ -1,4 +1,4 @@
-"TradeID","TradeName","TradeGroup","TradeParentGroup","BookingCountryID","BookingCountry","SellingCountryID","SellingCountry"
+"trade_id","trade_name","trade_group","trade_parent_group","booking_country_id","booking_country","selling_country_id","selling_country"
 "3","Server Performane Monitoring","","Internal Testing","57","England","57","England"
 "5","Worldwide Hotel Link - Albatravel Group","WS_WHL","Worldwide Hotel Link","57","England","57","England"
 "6","Restel B2C","WS_Restel","Hotusa-Restel Group","57","England","57","England"

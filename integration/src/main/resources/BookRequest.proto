@@ -12,7 +12,7 @@ option java_multiple_files = true;
 // [END java_declaration]
 
 
-message BookRequest {      
+message BookRequest {
 	optional string queryUUID = 1;  
 	optional string searchQueryUUID = 2;
 	optional string preBookQueryUUID = 3;
@@ -20,6 +20,9 @@ message BookRequest {
 	optional string host = 5;
 	optional string startUtcTimestamp = 6;
 	optional string endUtcTimestamp = 7;
+	optional int32 tradeID = 8;
+	optional int32 brandID = 9;
+	optional int32 salesChannelID = 10;
 	optional int32 propertyID = 11;
 	optional string arrivalDate = 12;
 	optional int32 duration = 13;
