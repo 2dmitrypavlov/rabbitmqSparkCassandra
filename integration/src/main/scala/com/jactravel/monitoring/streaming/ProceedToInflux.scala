@@ -12,7 +12,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring"
+  override val keyspaceName: String = "jactravel_monitoring_new"
 
   def main(args: Array[String]): Unit = {
 
@@ -25,12 +25,14 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
     // Start up the receiver.
 
 
-    val cassandraRDD = ssc.cassandraTable(keyspaceName, "query_proxy_request")
-      .select("query_uuid", "request_utc_timestamp").where("current_time_in_millis >= ?", System.currentTimeMillis() - 5000)
+    val cassandraRDD = ssc.cassandraTable(keyspaceName, "query_uuid_proceed")
+      .select("query_uuid", "proceed").where("proceed < ?", 1)
 
     val dstream = new ConstantInputDStream(ssc, cassandraRDD)
 
-    dstream.foreachRDD{ rdd =>
+    //val streamBookRequest = dstream.joinWithCassandraTable(keyspaceName, "book_request")
+
+    dstream.foreachRDD { rdd =>
       // any action will trigger the underlying cassandra query, using collect to have a simple output
       println("======================================================")
       println(rdd.collect.mkString("\n"))

@@ -433,6 +433,6 @@ CREATE TABLE jactravel_monitoring.cmi_batch_request (
 
 CREATE TABLE jactravel_monitoring.query_uuid_proceed (
   query_uuid text,
-  proceed int,
+  proceed smallint,
   PRIMARY KEY (query_uuid)
 );
