@@ -430,3 +430,9 @@ CREATE TABLE jactravel_monitoring.cmi_batch_request (
   error_stack_trace text,
   PRIMARY KEY (query_uuid)
 );
+
+CREATE TABLE jactravel_monitoring.query_uuid_proceed (
+  query_uuid text,
+  proceed int,
+  PRIMARY KEY (query_uuid)
+);

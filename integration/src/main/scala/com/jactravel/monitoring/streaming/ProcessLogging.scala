@@ -69,15 +69,24 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     cmiBatchRequestStream.saveToCassandra(keyspaceName, "cmi_batch_request")
 
     // Store query uuid
-    bookingStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    preBookingStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    searchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    supplierBookhRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    supplierPreBookRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    supplierSearchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    queryProxyStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    cmiRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
-    cmiBatchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    searchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierBookhRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
 
 
     // Start the computation
