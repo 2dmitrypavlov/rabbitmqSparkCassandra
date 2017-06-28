@@ -7,21 +7,19 @@ import java.util.Date
   */
 case class QueryProxyRequest(
                               queryUUID: String,
-                              requestUtcTimestamp: Date,
-                              clientIP: String,
+                              clientIp: String,
                               searchQueryType: Int,
                               host: String,
                               clientRequestUtcTimestamp: Date,
                               clientResponseUtcTimestamp: Date,
                               forwardedRequestUtcTimestamp: Date,
                               forwardedResponseUtcTimestamp: Date,
-                              requestXML: String,
-                              responseXML: String,
+                              requestXml: String,
+                              responseXml: String,
                               xmlBookingLogin: String,
                               success: String,
                               errorMessage: String,
                               requestProcessor: Int,
                               requestURL: String,
-                              errorStackTrace: String,
-                              currentTimeInMillis: Long
+                              errorStackTrace: String
                             )

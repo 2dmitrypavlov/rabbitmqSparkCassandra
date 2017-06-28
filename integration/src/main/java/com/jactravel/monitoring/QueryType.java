@@ -9,76 +9,184 @@ package com.jactravel.monitoring;
 public enum QueryType
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
-   * <code>UnknownSearch = 0;</code>
+   * <code>NewBooking = 0;</code>
    */
-  UnknownSearch(0, 0),
+  NewBooking(0, 0),
   /**
-   * <code>IVectorSearch = 1;</code>
+   * <code>PreBook = 1;</code>
    */
-  IVectorSearch(1, 1),
+  PreBook(1, 1),
   /**
-   * <code>TravelStudioSearch = 2;</code>
+   * <code>PreCancel = 2;</code>
    */
-  TravelStudioSearch(2, 2),
+  PreCancel(2, 2),
   /**
-   * <code>IVectorBook = 3;</code>
+   * <code>CancelBooking = 3;</code>
    */
-  IVectorBook(3, 3),
+  CancelBooking(3, 3),
   /**
-   * <code>IVectorPreBook = 4;</code>
+   * <code>Cancel = 4;</code>
    */
-  IVectorPreBook(4, 4),
+  Cancel(4, 4),
   /**
-   * <code>IVectorCancellation = 5;</code>
+   * <code>CancellationPolicy = 5;</code>
    */
-  IVectorCancellation(5, 5),
+  CancellationPolicy(5, 5),
   /**
-   * <code>CMI = 6;</code>
+   * <code>CancellationPolicyV2 = 6;</code>
    */
-  CMI(6, 6),
+  CancellationPolicyV2(6, 6),
+  /**
+   * <code>Book = 7;</code>
+   */
+  Book(7, 7),
+  /**
+   * <code>Search = 8;</code>
+   */
+  Search(8, 8),
+  /**
+   * <code>BookingDetails = 9;</code>
+   */
+  BookingDetails(9, 9),
+  /**
+   * <code>GetBooking = 10;</code>
+   */
+  GetBooking(10, 10),
+  /**
+   * <code>GetFacilities = 11;</code>
+   */
+  GetFacilities(11, 11),
+  /**
+   * <code>GeoTree = 12;</code>
+   */
+  GeoTree(12, 12),
+  /**
+   * <code>HotelList = 13;</code>
+   */
+  HotelList(13, 13),
+  /**
+   * <code>LiveErrata = 14;</code>
+   */
+  LiveErrata(14, 14),
+  /**
+   * <code>HotelSearch = 15;</code>
+   */
+  HotelSearch(15, 15),
+  /**
+   * <code>HotelDetails = 16;</code>
+   */
+  HotelDetails(16, 16),
+  /**
+   * <code>PriceSearch = 17;</code>
+   */
+  PriceSearch(17, 17),
+  /**
+   * <code>Unknown = 18;</code>
+   */
+  Unknown(18, 18),
   ;
 
   /**
-   * <code>UnknownSearch = 0;</code>
+   * <code>NewBooking = 0;</code>
    */
-  public static final int UnknownSearch_VALUE = 0;
+  public static final int NewBooking_VALUE = 0;
   /**
-   * <code>IVectorSearch = 1;</code>
+   * <code>PreBook = 1;</code>
    */
-  public static final int IVectorSearch_VALUE = 1;
+  public static final int PreBook_VALUE = 1;
   /**
-   * <code>TravelStudioSearch = 2;</code>
+   * <code>PreCancel = 2;</code>
    */
-  public static final int TravelStudioSearch_VALUE = 2;
+  public static final int PreCancel_VALUE = 2;
   /**
-   * <code>IVectorBook = 3;</code>
+   * <code>CancelBooking = 3;</code>
    */
-  public static final int IVectorBook_VALUE = 3;
+  public static final int CancelBooking_VALUE = 3;
   /**
-   * <code>IVectorPreBook = 4;</code>
+   * <code>Cancel = 4;</code>
    */
-  public static final int IVectorPreBook_VALUE = 4;
+  public static final int Cancel_VALUE = 4;
   /**
-   * <code>IVectorCancellation = 5;</code>
+   * <code>CancellationPolicy = 5;</code>
    */
-  public static final int IVectorCancellation_VALUE = 5;
+  public static final int CancellationPolicy_VALUE = 5;
   /**
-   * <code>CMI = 6;</code>
+   * <code>CancellationPolicyV2 = 6;</code>
    */
-  public static final int CMI_VALUE = 6;
+  public static final int CancellationPolicyV2_VALUE = 6;
+  /**
+   * <code>Book = 7;</code>
+   */
+  public static final int Book_VALUE = 7;
+  /**
+   * <code>Search = 8;</code>
+   */
+  public static final int Search_VALUE = 8;
+  /**
+   * <code>BookingDetails = 9;</code>
+   */
+  public static final int BookingDetails_VALUE = 9;
+  /**
+   * <code>GetBooking = 10;</code>
+   */
+  public static final int GetBooking_VALUE = 10;
+  /**
+   * <code>GetFacilities = 11;</code>
+   */
+  public static final int GetFacilities_VALUE = 11;
+  /**
+   * <code>GeoTree = 12;</code>
+   */
+  public static final int GeoTree_VALUE = 12;
+  /**
+   * <code>HotelList = 13;</code>
+   */
+  public static final int HotelList_VALUE = 13;
+  /**
+   * <code>LiveErrata = 14;</code>
+   */
+  public static final int LiveErrata_VALUE = 14;
+  /**
+   * <code>HotelSearch = 15;</code>
+   */
+  public static final int HotelSearch_VALUE = 15;
+  /**
+   * <code>HotelDetails = 16;</code>
+   */
+  public static final int HotelDetails_VALUE = 16;
+  /**
+   * <code>PriceSearch = 17;</code>
+   */
+  public static final int PriceSearch_VALUE = 17;
+  /**
+   * <code>Unknown = 18;</code>
+   */
+  public static final int Unknown_VALUE = 18;
 
 
   public final int getNumber() { return value; }
 
   public static QueryType valueOf(int value) {
     switch (value) {
-      case 0: return UnknownSearch;
-      case 1: return IVectorSearch;
-      case 2: return TravelStudioSearch;
-      case 3: return IVectorBook;
-      case 4: return IVectorPreBook;
-      case 5: return IVectorCancellation;
-      case 6: return CMI;
+      case 0: return NewBooking;
+      case 1: return PreBook;
+      case 2: return PreCancel;
+      case 3: return CancelBooking;
+      case 4: return Cancel;
+      case 5: return CancellationPolicy;
+      case 6: return CancellationPolicyV2;
+      case 7: return Book;
+      case 8: return Search;
+      case 9: return BookingDetails;
+      case 10: return GetBooking;
+      case 11: return GetFacilities;
+      case 12: return GeoTree;
+      case 13: return HotelList;
+      case 14: return LiveErrata;
+      case 15: return HotelSearch;
+      case 16: return HotelDetails;
+      case 17: return PriceSearch;
+      case 18: return Unknown;
       default: return null;
     }
   }

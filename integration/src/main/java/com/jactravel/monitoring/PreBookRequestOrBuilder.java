@@ -191,20 +191,20 @@ public interface PreBookRequestOrBuilder
    */
   int getCurrencyID();
 
-  // optional string preBookingToken = 15;
+  // optional string success = 15;
   /**
-   * <code>optional string preBookingToken = 15;</code>
+   * <code>optional string success = 15;</code>
    */
-  boolean hasPreBookingToken();
+  boolean hasSuccess();
   /**
-   * <code>optional string preBookingToken = 15;</code>
+   * <code>optional string success = 15;</code>
    */
-  java.lang.String getPreBookingToken();
+  java.lang.String getSuccess();
   /**
-   * <code>optional string preBookingToken = 15;</code>
+   * <code>optional string success = 15;</code>
    */
   com.google.protobuf.ByteString
-      getPreBookingTokenBytes();
+      getSuccessBytes();
 
   // optional string errorMessage = 16;
   /**

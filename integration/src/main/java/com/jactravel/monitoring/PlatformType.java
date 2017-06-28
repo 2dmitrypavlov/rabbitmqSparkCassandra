@@ -29,13 +29,33 @@ public enum PlatformType
    */
   TravelStudioAdapter(4, 4),
   /**
-   * <code>QueryProxy = 5;</code>
+   * <code>IVCC = 5;</code>
    */
-  QueryProxy(5, 5),
+  IVCC(5, 5),
   /**
    * <code>CMIPrice = 6;</code>
    */
   CMIPrice(6, 6),
+  /**
+   * <code>IVWeb = 7;</code>
+   */
+  IVWeb(7, 7),
+  /**
+   * <code>TSCMQ = 8;</code>
+   */
+  TSCMQ(8, 8),
+  /**
+   * <code>IVNative = 9;</code>
+   */
+  IVNative(9, 9),
+  /**
+   * <code>IVSM = 10;</code>
+   */
+  IVSM(10, 10),
+  /**
+   * <code>IVOTA = 11;</code>
+   */
+  IVOTA(11, 11),
   ;
 
   /**
@@ -59,13 +79,33 @@ public enum PlatformType
    */
   public static final int TravelStudioAdapter_VALUE = 4;
   /**
-   * <code>QueryProxy = 5;</code>
+   * <code>IVCC = 5;</code>
    */
-  public static final int QueryProxy_VALUE = 5;
+  public static final int IVCC_VALUE = 5;
   /**
    * <code>CMIPrice = 6;</code>
    */
   public static final int CMIPrice_VALUE = 6;
+  /**
+   * <code>IVWeb = 7;</code>
+   */
+  public static final int IVWeb_VALUE = 7;
+  /**
+   * <code>TSCMQ = 8;</code>
+   */
+  public static final int TSCMQ_VALUE = 8;
+  /**
+   * <code>IVNative = 9;</code>
+   */
+  public static final int IVNative_VALUE = 9;
+  /**
+   * <code>IVSM = 10;</code>
+   */
+  public static final int IVSM_VALUE = 10;
+  /**
+   * <code>IVOTA = 11;</code>
+   */
+  public static final int IVOTA_VALUE = 11;
 
 
   public final int getNumber() { return value; }
@@ -77,8 +117,13 @@ public enum PlatformType
       case 2: return IVector;
       case 3: return TravelStudio;
       case 4: return TravelStudioAdapter;
-      case 5: return QueryProxy;
+      case 5: return IVCC;
       case 6: return CMIPrice;
+      case 7: return IVWeb;
+      case 8: return TSCMQ;
+      case 9: return IVNative;
+      case 10: return IVSM;
+      case 11: return IVOTA;
       default: return null;
     }
   }

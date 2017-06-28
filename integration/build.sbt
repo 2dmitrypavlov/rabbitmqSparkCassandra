@@ -16,9 +16,9 @@ lazy val root = (project in file(".")).
     assembleArtifact in assemblyPackageScala := false,
     assemblyJarName := "uber-jactravel-monitoring.jar",
     libraryDependencies ++= Seq(
-      "org.apache.spark"            %% "spark-core"                % sparkVersion % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
-      "org.apache.spark"            %% "spark-streaming"           % sparkVersion % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
-      "org.apache.spark"            %% "spark-sql"                 % sparkVersion % "provided", // exclude("org.slf4j", "slf4j-log4j12"), //
+      "org.apache.spark"            %% "spark-core"                % sparkVersion exclude("org.slf4j", "slf4j-log4j12"), //% "provided", //
+      "org.apache.spark"            %% "spark-streaming"           % sparkVersion exclude("org.slf4j", "slf4j-log4j12"), //% "provided", //
+      "org.apache.spark"            %% "spark-sql"                 % sparkVersion exclude("org.slf4j", "slf4j-log4j12"), //% "provided", //
 //      "com.typesafe.akka"           %% "akka-actor"                % akkaVersion,
       "com.typesafe.akka"           %% "akka-stream"               % akkaVersion,
       "com.datastax.spark"          %% "spark-cassandra-connector" % "2.0.2",

@@ -7,8 +7,10 @@ case class BookRoomInfo(
                          adults: Int,
                          children: Int,
                          childAges: List[Int],
-                         mealBasisID: Int,
+                         mealBasisId: Int,
                          bookingToken: String,
-                         propertyRoomTypeID: Int,
-                         priceDiff: String
+                         propertyRoomTypeId: Int,
+                         priceDiff: String,
+                         roomCount: Int,
+                         preBookingToken: String
                        )

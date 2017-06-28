@@ -11,7 +11,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring"
+  override val keyspaceName: String = "jactravel_monitoring_new"
 
   def main(args: Array[String]): Unit = {
 
@@ -28,9 +28,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("PreBookRequest")
       , messagePreBookingHandler)
 
-    val searchRequestStream = RabbitMQUtils.createStream[(SearchRequestInfo, SearchResponseInfo)](ssc
+    val searchRequestStream = RabbitMQUtils.createStream[SearchRequest](ssc
       , prepareQueueMap("SearchRequest")
-      , messageSearchReportHandler)
+      , messageSearchRequestHandler)
 
     val supplierBookhRequestStream = RabbitMQUtils.createStream[SupplierBookRequest](ssc
       , prepareQueueMap("SupplierBookRequest")
@@ -48,19 +48,36 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("QueryProxyRequest")
       , messageQueryProxyHandler)
 
+    val cmiRequestStream = RabbitMQUtils.createStream[CmiRequest](ssc
+      , prepareQueueMap("CMIRequest")
+      , messageCmiRequestHandler)
+
+    val cmiBatchRequestStream = RabbitMQUtils.createStream[CmiBatchRequest](ssc
+      , prepareQueueMap("CMIBatchRequest")
+      , messageCmiBatchRequestHandler)
+
 
     // Start up the receiver.
     bookingStream.saveToCassandra(keyspaceName, "book_request")
     preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
-    searchRequestStream.foreachRDD {
-      rdd =>
-        rdd.map(_._1).saveToCassandra(keyspaceName, "search_request_info")
-        rdd.map(_._2).saveToCassandra(keyspaceName, "search_response_info")
-    }
+    searchRequestStream.saveToCassandra(keyspaceName, "search_request")
     supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
     supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
     supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
     queryProxyStream.saveToCassandra(keyspaceName, "query_proxy_request")
+    cmiRequestStream.saveToCassandra(keyspaceName, "cmi_request")
+    cmiBatchRequestStream.saveToCassandra(keyspaceName, "cmi_batch_request")
+
+    // Store query uuid
+    bookingStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    preBookingStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    searchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    supplierBookhRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    supplierPreBookRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    supplierSearchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    queryProxyStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    cmiRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
+    cmiBatchRequestStream.map(br => QueryUUID(queryUUID = br.queryUUID)).saveToCassandra(keyspaceName, "query_uuid")
 
 
     // Start the computation

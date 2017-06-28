@@ -55,10 +55,9 @@ object SendProtobuf {
       .setStartUtcTimestamp("2017-05-06 00:00:00")
       .setHost("test host")
       .setDuration(14)
-      .setPreBookingToken("preBookingToken")
       .setPreBookQueryUUID("preBookingUUID")
       .setPropertyID(15)
-      .setSearchProcessor(PlatformType.QueryProxy)
+      .setSearchProcessor(PlatformType.IVector)
       .setSalesChannelID(16)
       .build()
     .toByteArray

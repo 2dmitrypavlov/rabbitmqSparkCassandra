@@ -104,6 +104,21 @@ public  final class SupplierPreBookRequest extends
             errorStackTrace_ = input.readBytes();
             break;
           }
+          case 90: {
+            bitField0_ |= 0x00000400;
+            requestXML_ = input.readBytes();
+            break;
+          }
+          case 98: {
+            bitField0_ |= 0x00000800;
+            responseXML_ = input.readBytes();
+            break;
+          }
+          case 104: {
+            bitField0_ |= 0x00001000;
+            requestCount_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -520,6 +535,108 @@ public  final class SupplierPreBookRequest extends
     }
   }
 
+  // optional string requestXML = 11;
+  public static final int REQUESTXML_FIELD_NUMBER = 11;
+  private java.lang.Object requestXML_;
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  public boolean hasRequestXML() {
+    return ((bitField0_ & 0x00000400) == 0x00000400);
+  }
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  public java.lang.String getRequestXML() {
+    java.lang.Object ref = requestXML_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        requestXML_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  public com.google.protobuf.ByteString
+      getRequestXMLBytes() {
+    java.lang.Object ref = requestXML_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      requestXML_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional string responseXML = 12;
+  public static final int RESPONSEXML_FIELD_NUMBER = 12;
+  private java.lang.Object responseXML_;
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  public boolean hasResponseXML() {
+    return ((bitField0_ & 0x00000800) == 0x00000800);
+  }
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  public java.lang.String getResponseXML() {
+    java.lang.Object ref = responseXML_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        responseXML_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  public com.google.protobuf.ByteString
+      getResponseXMLBytes() {
+    java.lang.Object ref = responseXML_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      responseXML_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional int32 requestCount = 13;
+  public static final int REQUESTCOUNT_FIELD_NUMBER = 13;
+  private int requestCount_;
+  /**
+   * <code>optional int32 requestCount = 13;</code>
+   */
+  public boolean hasRequestCount() {
+    return ((bitField0_ & 0x00001000) == 0x00001000);
+  }
+  /**
+   * <code>optional int32 requestCount = 13;</code>
+   */
+  public int getRequestCount() {
+    return requestCount_;
+  }
+
   private void initFields() {
     queryUUID_ = "";
     host_ = "";
@@ -531,6 +648,9 @@ public  final class SupplierPreBookRequest extends
     success_ = "";
     errorMessage_ = "";
     errorStackTrace_ = "";
+    requestXML_ = "";
+    responseXML_ = "";
+    requestCount_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -573,6 +693,15 @@ public  final class SupplierPreBookRequest extends
     }
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
       output.writeBytes(10, getErrorStackTraceBytes());
+    }
+    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+      output.writeBytes(11, getRequestXMLBytes());
+    }
+    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+      output.writeBytes(12, getResponseXMLBytes());
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      output.writeInt32(13, requestCount_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -622,6 +751,18 @@ public  final class SupplierPreBookRequest extends
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
       size += com.google.protobuf.CodedOutputStream
         .computeBytesSize(10, getErrorStackTraceBytes());
+    }
+    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(11, getRequestXMLBytes());
+    }
+    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(12, getResponseXMLBytes());
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(13, requestCount_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -759,6 +900,12 @@ public  final class SupplierPreBookRequest extends
       bitField0_ = (bitField0_ & ~0x00000100);
       errorStackTrace_ = "";
       bitField0_ = (bitField0_ & ~0x00000200);
+      requestXML_ = "";
+      bitField0_ = (bitField0_ & ~0x00000400);
+      responseXML_ = "";
+      bitField0_ = (bitField0_ & ~0x00000800);
+      requestCount_ = 0;
+      bitField0_ = (bitField0_ & ~0x00001000);
       return this;
     }
 
@@ -827,6 +974,18 @@ public  final class SupplierPreBookRequest extends
         to_bitField0_ |= 0x00000200;
       }
       result.errorStackTrace_ = errorStackTrace_;
+      if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
+        to_bitField0_ |= 0x00000400;
+      }
+      result.requestXML_ = requestXML_;
+      if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        to_bitField0_ |= 0x00000800;
+      }
+      result.responseXML_ = responseXML_;
+      if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
+        to_bitField0_ |= 0x00001000;
+      }
+      result.requestCount_ = requestCount_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -888,6 +1047,19 @@ public  final class SupplierPreBookRequest extends
         bitField0_ |= 0x00000200;
         errorStackTrace_ = other.errorStackTrace_;
         onChanged();
+      }
+      if (other.hasRequestXML()) {
+        bitField0_ |= 0x00000400;
+        requestXML_ = other.requestXML_;
+        onChanged();
+      }
+      if (other.hasResponseXML()) {
+        bitField0_ |= 0x00000800;
+        responseXML_ = other.responseXML_;
+        onChanged();
+      }
+      if (other.hasRequestCount()) {
+        setRequestCount(other.getRequestCount());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
@@ -1570,6 +1742,187 @@ public  final class SupplierPreBookRequest extends
   }
   bitField0_ |= 0x00000200;
       errorStackTrace_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string requestXML = 11;
+    private java.lang.Object requestXML_ = "";
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public boolean hasRequestXML() {
+      return ((bitField0_ & 0x00000400) == 0x00000400);
+    }
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public java.lang.String getRequestXML() {
+      java.lang.Object ref = requestXML_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        requestXML_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public com.google.protobuf.ByteString
+        getRequestXMLBytes() {
+      java.lang.Object ref = requestXML_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        requestXML_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public Builder setRequestXML(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000400;
+      requestXML_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public Builder clearRequestXML() {
+      bitField0_ = (bitField0_ & ~0x00000400);
+      requestXML_ = getDefaultInstance().getRequestXML();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string requestXML = 11;</code>
+     */
+    public Builder setRequestXMLBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000400;
+      requestXML_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string responseXML = 12;
+    private java.lang.Object responseXML_ = "";
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public boolean hasResponseXML() {
+      return ((bitField0_ & 0x00000800) == 0x00000800);
+    }
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public java.lang.String getResponseXML() {
+      java.lang.Object ref = responseXML_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        responseXML_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public com.google.protobuf.ByteString
+        getResponseXMLBytes() {
+      java.lang.Object ref = responseXML_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        responseXML_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public Builder setResponseXML(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000800;
+      responseXML_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public Builder clearResponseXML() {
+      bitField0_ = (bitField0_ & ~0x00000800);
+      responseXML_ = getDefaultInstance().getResponseXML();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string responseXML = 12;</code>
+     */
+    public Builder setResponseXMLBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000800;
+      responseXML_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional int32 requestCount = 13;
+    private int requestCount_ ;
+    /**
+     * <code>optional int32 requestCount = 13;</code>
+     */
+    public boolean hasRequestCount() {
+      return ((bitField0_ & 0x00001000) == 0x00001000);
+    }
+    /**
+     * <code>optional int32 requestCount = 13;</code>
+     */
+    public int getRequestCount() {
+      return requestCount_;
+    }
+    /**
+     * <code>optional int32 requestCount = 13;</code>
+     */
+    public Builder setRequestCount(int value) {
+      bitField0_ |= 0x00001000;
+      requestCount_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional int32 requestCount = 13;</code>
+     */
+    public Builder clearRequestCount() {
+      bitField0_ = (bitField0_ & ~0x00001000);
+      requestCount_ = 0;
       onChanged();
       return this;
     }

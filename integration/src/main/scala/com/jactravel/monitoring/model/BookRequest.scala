@@ -1,7 +1,5 @@
 package com.jactravel.monitoring.model
 
-import org.glassfish.jersey.internal.Errors.ErrorMessage
-
 /**
   * Created by admin on 6/10/17.
   */
@@ -13,15 +11,15 @@ case class BookRequest(
                         host: String,
                         startUtcTimestamp: String,
                         endUtcTimestamp: String,
-                        tradeID: Int,
-                        brandID: Int,
-                        salesChannelID: Int,
-                        propertyID: Int,
+                        tradeId: Int,
+                        brandId: Int,
+                        salesChannelId: Int,
+                        propertyId: Int,
                         arrivalDate: String,
                         duration: Int,
                         rooms: List[BookRoomInfo],
-                        currencyID: Int,
-                        preBookingToken: String,
+                        currencyId: Int,
+                        success: String,
                         errorMessage: String,
                         errorStackTrace: String
                       )
@@ -36,5 +34,8 @@ case class SupplierBookRequest(
                                 propertyCount: Int,
                                 success: String,
                                 errorMessage: String,
-                                errorStackTrace: String
+                                errorStackTrace: String,
+                                requestXml: String,
+                                responseXml: String,
+                                requestCount: Int
                               )

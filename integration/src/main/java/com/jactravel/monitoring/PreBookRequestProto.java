@@ -24,7 +24,7 @@ public final class PreBookRequestProto {
     java.lang.String[] descriptorData = {
       "\n\024PreBookRequest.proto\022\024Jactravel.Monito" +
       "ring\032\022PlatformType.proto\032\022BookRoomInfo.p" +
-      "roto\"\277\003\n\016PreBookRequest\022\021\n\tqueryUUID\030\001 \001" +
+      "roto\"\267\003\n\016PreBookRequest\022\021\n\tqueryUUID\030\001 \001" +
       "(\t\022\027\n\017searchQueryUUID\030\002 \001(\t\022;\n\017searchPro" +
       "cessor\030\003 \001(\0162\".Jactravel.Monitoring.Plat" +
       "formType\022\014\n\004host\030\004 \001(\t\022\031\n\021startUtcTimest" +
@@ -33,10 +33,10 @@ public final class PreBookRequestProto {
       "nnelID\030\t \001(\005\022\022\n\npropertyID\030\n \001(\005\022\023\n\013arri" +
       "valDate\030\013 \001(\t\022\020\n\010duration\030\014 \001(\005\0221\n\005rooms",
       "\030\r \003(\0132\".Jactravel.Monitoring.BookRoomIn" +
-      "fo\022\022\n\ncurrencyID\030\016 \001(\005\022\027\n\017preBookingToke" +
-      "n\030\017 \001(\t\022\024\n\014errorMessage\030\020 \001(\t\022\027\n\017errorSt" +
-      "ackTrace\030\021 \001(\tB1\n\030com.jactravel.monitori" +
-      "ngB\023PreBookRequestProtoP\001"
+      "fo\022\022\n\ncurrencyID\030\016 \001(\005\022\017\n\007success\030\017 \001(\t\022" +
+      "\024\n\014errorMessage\030\020 \001(\t\022\027\n\017errorStackTrace" +
+      "\030\021 \001(\tB1\n\030com.jactravel.monitoringB\023PreB" +
+      "ookRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -48,7 +48,7 @@ public final class PreBookRequestProto {
           internal_static_Jactravel_Monitoring_PreBookRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Jactravel_Monitoring_PreBookRequest_descriptor,
-              new java.lang.String[] { "QueryUUID", "SearchQueryUUID", "SearchProcessor", "Host", "StartUtcTimestamp", "EndUtcTimestamp", "TradeID", "BrandID", "SalesChannelID", "PropertyID", "ArrivalDate", "Duration", "Rooms", "CurrencyID", "PreBookingToken", "ErrorMessage", "ErrorStackTrace", });
+              new java.lang.String[] { "QueryUUID", "SearchQueryUUID", "SearchProcessor", "Host", "StartUtcTimestamp", "EndUtcTimestamp", "TradeID", "BrandID", "SalesChannelID", "PropertyID", "ArrivalDate", "Duration", "Rooms", "CurrencyID", "Success", "ErrorMessage", "ErrorStackTrace", });
           return null;
         }
       };

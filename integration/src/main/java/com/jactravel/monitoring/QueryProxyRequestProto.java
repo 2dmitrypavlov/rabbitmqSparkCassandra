@@ -35,12 +35,17 @@ public final class QueryProxyRequestProto {
       "gLogin\030\014 \001(\t\022\017\n\007success\030\r \001(\t\022\024\n\014errorMe" +
       "ssage\030\016 \001(\t\022<\n\020requestProcessor\030\017 \001(\0162\"." +
       "Jactravel.Monitoring.PlatformType\022\022\n\nreq" +
-      "uestURL\030\020 \001(\t\022\027\n\017errorStackTrace\030\021 \001(\t*\220" +
-      "\001\n\tQueryType\022\021\n\rUnknownSearch\020\000\022\021\n\rIVect" +
-      "orSearch\020\001\022\026\n\022TravelStudioSearch\020\002\022\017\n\013IV" +
-      "ectorBook\020\003\022\022\n\016IVectorPreBook\020\004\022\027\n\023IVect" +
-      "orCancellation\020\005\022\007\n\003CMI\020\006B4\n\030com.jactrav" +
-      "el.monitoringB\026QueryProxyRequestProtoP\001"
+      "uestURL\030\020 \001(\t\022\027\n\017errorStackTrace\030\021 \001(\t*\302" +
+      "\002\n\tQueryType\022\016\n\nNewBooking\020\000\022\013\n\007PreBook\020" +
+      "\001\022\r\n\tPreCancel\020\002\022\021\n\rCancelBooking\020\003\022\n\n\006C" +
+      "ancel\020\004\022\026\n\022CancellationPolicy\020\005\022\030\n\024Cance" +
+      "llationPolicyV2\020\006\022\010\n\004Book\020\007\022\n\n\006Search\020\010\022" +
+      "\022\n\016BookingDetails\020\t\022\016\n\nGetBooking\020\n\022\021\n\rG" +
+      "etFacilities\020\013\022\013\n\007GeoTree\020\014\022\r\n\tHotelList",
+      "\020\r\022\016\n\nLiveErrata\020\016\022\017\n\013HotelSearch\020\017\022\020\n\014H" +
+      "otelDetails\020\020\022\017\n\013PriceSearch\020\021\022\013\n\007Unknow" +
+      "n\020\022B4\n\030com.jactravel.monitoringB\026QueryPr" +
+      "oxyRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

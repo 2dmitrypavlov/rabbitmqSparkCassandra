@@ -105,6 +105,16 @@ public  final class BookRoomInfo extends
             priceDiff_ = input.readBytes();
             break;
           }
+          case 64: {
+            bitField0_ |= 0x00000040;
+            roomCount_ = input.readInt32();
+            break;
+          }
+          case 74: {
+            bitField0_ |= 0x00000080;
+            preBookingToken_ = input.readBytes();
+            break;
+          }
         }
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -321,6 +331,65 @@ public  final class BookRoomInfo extends
     }
   }
 
+  // optional int32 roomCount = 8;
+  public static final int ROOMCOUNT_FIELD_NUMBER = 8;
+  private int roomCount_;
+  /**
+   * <code>optional int32 roomCount = 8;</code>
+   */
+  public boolean hasRoomCount() {
+    return ((bitField0_ & 0x00000040) == 0x00000040);
+  }
+  /**
+   * <code>optional int32 roomCount = 8;</code>
+   */
+  public int getRoomCount() {
+    return roomCount_;
+  }
+
+  // optional string preBookingToken = 9;
+  public static final int PREBOOKINGTOKEN_FIELD_NUMBER = 9;
+  private java.lang.Object preBookingToken_;
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  public boolean hasPreBookingToken() {
+    return ((bitField0_ & 0x00000080) == 0x00000080);
+  }
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  public java.lang.String getPreBookingToken() {
+    java.lang.Object ref = preBookingToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        preBookingToken_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  public com.google.protobuf.ByteString
+      getPreBookingTokenBytes() {
+    java.lang.Object ref = preBookingToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      preBookingToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private void initFields() {
     adults_ = 0;
     children_ = 0;
@@ -329,6 +398,8 @@ public  final class BookRoomInfo extends
     bookingToken_ = "";
     propertyRoomTypeID_ = 0;
     priceDiff_ = "";
+    roomCount_ = 0;
+    preBookingToken_ = "";
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -362,6 +433,12 @@ public  final class BookRoomInfo extends
     }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       output.writeBytes(7, getPriceDiffBytes());
+    }
+    if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      output.writeInt32(8, roomCount_);
+    }
+    if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      output.writeBytes(9, getPreBookingTokenBytes());
     }
     getUnknownFields().writeTo(output);
   }
@@ -404,6 +481,14 @@ public  final class BookRoomInfo extends
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += com.google.protobuf.CodedOutputStream
         .computeBytesSize(7, getPriceDiffBytes());
+    }
+    if (((bitField0_ & 0x00000040) == 0x00000040)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(8, roomCount_);
+    }
+    if (((bitField0_ & 0x00000080) == 0x00000080)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(9, getPreBookingTokenBytes());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -535,6 +620,10 @@ public  final class BookRoomInfo extends
       bitField0_ = (bitField0_ & ~0x00000020);
       priceDiff_ = "";
       bitField0_ = (bitField0_ & ~0x00000040);
+      roomCount_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000080);
+      preBookingToken_ = "";
+      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -592,6 +681,14 @@ public  final class BookRoomInfo extends
         to_bitField0_ |= 0x00000020;
       }
       result.priceDiff_ = priceDiff_;
+      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+        to_bitField0_ |= 0x00000040;
+      }
+      result.roomCount_ = roomCount_;
+      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        to_bitField0_ |= 0x00000080;
+      }
+      result.preBookingToken_ = preBookingToken_;
       result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
@@ -638,6 +735,14 @@ public  final class BookRoomInfo extends
       if (other.hasPriceDiff()) {
         bitField0_ |= 0x00000040;
         priceDiff_ = other.priceDiff_;
+        onChanged();
+      }
+      if (other.hasRoomCount()) {
+        setRoomCount(other.getRoomCount());
+      }
+      if (other.hasPreBookingToken()) {
+        bitField0_ |= 0x00000100;
+        preBookingToken_ = other.preBookingToken_;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -1009,6 +1114,113 @@ public  final class BookRoomInfo extends
   }
   bitField0_ |= 0x00000040;
       priceDiff_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional int32 roomCount = 8;
+    private int roomCount_ ;
+    /**
+     * <code>optional int32 roomCount = 8;</code>
+     */
+    public boolean hasRoomCount() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional int32 roomCount = 8;</code>
+     */
+    public int getRoomCount() {
+      return roomCount_;
+    }
+    /**
+     * <code>optional int32 roomCount = 8;</code>
+     */
+    public Builder setRoomCount(int value) {
+      bitField0_ |= 0x00000080;
+      roomCount_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional int32 roomCount = 8;</code>
+     */
+    public Builder clearRoomCount() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      roomCount_ = 0;
+      onChanged();
+      return this;
+    }
+
+    // optional string preBookingToken = 9;
+    private java.lang.Object preBookingToken_ = "";
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public boolean hasPreBookingToken() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public java.lang.String getPreBookingToken() {
+      java.lang.Object ref = preBookingToken_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        preBookingToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPreBookingTokenBytes() {
+      java.lang.Object ref = preBookingToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        preBookingToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public Builder setPreBookingToken(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000100;
+      preBookingToken_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public Builder clearPreBookingToken() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      preBookingToken_ = getDefaultInstance().getPreBookingToken();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string preBookingToken = 9;</code>
+     */
+    public Builder setPreBookingTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000100;
+      preBookingToken_ = value;
       onChanged();
       return this;
     }

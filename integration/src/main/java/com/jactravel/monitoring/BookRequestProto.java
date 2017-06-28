@@ -24,7 +24,7 @@ public final class BookRequestProto {
     java.lang.String[] descriptorData = {
       "\n\021BookRequest.proto\022\024Jactravel.Monitorin" +
       "g\032\022PlatformType.proto\032\022BookRoomInfo.prot" +
-      "o\"\326\003\n\013BookRequest\022\021\n\tqueryUUID\030\001 \001(\t\022\027\n\017" +
+      "o\"\316\003\n\013BookRequest\022\021\n\tqueryUUID\030\001 \001(\t\022\027\n\017" +
       "searchQueryUUID\030\002 \001(\t\022\030\n\020preBookQueryUUI" +
       "D\030\003 \001(\t\022;\n\017searchProcessor\030\004 \001(\0162\".Jactr" +
       "avel.Monitoring.PlatformType\022\014\n\004host\030\005 \001" +
@@ -34,10 +34,9 @@ public final class BookRequestProto {
       "ertyID\030\013 \001(\005\022\023\n\013arrivalDate\030\014 \001(\t\022\020\n\010dur",
       "ation\030\r \001(\005\0221\n\005rooms\030\016 \003(\0132\".Jactravel.M" +
       "onitoring.BookRoomInfo\022\022\n\ncurrencyID\030\017 \001" +
-      "(\005\022\027\n\017preBookingToken\030\020 \001(\t\022\024\n\014errorMess" +
-      "age\030\021 \001(\t\022\027\n\017errorStackTrace\030\022 \001(\tB.\n\030co" +
-      "m.jactravel.monitoringB\020BookRequestProto" +
-      "P\001"
+      "(\005\022\017\n\007success\030\020 \001(\t\022\024\n\014errorMessage\030\021 \001(" +
+      "\t\022\027\n\017errorStackTrace\030\022 \001(\tB.\n\030com.jactra" +
+      "vel.monitoringB\020BookRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -49,7 +48,7 @@ public final class BookRequestProto {
           internal_static_Jactravel_Monitoring_BookRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Jactravel_Monitoring_BookRequest_descriptor,
-              new java.lang.String[] { "QueryUUID", "SearchQueryUUID", "PreBookQueryUUID", "SearchProcessor", "Host", "StartUtcTimestamp", "EndUtcTimestamp", "TradeID", "BrandID", "SalesChannelID", "PropertyID", "ArrivalDate", "Duration", "Rooms", "CurrencyID", "PreBookingToken", "ErrorMessage", "ErrorStackTrace", });
+              new java.lang.String[] { "QueryUUID", "SearchQueryUUID", "PreBookQueryUUID", "SearchProcessor", "Host", "StartUtcTimestamp", "EndUtcTimestamp", "TradeID", "BrandID", "SalesChannelID", "PropertyID", "ArrivalDate", "Duration", "Rooms", "CurrencyID", "Success", "ErrorMessage", "ErrorStackTrace", });
           return null;
         }
       };

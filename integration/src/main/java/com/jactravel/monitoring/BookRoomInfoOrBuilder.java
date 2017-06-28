@@ -89,4 +89,29 @@ public interface BookRoomInfoOrBuilder
    */
   com.google.protobuf.ByteString
       getPriceDiffBytes();
+
+  // optional int32 roomCount = 8;
+  /**
+   * <code>optional int32 roomCount = 8;</code>
+   */
+  boolean hasRoomCount();
+  /**
+   * <code>optional int32 roomCount = 8;</code>
+   */
+  int getRoomCount();
+
+  // optional string preBookingToken = 9;
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  boolean hasPreBookingToken();
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  java.lang.String getPreBookingToken();
+  /**
+   * <code>optional string preBookingToken = 9;</code>
+   */
+  com.google.protobuf.ByteString
+      getPreBookingTokenBytes();
 }

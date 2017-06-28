@@ -145,4 +145,44 @@ public interface SupplierSearchRequestOrBuilder
    */
   com.google.protobuf.ByteString
       getErrorStackTraceBytes();
+
+  // optional string requestXML = 11;
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  boolean hasRequestXML();
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  java.lang.String getRequestXML();
+  /**
+   * <code>optional string requestXML = 11;</code>
+   */
+  com.google.protobuf.ByteString
+      getRequestXMLBytes();
+
+  // optional string responseXML = 12;
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  boolean hasResponseXML();
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  java.lang.String getResponseXML();
+  /**
+   * <code>optional string responseXML = 12;</code>
+   */
+  com.google.protobuf.ByteString
+      getResponseXMLBytes();
+
+  // optional int32 requestCount = 13;
+  /**
+   * <code>optional int32 requestCount = 13;</code>
+   */
+  boolean hasRequestCount();
+  /**
+   * <code>optional int32 requestCount = 13;</code>
+   */
+  int getRequestCount();
 }

@@ -140,7 +140,7 @@ public  final class BookRequest extends
           }
           case 130: {
             bitField0_ |= 0x00004000;
-            preBookingToken_ = input.readBytes();
+            success_ = input.readBytes();
             break;
           }
           case 138: {
@@ -645,20 +645,20 @@ public  final class BookRequest extends
     return currencyID_;
   }
 
-  // optional string preBookingToken = 16;
-  public static final int PREBOOKINGTOKEN_FIELD_NUMBER = 16;
-  private java.lang.Object preBookingToken_;
+  // optional string success = 16;
+  public static final int SUCCESS_FIELD_NUMBER = 16;
+  private java.lang.Object success_;
   /**
-   * <code>optional string preBookingToken = 16;</code>
+   * <code>optional string success = 16;</code>
    */
-  public boolean hasPreBookingToken() {
+  public boolean hasSuccess() {
     return ((bitField0_ & 0x00004000) == 0x00004000);
   }
   /**
-   * <code>optional string preBookingToken = 16;</code>
+   * <code>optional string success = 16;</code>
    */
-  public java.lang.String getPreBookingToken() {
-    java.lang.Object ref = preBookingToken_;
+  public java.lang.String getSuccess() {
+    java.lang.Object ref = success_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
@@ -666,22 +666,22 @@ public  final class BookRequest extends
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       if (bs.isValidUtf8()) {
-        preBookingToken_ = s;
+        success_ = s;
       }
       return s;
     }
   }
   /**
-   * <code>optional string preBookingToken = 16;</code>
+   * <code>optional string success = 16;</code>
    */
   public com.google.protobuf.ByteString
-      getPreBookingTokenBytes() {
-    java.lang.Object ref = preBookingToken_;
+      getSuccessBytes() {
+    java.lang.Object ref = success_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      preBookingToken_ = b;
+      success_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -790,7 +790,7 @@ public  final class BookRequest extends
     duration_ = 0;
     rooms_ = java.util.Collections.emptyList();
     currencyID_ = 0;
-    preBookingToken_ = "";
+    success_ = "";
     errorMessage_ = "";
     errorStackTrace_ = "";
   }
@@ -852,7 +852,7 @@ public  final class BookRequest extends
       output.writeInt32(15, currencyID_);
     }
     if (((bitField0_ & 0x00004000) == 0x00004000)) {
-      output.writeBytes(16, getPreBookingTokenBytes());
+      output.writeBytes(16, getSuccessBytes());
     }
     if (((bitField0_ & 0x00008000) == 0x00008000)) {
       output.writeBytes(17, getErrorMessageBytes());
@@ -931,7 +931,7 @@ public  final class BookRequest extends
     }
     if (((bitField0_ & 0x00004000) == 0x00004000)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(16, getPreBookingTokenBytes());
+        .computeBytesSize(16, getSuccessBytes());
     }
     if (((bitField0_ & 0x00008000) == 0x00008000)) {
       size += com.google.protobuf.CodedOutputStream
@@ -1092,7 +1092,7 @@ public  final class BookRequest extends
       }
       currencyID_ = 0;
       bitField0_ = (bitField0_ & ~0x00004000);
-      preBookingToken_ = "";
+      success_ = "";
       bitField0_ = (bitField0_ & ~0x00008000);
       errorMessage_ = "";
       bitField0_ = (bitField0_ & ~0x00010000);
@@ -1194,7 +1194,7 @@ public  final class BookRequest extends
       if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
         to_bitField0_ |= 0x00004000;
       }
-      result.preBookingToken_ = preBookingToken_;
+      result.success_ = success_;
       if (((from_bitField0_ & 0x00010000) == 0x00010000)) {
         to_bitField0_ |= 0x00008000;
       }
@@ -1301,9 +1301,9 @@ public  final class BookRequest extends
       if (other.hasCurrencyID()) {
         setCurrencyID(other.getCurrencyID());
       }
-      if (other.hasPreBookingToken()) {
+      if (other.hasSuccess()) {
         bitField0_ |= 0x00008000;
-        preBookingToken_ = other.preBookingToken_;
+        success_ = other.success_;
         onChanged();
       }
       if (other.hasErrorMessage()) {
@@ -2335,76 +2335,76 @@ public  final class BookRequest extends
       return this;
     }
 
-    // optional string preBookingToken = 16;
-    private java.lang.Object preBookingToken_ = "";
+    // optional string success = 16;
+    private java.lang.Object success_ = "";
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
-    public boolean hasPreBookingToken() {
+    public boolean hasSuccess() {
       return ((bitField0_ & 0x00008000) == 0x00008000);
     }
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
-    public java.lang.String getPreBookingToken() {
-      java.lang.Object ref = preBookingToken_;
+    public java.lang.String getSuccess() {
+      java.lang.Object ref = success_;
       if (!(ref instanceof java.lang.String)) {
         java.lang.String s = ((com.google.protobuf.ByteString) ref)
             .toStringUtf8();
-        preBookingToken_ = s;
+        success_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
     public com.google.protobuf.ByteString
-        getPreBookingTokenBytes() {
-      java.lang.Object ref = preBookingToken_;
+        getSuccessBytes() {
+      java.lang.Object ref = success_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        preBookingToken_ = b;
+        success_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
-    public Builder setPreBookingToken(
+    public Builder setSuccess(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00008000;
-      preBookingToken_ = value;
+      success_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
-    public Builder clearPreBookingToken() {
+    public Builder clearSuccess() {
       bitField0_ = (bitField0_ & ~0x00008000);
-      preBookingToken_ = getDefaultInstance().getPreBookingToken();
+      success_ = getDefaultInstance().getSuccess();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string preBookingToken = 16;</code>
+     * <code>optional string success = 16;</code>
      */
-    public Builder setPreBookingTokenBytes(
+    public Builder setSuccessBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00008000;
-      preBookingToken_ = value;
+      success_ = value;
       onChanged();
       return this;
     }

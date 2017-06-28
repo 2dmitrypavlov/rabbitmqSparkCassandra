@@ -36,7 +36,7 @@ trait ProcessMonitoringStream extends LazyLogging {
       , bookRequestProto.getDuration
       , getRoomsInfo(bookRequestProto.getRoomsList)
       , bookRequestProto.getCurrencyID
-      , bookRequestProto.getPreBookingToken
+      , bookRequestProto.getSuccess
       , bookRequestProto.getErrorMessage
       , bookRequestProto.getErrorStackTrace)
 
@@ -56,7 +56,10 @@ trait ProcessMonitoringStream extends LazyLogging {
       , supplierBookRequestProto.getPropertyCount
       , supplierBookRequestProto.getSuccess
       , supplierBookRequestProto.getErrorMessage
-      , supplierBookRequestProto.getErrorStackTrace)
+      , supplierBookRequestProto.getErrorStackTrace
+      , supplierBookRequestProto.getRequestXML
+      , supplierBookRequestProto.getResponseXML
+      , supplierBookRequestProto.getPropertyCount)
 
   }
 
@@ -79,7 +82,7 @@ trait ProcessMonitoringStream extends LazyLogging {
       , preBookRequestProto.getDuration
       , getRoomsInfo(preBookRequestProto.getRoomsList)
       , preBookRequestProto.getCurrencyID
-      , preBookRequestProto.getPreBookingToken
+      , preBookRequestProto.getSuccess
       , preBookRequestProto.getErrorMessage
       , preBookRequestProto.getErrorStackTrace)
 
@@ -99,7 +102,10 @@ trait ProcessMonitoringStream extends LazyLogging {
       , supplierPreBookRequestProto.getPropertyCount
       , supplierPreBookRequestProto.getSuccess
       , supplierPreBookRequestProto.getErrorMessage
-      , supplierPreBookRequestProto.getErrorStackTrace)
+      , supplierPreBookRequestProto.getErrorStackTrace
+      , supplierPreBookRequestProto.getRequestXML
+      , supplierPreBookRequestProto.getResponseXML
+      , supplierPreBookRequestProto.getPropertyCount)
 
   }
 
@@ -109,7 +115,6 @@ trait ProcessMonitoringStream extends LazyLogging {
 
     QueryProxyRequest(
       queryProxyRequest.getQueryUUID
-      , toDate(parseDateTime(queryProxyRequest.getClientRequestUtcTimestamp, ChronoUnit.MINUTES))
       , queryProxyRequest.getClientIP
       , queryProxyRequest.getSearchQueryType.getNumber
       , queryProxyRequest.getHost
@@ -125,21 +130,18 @@ trait ProcessMonitoringStream extends LazyLogging {
       , queryProxyRequest.getRequestProcessor.getNumber
       , queryProxyRequest.getRequestURL
       , queryProxyRequest.getErrorStackTrace
-      , System.currentTimeMillis()
     )
 
   }
 
-  def messageSearchReportHandler(delivery: Delivery): (SearchRequestInfo, SearchResponseInfo) = {
+  def messageSearchRequestHandler(delivery: Delivery): SearchRequest = {
 
-    val searchReport = com.jactravel.monitoring.SearchReport.PARSER.parseFrom(delivery.getBody)
-    val searchRequestInfo = searchReport.getRequestInfo
-    val searchResponseInfo = searchReport.getResponseInfo
+    val searchRequestProto = com.jactravel.monitoring.SearchRequest.PARSER.parseFrom(delivery.getBody)
+    val searchRequestInfo = searchRequestProto.getRequestInfo
+    val searchResponseInfo = searchRequestProto.getResponseInfo
 
     val searchRequestInfoRes = SearchRequestInfo(
-      searchReport.getQueryUUID
-      , searchReport.getHost
-      , searchRequestInfo.getStartUtcTimestamp
+      searchRequestInfo.getStartUtcTimestamp
       , searchRequestInfo.getEndUtcTimestamp
       , searchRequestInfo.getTradeID
       , searchRequestInfo.getBrandID
@@ -161,18 +163,21 @@ trait ProcessMonitoringStream extends LazyLogging {
     )
 
     val searchResponseInfoRes = SearchResponseInfo(
-      searchReport.getQueryUUID
-      , searchReport.getHost
-      , searchResponseInfo.getPropertyReferenceCount
+      searchResponseInfo.getPropertyReferenceCount
       , searchResponseInfo.getPropertyCount
       , searchResponseInfo.getPricedRoomCount
+      , searchResponseInfo.getSuppliersSearchedList.asScala.toList
       , searchResponseInfo.getSuccess
       , searchResponseInfo.getErrorMessage
       , searchResponseInfo.getErrorStackTrace
-      , searchResponseInfo.getSuppliersSearchedList.asScala.toList
     )
 
-    (searchRequestInfoRes, searchResponseInfoRes)
+    SearchRequest(
+      searchRequestProto.getQueryUUID
+      , searchRequestProto.getHost
+      , searchRequestInfoRes
+      , searchResponseInfoRes
+    )
 
   }
 
@@ -190,8 +195,52 @@ trait ProcessMonitoringStream extends LazyLogging {
       , supplierSearchRequestProto.getPropertyCount
       , supplierSearchRequestProto.getSuccess
       , supplierSearchRequestProto.getErrorMessage
-      , supplierSearchRequestProto.getErrorStackTrace)
+      , supplierSearchRequestProto.getErrorStackTrace
+      , supplierSearchRequestProto.getRequestXML
+      , supplierSearchRequestProto.getResponseXML
+      , supplierSearchRequestProto.getPropertyCount)
 
+  }
+
+  def messageCmiRequestHandler(delivery: Delivery): CmiRequest = {
+    val cmiRequestProto = com.jactravel.monitoring.CMIRequest.PARSER.parseFrom(delivery.getBody)
+
+    CmiRequest(
+      cmiRequestProto.getQueryUUID
+      , cmiRequestProto.getSupplierIP
+      , cmiRequestProto.getCMIQueryType.getNumber
+      , cmiRequestProto.getHost
+      , cmiRequestProto.getClientRequestUtcTimestamp
+      , cmiRequestProto.getClientResponseUtcTimestamp
+      , cmiRequestProto.getForwardedRequestUtcTimestamp
+      , cmiRequestProto.getForwardedResponseUtcTimestamp
+      , cmiRequestProto.getRequestXML
+      , cmiRequestProto.getResponseXML
+      , cmiRequestProto.getXmlBookingLogin
+      , cmiRequestProto.getSuccess
+      , cmiRequestProto.getErrorMessage
+      , cmiRequestProto.getRequestProcessor.getNumber
+      , cmiRequestProto.getRequestURL
+      , cmiRequestProto.getErrorStackTrace
+    )
+  }
+
+  def messageCmiBatchRequestHandler(delivery: Delivery): CmiBatchRequest = {
+    val cmiBatchRequestProto = com.jactravel.monitoring.CMIBatchRequest.PARSER.parseFrom(delivery.getBody)
+
+    CmiBatchRequest(
+      cmiBatchRequestProto.getQueryUUID
+      , cmiBatchRequestProto.getSupplierIP
+      , cmiBatchRequestProto.getCMIQueryType.getNumber
+      , cmiBatchRequestProto.getHost
+      , cmiBatchRequestProto.getRequestUtcTimestamp
+      , cmiBatchRequestProto.getResponseUtcTimestamp
+      , cmiBatchRequestProto.getRequestXML
+      , cmiBatchRequestProto.getResponseXML
+      , cmiBatchRequestProto.getSuccess
+      , cmiBatchRequestProto.getErrorMessage
+      , cmiBatchRequestProto.getErrorStackTrace
+    )
   }
 
   private[streaming] def getRoomsInfo(roomsList: java.util.List[com.jactravel.monitoring.BookRoomInfo]) = {
@@ -205,6 +254,8 @@ trait ProcessMonitoringStream extends LazyLogging {
           , roomInfo.getBookingToken
           , roomInfo.getPropertyRoomTypeID
           , roomInfo.getPriceDiff
+          , roomInfo.getRoomCount
+          , roomInfo.getPreBookingToken
         )
     }.toList
   }

@@ -18,11 +18,12 @@ public final class PlatformTypeProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\022PlatformType.proto\022\024Jactravel.Monitori" +
-      "ng*\203\001\n\014PlatformType\022\023\n\017UnknownPlatform\020\000" +
+      "ng*\266\001\n\014PlatformType\022\023\n\017UnknownPlatform\020\000" +
       "\022\010\n\004Grid\020\001\022\013\n\007IVector\020\002\022\020\n\014TravelStudio\020" +
-      "\003\022\027\n\023TravelStudioAdapter\020\004\022\016\n\nQueryProxy" +
-      "\020\005\022\014\n\010CMIPrice\020\006B/\n\030com.jactravel.monito" +
-      "ringB\021PlatformTypeProtoP\001"
+      "\003\022\027\n\023TravelStudioAdapter\020\004\022\010\n\004IVCC\020\005\022\014\n\010" +
+      "CMIPrice\020\006\022\t\n\005IVWeb\020\007\022\t\n\005TSCMQ\020\010\022\014\n\010IVNa" +
+      "tive\020\t\022\010\n\004IVSM\020\n\022\t\n\005IVOTA\020\013B/\n\030com.jactr" +
+      "avel.monitoringB\021PlatformTypeProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

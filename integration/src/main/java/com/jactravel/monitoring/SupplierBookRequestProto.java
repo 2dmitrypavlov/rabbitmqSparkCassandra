@@ -23,14 +23,15 @@ public final class SupplierBookRequestProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\031SupplierBookRequest.proto\022\024Jactravel.M" +
-      "onitoring\"\342\001\n\023SupplierBookRequest\022\021\n\tque" +
+      "onitoring\"\241\002\n\023SupplierBookRequest\022\021\n\tque" +
       "ryUUID\030\001 \001(\t\022\014\n\004host\030\002 \001(\t\022\016\n\006source\030\003 \001" +
       "(\t\022\031\n\021startUtcTimestamp\030\004 \001(\t\022\027\n\017endUtcT" +
       "imestamp\030\005 \001(\t\022\017\n\007timeout\030\006 \001(\005\022\025\n\rprope" +
       "rtyCount\030\007 \001(\005\022\017\n\007success\030\010 \001(\t\022\024\n\014error" +
-      "Message\030\t \001(\t\022\027\n\017errorStackTrace\030\n \001(\tB6" +
-      "\n\030com.jactravel.monitoringB\030SupplierBook" +
-      "RequestProtoP\001"
+      "Message\030\t \001(\t\022\027\n\017errorStackTrace\030\n \001(\t\022\022" +
+      "\n\nrequestXML\030\013 \001(\t\022\023\n\013responseXML\030\014 \001(\t\022" +
+      "\024\n\014requestCount\030\r \001(\005B6\n\030com.jactravel.m" +
+      "onitoringB\030SupplierBookRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -42,7 +43,7 @@ public final class SupplierBookRequestProto {
           internal_static_Jactravel_Monitoring_SupplierBookRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Jactravel_Monitoring_SupplierBookRequest_descriptor,
-              new java.lang.String[] { "QueryUUID", "Host", "Source", "StartUtcTimestamp", "EndUtcTimestamp", "Timeout", "PropertyCount", "Success", "ErrorMessage", "ErrorStackTrace", });
+              new java.lang.String[] { "QueryUUID", "Host", "Source", "StartUtcTimestamp", "EndUtcTimestamp", "Timeout", "PropertyCount", "Success", "ErrorMessage", "ErrorStackTrace", "RequestXML", "ResponseXML", "RequestCount", });
           return null;
         }
       };

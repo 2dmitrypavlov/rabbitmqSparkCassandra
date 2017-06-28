@@ -10,15 +10,15 @@ case class PreBookRequest(
                            host: String,
                            startUtcTimestamp: String,
                            endUtcTimestamp: String,
-                           tradeID: Int,
-                           brandID: Int,
-                           salesChannelID: Int,
-                           propertyID: Int,
+                           tradeId: Int,
+                           brandId: Int,
+                           salesChannelId: Int,
+                           propertyId: Int,
                            arrivalDate: String,
                            duration: Int,
                            rooms: List[BookRoomInfo],
-                           currencyID: Int,
-                           preBookingToken: String,
+                           currencyId: Int,
+                           success: String,
                            errorMessage: String,
                            errorStackTrace: String
                          )
@@ -33,5 +33,8 @@ case class SupplierPreBookRequest(
                                 propertyCount: Int,
                                 success: String,
                                 errorMessage: String,
-                                errorStackTrace: String
+                                errorStackTrace: String,
+                                requestXml: String,
+                                responseXml: String,
+                                requestCount: Int
                               )
