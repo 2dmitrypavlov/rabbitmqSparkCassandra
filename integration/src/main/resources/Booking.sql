@@ -5,13 +5,6 @@ LEFT JOIN QueryProxyRequest q
 on br.query_uuid==q.query_uuid
 where br.trade_id == t.trade_id and br.brand_id==b.brand_id and br.sales_channel_id=s.sales_channel_id
 
-select *
-from BookRequest as br, SalesChannel as s, Brand as b,Trade as t
-LEFT JOIN QueryProxyRequest q
-on br.query_uuid==q.query_uuid
-LEFT JOIN br
-where br.trade_id == t.trade_id and br.brand_id==b.brand_id and br.sales_channel_id=s.sales_channel_id
-
 
 //count
 select '11:35' as 'timestamp', COUNT(query_uuid) AS 'booking_count', brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
@@ -62,7 +55,7 @@ group by
 brand_name, sales_channel_name, trade_group, trade_name, trade_parent_name, xml_booking_login
 Booking is stored in Cassandra, does it make sense?
 The other select is stored in influx
-again, queries look logically correct but I'm now a bit confused on where you are running them on and ot do what
+again, queries look logically correct but Im now a bit confused on where you are running them on and ot do what
 
 [6/28/17, 9:38:55 AM] Alessandro Martino: On 6/27/17, at 9:17 PM, spark pavlov wrote:
 > Will this make any sense?
