@@ -87,7 +87,8 @@ object SendProtobuf {
     val room = RoomRequest.newBuilder()
       .setAdults(3)
       .setChildren(4)
-      .setChildAges(0, 1)
+      .addChildAges(5)
+      .addChildAges(3)
     val searchRequestInfo = SearchRequestInfo.newBuilder()
       .setEndUtcTimestamp("2017-06-06 00:00:00")
       .setStartUtcTimestamp("2017-05-06 00:00:00")
@@ -97,23 +98,23 @@ object SendProtobuf {
       .setSearchGeoLevel(GeoLevel.Country)
       .setGeoLevel1ID(4)
       .setGeoLevel2ID(8)
-      .setGeoLevel3IDs(0, 1)
-      .setPropertyReferenceIDs(0, 1)
-      .setPropertyIDs(0, 1)
       .setMinStarRating("low")
       .setArrivalDate("arrivalDate")
       .setDuration(14)
       .setMinStarRating("Zero")
       .addRooms(room)
+      .addGeoLevel3IDs(4)
+      .addPropertyReferenceIDs(5)
+      .addPropertyIDs(5)
 
     val searchResponseInfo = SearchResponseInfo.newBuilder()
       .setPropertyReferenceCount(1)
       .setPropertyCount(1)
       .setPricedRoomCount(1)
-      .setSuppliersSearched(0, "1")
       .setSuccess("true")
       .setErrorMessage("msg")
       .setErrorStackTrace("msg")
+      .addSuppliersSearched("value")
 
     val sendSearchRequest = SearchRequest.newBuilder()
       .setQueryUUID("query")
@@ -124,7 +125,7 @@ object SendProtobuf {
       .toByteArray
 
     // SUPPLIER BOOK REQUEST
-    val sendSupplierBokRequest = SupplierBookRequest.newBuilder()
+    val sendSupplierBookRequest = SupplierBookRequest.newBuilder()
       .setQueryUUID("query")
       .setHost("setHost")
       .setSource("source")
@@ -216,6 +217,8 @@ object SendProtobuf {
       .setRequestProcessor(PlatformType.IVector)
       .setRequestURL("url")
       .setErrorStackTrace("error")
+      .build()
+      .toByteArray
 
     // CMI BATCH REQUEST
     val sendCmiBatchRequest = CMIBatchRequest.newBuilder()
@@ -230,11 +233,18 @@ object SendProtobuf {
       .setSuccess("true")
       .setErrorMessage("msg")
       .setErrorStackTrace("error")
+      .build()
+      .toByteArray
 
     channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendBooking)
     channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendPreBooking)
     channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSearchRequest)
-    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSupplierBokRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSupplierBookRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSupplierPreBookRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendQueryProxyRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendCmiRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendCmiBatchRequest)
+
 
     channel.close()
     connection.close()
