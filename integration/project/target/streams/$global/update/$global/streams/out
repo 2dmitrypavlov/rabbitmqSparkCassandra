@@ -6003,7 +6003,7 @@
 [debug] 	[NOT REQUIRED] org.scala-sbt#template-resolver;0.1!template-resolver.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#jline;2.10.6!jline.jar
 [debug] 	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar
-[debug] :: resolution report :: resolve 1018ms :: artifacts dl 22ms
+[debug] :: resolution report :: resolve 1184ms :: artifacts dl 30ms
 [debug] 	report for default#integration-build;0.1-SNAPSHOT compile produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-compile.xml
 [debug] 	report for default#integration-build;0.1-SNAPSHOT runtime produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-runtime.xml
 [debug] 	report for default#integration-build;0.1-SNAPSHOT test produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-test.xml
@@ -6017,5 +6017,5 @@
 [debug] 	report for default#integration-build;0.1-SNAPSHOT docs produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-docs.xml
 [debug] 	report for default#integration-build;0.1-SNAPSHOT pom produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-pom.xml
 [debug] 	report for default#integration-build;0.1-SNAPSHOT scala-tool produced in /Users/dmitry/rabbitmqSparkCassandra/integration/project/target/resolution-cache/reports/default-integration-build-scala-tool.xml
-[debug] 	resolve done (1018ms resolve - 22ms download)
+[debug] 	resolve done (1184ms resolve - 30ms download)
 [info] Done updating.

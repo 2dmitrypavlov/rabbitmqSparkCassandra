@@ -35,8 +35,8 @@ private[streaming] trait ConfigService {
     * RabbitMQ Properties
     */
   //val queueName = Try(config.getString("amqp.queueName")).getOrElse("rabbitmq-queue")
-  val exchangeName = Try(config.getString("amqp.exchangeName")).getOrElse("rabbitmq-exchange")
-  val exchangeType = Try(config.getString("amqp.exchangeType")).getOrElse("direct")
+  val exchangeName = Try(config.getString("amqp.exchangeName")).getOrElse("")
+  val exchangeType = Try(config.getString("amqp.exchangeType")).getOrElse("")
   val routingKey = Try(config.getString("rabbitmq.routingKey")).getOrElse("")
   val vHost = Try(config.getString("amqp.virtual-host")).getOrElse("/")
   val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
