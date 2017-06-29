@@ -29,6 +29,12 @@ object SendProtobuf {
     channel.queueDeclare("BookRequest", true, false, false, null)
     channel.queueDeclare("SearchRequest", true, false, false, null)
     channel.queueDeclare("PreBookRequest", true, false, false, null)
+    channel.queueDeclare("SupplierBookRequest", true, false, false, null)
+    channel.queueDeclare("SupplierPreBookRequest", true, false, false, null)
+    channel.queueDeclare("SupplierSearchRequest", true, false, false, null)
+    channel.queueDeclare("QueryProxyRequest", true, false, false, null)
+    channel.queueDeclare("CMIRequest", true, false, false, null)
+    channel.queueDeclare("CMIBatchRequest", true, false, false, null)
 
 
     // BOOKING
@@ -57,13 +63,13 @@ object SendProtobuf {
       .setPropertyID(15)
       .setSearchProcessor(PlatformType.IVector)
       .setSalesChannelID(16)
-      .setQueryUUID("101")
+      .setQueryUUID("400")
       .build()
     .toByteArray
 
     // PRE-BOOKING
     val sendPreBooking = PreBookRequest.newBuilder()
-      .setQueryUUID("102")
+      .setQueryUUID("401")
       .setSearchQueryUUID("search_uuid")
       .setSearchProcessor(PlatformType.IVector)
       .setHost("localhost")

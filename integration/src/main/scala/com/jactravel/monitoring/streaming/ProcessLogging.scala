@@ -28,14 +28,14 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("PreBookRequest")
       , messagePreBookingHandler)
 
-//    val searchRequestStream = RabbitMQUtils.createStream[SearchRequest](ssc
-//      , prepareQueueMap("SearchRequest")
-//      , messageSearchRequestHandler)
-//
+    val searchRequestStream = RabbitMQUtils.createStream[SearchRequest](ssc
+      , prepareQueueMap("SearchRequest")
+      , messageSearchRequestHandler)
+
 //    val supplierBookhRequestStream = RabbitMQUtils.createStream[SupplierBookRequest](ssc
 //      , prepareQueueMap("SupplierBookRequest")
 //      , messageSupplierBookRequestHandler)
-//
+
 //    val supplierPreBookRequestStream = RabbitMQUtils.createStream[SupplierPreBookRequest](ssc
 //      , prepareQueueMap("SupplierPreBookRequest")
 //      , messageSupplierPreBookRequestHandler)
