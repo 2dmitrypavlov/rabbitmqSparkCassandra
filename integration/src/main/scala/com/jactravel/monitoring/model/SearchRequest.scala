@@ -5,10 +5,10 @@ package com.jactravel.monitoring.model
   */
 
 case class SearchRequest(
-                        queryUUID: String,
-                        host: String,
-                        requestInfo: SearchRequestInfo,
-                        responseInfo: SearchResponseInfo
+                          queryUUID: String,
+                          host: String,
+                          requestInfo: RequestInfo,
+                          responseInfo: ResponseInfo
                         )
 
 case class RoomRequest(
@@ -17,7 +17,7 @@ case class RoomRequest(
                         childAges: List[Int]
                       )
 
-case class SearchRequestInfo(
+case class RequestInfo(
                               startUtcTimestamp: String,
                               endUtcTimestamp: String,
                               tradeId: Int,
@@ -26,17 +26,18 @@ case class SearchRequestInfo(
                               searchGeoLevel: Int,
                               geo_level1_id: Int,
                               geo_level2_id: Int,
-                              geo_level3_id: List[Int],
+                              geo_level3_ids: List[Int],
                               property_reference_ids: List[Int],
                               property_ids: List[Int],
                               minStarRating: String,
                               arrivalDate: String,
                               duration: Int,
                               mealBasisId: Int,
-                              rooms: List[RoomRequest]
+                              rooms: List[RoomRequest],
+                              room_count: Int
                             )
 
-case class SearchResponseInfo(
+case class ResponseInfo(
                                propertyReferenceCount: Int,
                                propertyCount: Int,
                                pricedRoomCount: Int,

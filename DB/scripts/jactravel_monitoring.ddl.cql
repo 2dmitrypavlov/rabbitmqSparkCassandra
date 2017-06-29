@@ -194,7 +194,7 @@ message SearchRequestInfo {
 }
 */
 
-CREATE TYPE jactravel_monitoring.search_request_info (
+CREATE TYPE jactravel_monitoring.request_info (
   start_utc_timestamp text,
   end_utc_timestamp text,
   trade_id int,
@@ -226,7 +226,7 @@ message SearchResponseInfo {
 }
 */
 
-CREATE TYPE jactravel_monitoring.search_response_info (
+CREATE TYPE jactravel_monitoring.response_info (
   property_reference_count int,
   property_count int,
   priced_room_count int,
@@ -248,8 +248,8 @@ message SearchRequest {
 CREATE TABLE jactravel_monitoring.search_request (
   query_uuid text,
   host text,
-  request_info FROZEN < search_request_info>,
-  response_info FROZEN < search_response_info >,
+  request_info FROZEN<request_info>,
+  response_info FROZEN<response_info >,
   PRIMARY KEY (query_uuid)
 );
 

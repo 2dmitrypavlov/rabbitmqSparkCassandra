@@ -60,7 +60,13 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     // Start up the receiver.
     bookingStream.saveToCassandra(keyspaceName, "book_request")
     preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
-    searchRequestStream.saveToCassandra(keyspaceName, "search_request")
+    searchRequestStream.foreachRDD { rdd =>
+      rdd.saveToCassandra(keyspaceName, "search_request")
+
+      rdd.map {row =>
+        println(s"=============================================== ${row.queryUUID} =============================================")
+        QueryUUIDProceed(queryUUID = row.queryUUID)}.saveToCassandra(keyspaceName, "query_uuid_proceed")
+    }
     supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
     supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
     supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
@@ -73,8 +79,11 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
     preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
-    searchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+//    searchRequestStream.map {
+//      br =>
+//
+//        QueryUUIDProceed(queryUUID = br.queryUUID)
+//    }.saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierBookhRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))

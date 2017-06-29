@@ -140,7 +140,7 @@ trait ProcessMonitoringStream extends LazyLogging {
     val searchRequestInfo = searchRequestProto.getRequestInfo
     val searchResponseInfo = searchRequestProto.getResponseInfo
 
-    val searchRequestInfoRes = SearchRequestInfo(
+    val searchRequestInfoRes = RequestInfo(
       searchRequestInfo.getStartUtcTimestamp
       , searchRequestInfo.getEndUtcTimestamp
       , searchRequestInfo.getTradeID
@@ -160,9 +160,10 @@ trait ProcessMonitoringStream extends LazyLogging {
         rr.getAdults
         , rr.getChildren
         , rr.getChildAgesList.asScala.map(_.asInstanceOf[Int]).toList)).toList
+      , searchRequestInfo.getRoomCount
     )
 
-    val searchResponseInfoRes = SearchResponseInfo(
+    val searchResponseInfoRes = ResponseInfo(
       searchResponseInfo.getPropertyReferenceCount
       , searchResponseInfo.getPropertyCount
       , searchResponseInfo.getPricedRoomCount
