@@ -87,6 +87,7 @@ object SendProtobuf {
     val room = RoomRequest.newBuilder()
       .setAdults(3)
       .setChildren(4)
+
 //      .setChildAges(1, 1)
 
 //    val searchRequestInfo = SearchRequestInfo.newBuilder()
@@ -235,8 +236,7 @@ object SendProtobuf {
 
     channel.basicPublish("", "BookRequest", null, sendBooking)
     channel.basicPublish("", "PreBookRequest", null, sendPreBooking)
-//    channel.basicPublish("", "", null, sendSearchRequest)
-//    channel.basicPublish("", "", null, sendSupplierBokRequest)
+
 
     channel.close()
     connection.close()
