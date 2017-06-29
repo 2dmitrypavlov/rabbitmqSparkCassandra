@@ -1,8 +1,6 @@
 
-import com.jactravel.monitoring.{BookRequest, BookRoomInfo, PlatformType}
+import com.jactravel.monitoring._
 import com.rabbitmq.client.ConnectionFactory
-
-import scala.collection.JavaConverters._
 
 /**
   * Created by admin on 5/31/17.
@@ -34,6 +32,7 @@ object SendProtobuf {
     channel.queueBind("jactravel.monitoring_queue_test", "jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test")
     //jactravel.monitoring
 
+    // BOOKING
     val bookRoomInfo = BookRoomInfo.newBuilder()
       .addChildAges(10)
       .addChildAges(5)
@@ -45,7 +44,7 @@ object SendProtobuf {
     .setPropertyRoomTypeID(101)
     .build()
 
-    val send = BookRequest.newBuilder()
+    val sendBooking = BookRequest.newBuilder()
       .addRooms(bookRoomInfo)
       .setArrivalDate("arrivalDate")
       .setBrandID(10)
@@ -62,7 +61,180 @@ object SendProtobuf {
       .build()
     .toByteArray
 
-    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, send)
+    // PRE-BOOKING
+    val sendPreBooking = PreBookRequest.newBuilder()
+      .setQueryUUID("query_uuid")
+      .setSearchQueryUUID("search_uuid")
+      .setSearchProcessor(PlatformType.IVector)
+      .setHost("localhost")
+      .setEndUtcTimestamp("2017-06-06 00:00:00")
+      .setStartUtcTimestamp("2017-05-06 00:00:00")
+      .setTradeID(1)
+      .setBrandID(2)
+      .setSalesChannelID(3)
+      .setPropertyID(4)
+      .setArrivalDate("arrivalDate")
+      .setDuration(14)
+      .addRooms(bookRoomInfo)
+      .setCurrencyID(4)
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("error")
+      .build()
+      .toByteArray
+
+    // SEARCH REQUEST
+    val room = RoomRequest.newBuilder()
+      .setAdults(3)
+      .setChildren(4)
+      .setChildAges(0, 1)
+    val searchRequestInfo = SearchRequestInfo.newBuilder()
+      .setEndUtcTimestamp("2017-06-06 00:00:00")
+      .setStartUtcTimestamp("2017-05-06 00:00:00")
+      .setTradeID(1)
+      .setBrandID(2)
+      .setSalesChannelID(3)
+      .setSearchGeoLevel(GeoLevel.Country)
+      .setGeoLevel1ID(4)
+      .setGeoLevel2ID(8)
+      .setGeoLevel3IDs(0, 1)
+      .setPropertyReferenceIDs(0, 1)
+      .setPropertyIDs(0, 1)
+      .setMinStarRating("low")
+      .setArrivalDate("arrivalDate")
+      .setDuration(14)
+      .setMinStarRating("Zero")
+      .addRooms(room)
+
+    val searchResponseInfo = SearchResponseInfo.newBuilder()
+      .setPropertyReferenceCount(1)
+      .setPropertyCount(1)
+      .setPricedRoomCount(1)
+      .setSuppliersSearched(0, "1")
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("msg")
+
+    val sendSearchRequest = SearchRequest.newBuilder()
+      .setQueryUUID("query")
+      .setHost("setHost")
+      .setRequestInfo(searchRequestInfo)
+      .setResponseInfo(searchResponseInfo)
+      .build()
+      .toByteArray
+
+    // SUPPLIER BOOK REQUEST
+    val sendSupplierBokRequest = SupplierBookRequest.newBuilder()
+      .setQueryUUID("query")
+      .setHost("setHost")
+      .setSource("source")
+      .setEndUtcTimestamp("2017-06-06 00:00:00")
+      .setStartUtcTimestamp("2017-05-06 00:00:00")
+      .setTimeout(400)
+      .setPropertyCount(1)
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("msg")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setRequestCount(1)
+      .build()
+      .toByteArray
+
+    // SUPPLIER PRE-BOOK REQUEST
+    val sendSupplierPreBookRequest = SupplierPreBookRequest.newBuilder()
+      .setQueryUUID("query")
+      .setHost("setHost")
+      .setSource("source")
+      .setEndUtcTimestamp("2017-06-06 00:00:00")
+      .setStartUtcTimestamp("2017-05-06 00:00:00")
+      .setTimeout(400)
+      .setPropertyCount(1)
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("msg")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setRequestCount(1)
+      .build()
+      .toByteArray
+
+    // SUPPLIER SEARCH REQUEST
+    val sendSupplierSearchRequest = SupplierSearchRequest.newBuilder()
+      .setQueryUUID("query")
+      .setHost("setHost")
+      .setSource("source")
+      .setEndUtcTimestamp("2017-06-06 00:00:00")
+      .setStartUtcTimestamp("2017-05-06 00:00:00")
+      .setTimeout(400)
+      .setPropertyCount(1)
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("msg")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setRequestCount(1)
+      .build()
+      .toByteArray
+
+    // QUERY PROXY REQUEST
+    val sendQueryProxyRequest = QueryProxyRequest.newBuilder()
+      .setQueryUUID("query")
+      .setClientIP("ip")
+      .setSearchQueryType(QueryType.Book)
+      .setHost("setHost")
+      .setClientRequestUtcTimestamp("2017-05-06 00:00:00")
+      .setClientResponseUtcTimestamp("2017-05-06 00:00:03")
+      .setForwardedRequestUtcTimestamp("2017-05-06 00:00:01")
+      .setForwardedResponseUtcTimestamp("2017-05-06 00:00:02")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setXmlBookingLogin("xml")
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setRequestProcessor(PlatformType.IVector)
+      .setRequestURL("url")
+      .setErrorStackTrace("error")
+      .build()
+      .toByteArray
+
+    // CMI REQUEST
+    val sendCmiRequest = CMIRequest.newBuilder()
+      .setQueryUUID("query")
+      .setSupplierIP("ip")
+      .setCMIQueryType(CMIQueryType.GetAllocation)
+      .setHost("setHost")
+      .setClientRequestUtcTimestamp("2017-05-06 00:00:00")
+      .setClientResponseUtcTimestamp("2017-05-06 00:00:03")
+      .setForwardedRequestUtcTimestamp("2017-05-06 00:00:01")
+      .setForwardedResponseUtcTimestamp("2017-05-06 00:00:02")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setXmlBookingLogin("xml")
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setRequestProcessor(PlatformType.IVector)
+      .setRequestURL("url")
+      .setErrorStackTrace("error")
+
+    // CMI BATCH REQUEST
+    val sendCmiBatchRequest = CMIBatchRequest.newBuilder()
+      .setQueryUUID("query")
+      .setSupplierIP("ip")
+      .setCMIQueryType(CMIQueryType.GetAllocation)
+      .setHost("setHost")
+      .setRequestUtcTimestamp("2017-05-06 00:00:00")
+      .setResponseUtcTimestamp("2017-05-06 00:00:01")
+      .setRequestXML("xml")
+      .setResponseXML("xml")
+      .setSuccess("true")
+      .setErrorMessage("msg")
+      .setErrorStackTrace("error")
+
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendBooking)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendPreBooking)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSearchRequest)
+    channel.basicPublish("jactravel.monitoring_direct_exchange_test", "jactravel.monitoring_queue_test", null, sendSupplierBokRequest)
 
     channel.close()
     connection.close()
