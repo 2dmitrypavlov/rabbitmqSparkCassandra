@@ -28,7 +28,7 @@ private[streaming] trait ConfigService {
     */
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
-    .setIfMissing("spark.master", "local[*]")
+    .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
   var ssc: StreamingContext = _
 
   /**
