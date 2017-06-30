@@ -32,61 +32,67 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("SearchRequest")
       , messageSearchRequestHandler)
 
-//    val supplierBookhRequestStream = RabbitMQUtils.createStream[SupplierBookRequest](ssc
-//      , prepareQueueMap("SupplierBookRequest")
-//      , messageSupplierBookRequestHandler)
+    val supplierBookhRequestStream = RabbitMQUtils.createStream[SupplierBookRequest](ssc
+      , prepareQueueMap("SupplierBookRequest")
+      , messageSupplierBookRequestHandler)
 
-//    val supplierPreBookRequestStream = RabbitMQUtils.createStream[SupplierPreBookRequest](ssc
-//      , prepareQueueMap("SupplierPreBookRequest")
-//      , messageSupplierPreBookRequestHandler)
-//
-//    val supplierSearchRequestStream = RabbitMQUtils.createStream[SupplierSearchRequest](ssc
-//      , prepareQueueMap("SupplierSearchRequest")
-//      , messageSupplierSearchRequestHandler)
-//
-//    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
-//      , prepareQueueMap("QueryProxyRequest")
-//      , messageQueryProxyHandler)
-//
-//    val cmiRequestStream = RabbitMQUtils.createStream[CmiRequest](ssc
-//      , prepareQueueMap("CMIRequest")
-//      , messageCmiRequestHandler)
-//
-//    val cmiBatchRequestStream = RabbitMQUtils.createStream[CmiBatchRequest](ssc
-//      , prepareQueueMap("CMIBatchRequest")
-//      , messageCmiBatchRequestHandler)
+    val supplierPreBookRequestStream = RabbitMQUtils.createStream[SupplierPreBookRequest](ssc
+      , prepareQueueMap("SupplierPreBookRequest")
+      , messageSupplierPreBookRequestHandler)
+
+    val supplierSearchRequestStream = RabbitMQUtils.createStream[SupplierSearchRequest](ssc
+      , prepareQueueMap("SupplierSearchRequest")
+      , messageSupplierSearchRequestHandler)
+
+    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
+      , messageQueryProxyHandler)
+
+    val cmiRequestStream = RabbitMQUtils.createStream[CmiRequest](ssc
+      , prepareQueueMap("CMIRequest")
+      , messageCmiRequestHandler)
+
+    val cmiBatchRequestStream = RabbitMQUtils.createStream[CmiBatchRequest](ssc
+      , prepareQueueMap("CMIBatchRequest")
+      , messageCmiBatchRequestHandler)
 
 
     // Start up the receiver.
     bookingStream.saveToCassandra(keyspaceName, "book_request")
     preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
-//    searchRequestStream.saveToCassandra(keyspaceName, "search_request")
-//    supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
-//    supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
-//    supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
-//    queryProxyStream.saveToCassandra(keyspaceName, "query_proxy_request")
-//    cmiRequestStream.saveToCassandra(keyspaceName, "cmi_request")
-//    cmiBatchRequestStream.saveToCassandra(keyspaceName, "cmi_batch_request")
+    searchRequestStream.foreachRDD { rdd =>
+      rdd.saveToCassandra(keyspaceName, "search_request")
+
+      rdd.map {row =>
+        println(s"=============================================== ${row.queryUUID} =============================================")
+        QueryUUIDProceed(queryUUID = row.queryUUID)}.saveToCassandra(keyspaceName, "query_uuid_proceed")
+    }
+    supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
+    supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
+    supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
+    queryProxyStream.saveToCassandra(keyspaceName, "query_proxy_request")
+    cmiRequestStream.saveToCassandra(keyspaceName, "cmi_request")
+    cmiBatchRequestStream.saveToCassandra(keyspaceName, "cmi_batch_request")
 
     // Store query uuid
     bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
     preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    searchRequestStream.map { br =>QueryUUIDProceed(queryUUID = br.queryUUID)
-//    }.saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    supplierBookhRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    searchRequestStream.map { br => QueryUUIDProceed(queryUUID = br.queryUUID)}
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierBookhRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+    cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
 
 
     // Start the computation
@@ -101,12 +107,11 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     Map(
       "hosts" -> hosts
       , "queueName" -> queueName
-//      , "exchangeName" -> exchangeName
-//      , "exchangeType" -> exchangeType
+      , "exchangeName" -> exchangeName
+      , "exchangeType" -> exchangeType
       , "vHost" -> vHost
       , "userName" -> username
       , "password" -> password
-      , "routingKey" -> queueName
     )
   }
 }
