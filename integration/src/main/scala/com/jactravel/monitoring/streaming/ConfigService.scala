@@ -26,9 +26,12 @@ private[streaming] trait ConfigService {
   /**
     * Spark Properties
     */
+  val cassandraPass=Try(config.getString("spark.cassandra.auth.password")).getOrElse("")
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
     .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
+    .set("spark.cassandra.auth.username", "cassandra")
+    .set("spark.cassandra.auth.password", cassandraPass)
   var ssc: StreamingContext = _
 
   /**
