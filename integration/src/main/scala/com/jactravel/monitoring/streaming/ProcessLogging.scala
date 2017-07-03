@@ -2,6 +2,7 @@ package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.model._
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 import org.apache.spark.streaming.{Duration, Milliseconds, Seconds, StreamingContext}
 
@@ -19,7 +20,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     import com.datastax.spark.connector.streaming._
 
 
-    ssc = new StreamingContext(conf, Milliseconds(600))
+    ssc = new StreamingContext(conf, Milliseconds(5000))
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
@@ -57,9 +58,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler)
 
-
+  val numPar=50
     // Start up the receiver.
-    bookingStream.saveToCassandra(keyspaceName, "book_request")
+    bookingStream.repartition(numPar).saveToCassandra(keyspaceName, "book_request")
     preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
     searchRequestStream.saveToCassandra(keyspaceName, "search_request")
     supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
@@ -110,9 +111,10 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , "routingKey" -> queueName
      // ,"maxMessagesPerPartition"->"1"
       ,"maxMessagesPerPartition" -> "100"
-      ,"levelParallelism"->"18"
-    ,"rememberDuration" -> "20000"
-
+      ,"levelParallelism"->"100"
+      ,"rememberDuration" -> "1800000"
+      ,"maxReceiveTime"->"500"
+      ,"storageLevel"->"MEMORY_AND_DISK_2"
 
     )
   }
