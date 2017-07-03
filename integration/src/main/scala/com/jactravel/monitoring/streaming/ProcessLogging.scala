@@ -3,7 +3,7 @@ package com.jactravel.monitoring.streaming
 import com.jactravel.monitoring.model._
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
-import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.streaming.{Duration, Milliseconds, Seconds, StreamingContext}
 
 /**
   * Created by eugene on 5/30/17.
@@ -18,7 +18,8 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     import com.datastax.spark.connector._
     import com.datastax.spark.connector.streaming._
 
-    ssc = new StreamingContext(conf, Seconds(50))
+
+    ssc = new StreamingContext(conf, Milliseconds(50))
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
