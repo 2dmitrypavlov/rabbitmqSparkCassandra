@@ -20,7 +20,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     import com.datastax.spark.connector.streaming._
 
 
-    ssc = new StreamingContext(conf, Milliseconds(10000))
+    ssc = new StreamingContext(conf, Seconds(20) )//Milliseconds(500))
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
@@ -58,7 +58,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler)
 
-  val numPar=200
+  val numPar=150
     // Start up the receiver.
     bookingStream.repartition(numPar).saveToCassandra(keyspaceName, "book_request")
     preBookingStream.repartition(numPar).saveToCassandra(keyspaceName, "pre_book_request")
@@ -72,23 +72,23 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     bookingStream.map(br=>println("++++++++++++++++++++++++"+br.queryUUID))
     // Store query uuid
     bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     searchRequestStream.map { br =>QueryUUIDProceed(queryUUID = br.queryUUID)
-    }.repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    }.saveToCassandra(keyspaceName, "query_uuid_proceed")
 //    supplierBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
 //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
 
 
     // Start the computation
