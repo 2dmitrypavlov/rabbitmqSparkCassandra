@@ -58,7 +58,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler)
 
-  val numPar=100
+  val numPar=200
     // Start up the receiver.
     bookingStream.repartition(numPar).saveToCassandra(keyspaceName, "book_request")
     preBookingStream.repartition(numPar).saveToCassandra(keyspaceName, "pre_book_request")
