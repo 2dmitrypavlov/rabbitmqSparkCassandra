@@ -107,7 +107,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , "userName" -> username
       , "password" -> password
       , "routingKey" -> queueName
-      ,"maxMessagesPerPartition"->"100"
+      ,"maxMessagesPerPartition"->"1"
     )
   }
 }
