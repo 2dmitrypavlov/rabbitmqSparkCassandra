@@ -19,7 +19,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     import com.datastax.spark.connector.streaming._
 
 
-    ssc = new StreamingContext(conf, Milliseconds(50))
+    ssc = new StreamingContext(conf, Milliseconds(500))
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
