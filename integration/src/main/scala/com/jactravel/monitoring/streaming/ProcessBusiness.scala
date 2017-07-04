@@ -141,7 +141,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
-      val bookingCount = spark.sql("""
+      spark.sql("""
       SELECT COUNT(query_uuid) as booking_count,
           time,
           brand_name,
@@ -160,6 +160,18 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_parent_group,
           xml_booking_login
       """).createOrReplaceTempView("BookingCount")
+
+      val data= spark.sql("""select booking_count,
+                            |          time,
+                            |          brand_name,
+                            |          sales_channel,
+                            |          trade_group,
+                            |          trade_name,
+                            |          trade_parent_group,
+                            |          xml_booking_login
+                            |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+
+
       // BOOKING SUCCESS
 //      val bookingSucces = spark.sql("""
 //      SELECT COUNT(query_uuid) as booking_success,
@@ -227,27 +239,27 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 //          xml_booking_login
 //      """).createOrReplaceTempView("BookingResponse")
 //      rdd.take(1)
-      rdd }.saveToCassandra(keyspaceName, "cmi_batch_request")
+      data }.saveToCassandra(keyspaceName, "booking_count")
 
 
-    cmiBatchRequestStream.transform{rdd=>
-      import org.apache.spark.sql.Encoders
-      val bookCount = Encoders.bean(classOf[BookRequestCount])
-     val data= spark.sql("""select booking_count,
-                  |          time,
-                  |          brand_name,
-                  |          sales_channel,
-                  |          trade_group,
-                  |          trade_name,
-                  |          trade_parent_group,
-                  |          xml_booking_login
-                  |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
-
-       //.as[BookRequestCount](bookCount).rdd
-
-      // .rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
-    data
-      }.saveToCassandra(keyspaceName, "booking_count")
+//    cmiBatchRequestStream.transform{rdd=>
+//      import org.apache.spark.sql.Encoders
+//      val bookCount = Encoders.bean(classOf[BookRequestCount])
+//     val data= spark.sql("""select booking_count,
+//                  |          time,
+//                  |          brand_name,
+//                  |          sales_channel,
+//                  |          trade_group,
+//                  |          trade_name,
+//                  |          trade_parent_group,
+//                  |          xml_booking_login
+//                  |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+//
+//       //.as[BookRequestCount](bookCount).rdd
+//
+//      // .rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+//    data
+//      }.saveToCassandra(keyspaceName, "booking_count")
 
     // Start the computation
     ssc.start()
