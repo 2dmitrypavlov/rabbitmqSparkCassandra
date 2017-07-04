@@ -113,7 +113,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     cmiRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_request")
-    cmiBatchRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_batch_request")
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("QueryProxyRequest")
 
       //here we put all the sqls
 
@@ -135,7 +135,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
              Trade as t,
              Brand as b
         LEFT JOIN QueryProxyRequest
-        ON br.searchQueryUUID == queryUUID
+        ON br.searchQueryUUID == QueryProxyRequest.queryUUID
         WHERE br.salesChannelId == sc.sales_channel_id
         AND br.tradeId == t.trade_id
         AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
