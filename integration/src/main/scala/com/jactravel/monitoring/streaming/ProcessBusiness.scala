@@ -125,7 +125,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                trade_group,
                trade_parent_group,
                sales_channel,
-               (unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 as response_time_ms,
+               /**(unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 as response_time_ms,**/
                br.error_stack_trace,
                br.success,
                xml_booking_login,
