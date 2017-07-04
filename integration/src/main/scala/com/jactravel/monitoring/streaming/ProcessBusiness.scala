@@ -1,11 +1,11 @@
 package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.model._
-import com.jactravel.monitoring.model.influx.BookRequestInflux.{BookRequestCount}
+import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
-import org.apache.spark.streaming.{Duration, Minutes, Seconds, StreamingContext}
+import org.apache.spark.streaming._
 
 /**
   * Created by dmitry on 7/4/17.
@@ -26,7 +26,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Minutes(1) )//Milliseconds(500))
+    ssc = new StreamingContext(spark.sparkContext, Milliseconds(50))
     val numPar=150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
@@ -119,14 +119,14 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
       // BOOKING
       spark.sql("""
-        SELECT br.search_query_uuid as query_uuid,
+        SELECT br.queryUUID as query_uuid,
                brand_name,
                trade_name,
                trade_group,
                trade_parent_group,
                sales_channel,
-               /**(unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 as response_time_ms,**/
-               br.error_stack_trace,
+               (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
+               br.errorStackTrace,
                br.success,
                xml_booking_login,
                window(start_utc_timestamp, '5 minutes').end as time
