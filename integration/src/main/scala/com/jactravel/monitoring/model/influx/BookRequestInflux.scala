@@ -14,7 +14,7 @@ object BookRequestInflux {
 
 
   case class BookRequestCount(booking_count: Long,
-                              tm: String,
+                              tm: java.sql.Timestamp,
                               brand_name: String,
                               sales_channel: String,
                               trade_group: String,
