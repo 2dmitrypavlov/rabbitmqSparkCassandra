@@ -158,13 +158,13 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       """).createOrReplaceTempView("BookingCount")
       //val bookCount = Encoders.bean(classOf[BookRequestCount])
       val data= spark.sql("""select booking_count,
-                            |          time as tm,
-                            |          brand_name,
-                            |          sales_channel,
-                            |          trade_group,
-                            |          trade_name,
-                            |          trade_parent_group
-                            |           from BookingCount""").rdd
+                                      time as tm,
+                                      brand_name,
+                                      sales_channel,
+                                      trade_group,
+                                      trade_name,
+                                      trade_parent_group
+                                       from BookingCount""").rdd
         .map { case r:Row => BookRequestCount(r.getAs("booking_count"),r.getAs("tm")
           ,r.getAs("brand_name"),r.getAs("sales_channel"),r.getAs("trade_group"),r.getAs("trade_name")
           ,r.getAs("trade_parent_group"),"")}
@@ -244,14 +244,14 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 //      import org.apache.spark.sql.Encoders
 //      val bookCount = Encoders.bean(classOf[BookRequestCount])
 //     val data= spark.sql("""select booking_count,
-//                  |          time,
-//                  |          brand_name,
-//                  |          sales_channel,
-//                  |          trade_group,
-//                  |          trade_name,
-//                  |          trade_parent_group,
-//                  |          xml_booking_login
-//                  |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+//                            time,
+//                            brand_name,
+//                            sales_channel,
+//                            trade_group,
+//                            trade_name,
+//                            trade_parent_group,
+//                            xml_booking_login
+//                             from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
 //
 //       //.as[BookRequestCount](bookCount).rdd
 //
