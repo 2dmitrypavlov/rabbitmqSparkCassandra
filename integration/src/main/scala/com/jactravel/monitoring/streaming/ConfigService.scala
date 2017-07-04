@@ -6,6 +6,7 @@ import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -28,6 +29,7 @@ private[streaming] trait ConfigService {
     */
   val cassandraUser=Try(config.getString("spark.cassandra.auth.username")).getOrElse("")
   val cassandraPass=Try(config.getString("spark.cassandra.auth.password")).getOrElse("")
+  val aws=Try(config.getString("aws")).getOrElse("")
 
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
@@ -35,7 +37,7 @@ private[streaming] trait ConfigService {
     .set("spark.cassandra.auth.username", cassandraUser)
     .set("spark.cassandra.auth.password", cassandraPass)
   var ssc: StreamingContext = _
-
+  var spark:SparkSession = _
   /**
     * RabbitMQ Properties
     */
