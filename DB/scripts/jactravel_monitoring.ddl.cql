@@ -433,17 +433,57 @@ CREATE TABLE jactravel_monitoring_new.query_uuid_proceed (
   PRIMARY KEY (query_uuid)
 );
 
-CREATE TABLE jactravel_monitoring_new.booking_count (
+CREATE TABLE jactravel_monitoring_new.book_request_count (
 booking_count text,
-time text,
+tm text,
 brand_name text,
 sales_channel text,
 trade_group text,
 trade_name text,
 trade_parent_group text,
 xmL_booking_login text,
-PRIMARY KEY (booking_count,time)
+PRIMARY KEY (tm)
 );
 
 
+CREATE TABLE jactravel_monitoring_new.book_request_t (
+query_uuid text,
+search_query_uuid text,
+pre_book_query_uuid text,
+search_processor int,
+host text,
+start_utc_timestamp text,
+end_utc_timestamp text,
+trade_id int,
+brand_id int,
+sales_channel_id int,
+property_id int,
+arrival_date text,
+duration int,
+rooms FROZEN<LIST<book_room_info>>,
+currency_id int,
+success text,
+error_message text,
+error_stack_trace text,
+PRIMARY KEY (start_utc_timestamp)
+);
 
+CREATE TABLE jactravel_monitoring_new.query_proxy_request_t (
+query_uuid text,
+client_ip text,
+search_query_type int,
+host text,
+client_request_utc_timestamp text,
+client_response_utc_timestamp text,
+forwarded_request_utc_timestamp text,
+forwarded_response_utc_timestamp text,
+request_xml text,
+response_xml text,
+xml_booking_login text,
+success text,
+error_message text,
+request_processor int,
+request_url text,
+error_stack_trace text,
+PRIMARY KEY (client_request_utc_timestamp)
+);
