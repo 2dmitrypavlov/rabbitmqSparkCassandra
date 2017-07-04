@@ -11,16 +11,18 @@ object BookRequestInflux {
     *  Use this class for entity type (count, success, failure),
     *  they are the same, just change influx measurement.
     */
-  case class BookRequestCount(count: Long,
-                              time: DateTime,
-                              brandName: String,
-                              salesChannel: String,
-                              tradeGroup: String,
-                              tradeName: String,
-                              tradeParentGroup: String,
-                              xmlBookingLogin: String)
 
-  case class BookRequesrResponseTime(time: DateTime,
+
+  case class BookRequestCount(booking_count: Long,
+                              time: org.joda.time.DateTime,
+                              brand_name: String,
+                              sales_channel: String,
+                              trade_group: String,
+                              trade_name: String,
+                              trade_parent_group: String,
+                              xml_booking_login: String)
+
+  case class BookRequestResponseTime(time: DateTime,
                                      brandName: String,
                                      salesChannel: String,
                                      tradeGroup: String,
