@@ -1,10 +1,11 @@
 package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.model._
+import com.jactravel.monitoring.model.influx.BookRequestInflux.{BookRequestCount}
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
-import org.apache.spark.streaming.{Duration, Seconds, StreamingContext}
+import org.apache.spark.streaming.{Duration, Minutes, Seconds, StreamingContext}
 
 /**
   * Created by dmitry on 7/4/17.
@@ -25,7 +26,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Seconds(5) )//Milliseconds(500))
+    ssc = new StreamingContext(spark.sparkContext, Minutes(1) )//Milliseconds(500))
     val numPar=150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
@@ -113,7 +114,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_request")
     cmiBatchRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_batch_request")
-      rdd.take(1)
+
       //here we put all the sqls
 
       // BOOKING
@@ -158,7 +159,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_name,
           trade_parent_group,
           xml_booking_login
-      """)
+      """).createOrReplaceTempView("BookingCount")
       // BOOKING SUCCESS
       val bookingSucces = spark.sql("""
       SELECT COUNT(query_uuid) as booking_success,
@@ -179,10 +180,10 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_name,
           trade_parent_group,
           xml_booking_login
-      """)
+      """).createOrReplaceTempView("BookingSuccess")
 
       // BOOKING ERROR
-      val bookingError = spark.sql("""
+      spark.sql("""
       SELECT COUNT(query_uuid) as booking_errors,
           time,
           brand_name,
@@ -201,9 +202,9 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_name,
           trade_parent_group,
           xml_booking_login
-      """)
+      """).createOrReplaceTempView("BookingError")
       // BOOKING RESPONSE TIME
-      val bookingResponse = spark.sql("""
+      spark.sql("""
       SELECT COUNT(query_uuid) as booking_errors,
           time,
           brand_name,
@@ -224,13 +225,27 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_name,
           trade_parent_group,
           xml_booking_login
-      """)
-      println("++++++++++++++++++++++++++++++  count book ++++++++"+bookingSucces.count())
-      bookingError.count()
-      bookingResponse.count()
-        rdd }.saveToCassandra(keyspaceName, "cmi_batch_request")
+      """).createOrReplaceTempView("BookingResponse")
+      rdd.take(1)
+      rdd }.saveToCassandra(keyspaceName, "cmi_batch_request")
 
 
+    cmiBatchRequestStream.transform{rdd=>
+      import org.apache.spark.sql.Encoders
+      val bookCount = Encoders.bean(classOf[BookRequestCount])
+     val data= spark.sql("""select booking_count,
+                  |          time,
+                  |          brand_name,
+                  |          sales_channel,
+                  |          trade_group,
+                  |          trade_name,
+                  |          trade_parent_group,
+                  |          xmL_booking_login
+                  |           from BookingCount""").as[BookRequestCount](bookCount).rdd
+
+      // .rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+    data
+      }.saveToCassandra(keyspaceName, "booking_count")
 
     // Start the computation
     ssc.start()

@@ -1,4 +1,4 @@
-CREATE KEYSPACE jactravel_monitoring_new   WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };
+CREATE KEYSPACE jactravel_monitoring_new   WITH replication = {'class' 'SimpleStrategy', 'replication_factor' 1 };
 
 /*
 message RoomRequest {
@@ -432,3 +432,18 @@ CREATE TABLE jactravel_monitoring_new.query_uuid_proceed (
   proceed smallint,
   PRIMARY KEY (query_uuid)
 );
+
+CREATE TABLE jactravel_monitoring_new.booking_count (
+booking_count text,
+time text,
+brand_name text,
+sales_channel text,
+trade_group text,
+trade_name text,
+trade_parent_group text,
+xmL_booking_login text,
+PRIMARY KEY (booking_count,time)
+);
+
+
+
