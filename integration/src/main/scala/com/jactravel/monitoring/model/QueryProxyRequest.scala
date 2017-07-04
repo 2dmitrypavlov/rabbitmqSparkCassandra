@@ -1,6 +1,6 @@
 package com.jactravel.monitoring.model
 
-import java.util.Date
+import java.sql.Date
 
 /**
   * Created by admin on 6/13/17.
