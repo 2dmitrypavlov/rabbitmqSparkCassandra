@@ -25,8 +25,8 @@ lazy val root = (project in file(".")).
       "com.google.protobuf"         %  "protobuf-java"             % "2.5.0",
       "com.typesafe.scala-logging"  %% "scala-logging"             % "3.5.0",
       "ch.qos.logback"              %  "logback-classic"           % "1.1.7",
-      "com.stratio.receiver"        %  "spark-rabbitmq"            % "0.5.1"
-
+      "com.stratio.receiver"        %  "spark-rabbitmq"            % "0.5.1",
+      "org.apache.hadoop"           % "hadoop-aws"                 % "2.6.0"
     )
     // To cross compile with Dotty and Scala 2
     //crossScalaVersions := Seq(dottyVersion, scala211Version),
