@@ -107,7 +107,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     supplierSearchRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "supplier_search_request")
-    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("QueryProxyRequest")
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "query_proxy_request")
     cmiRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
