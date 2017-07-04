@@ -129,16 +129,16 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                br.errorStackTrace,
                br.success,
                xml_booking_login,
-               window(start_utc_timestamp, '5 minutes').end as time
+               window(startUtcTimestamp, '5 minutes').end as time
         FROM BookRequest as br,
              SalesChannel as sc,
              Trade as t,
              Brand as b
         LEFT JOIN QueryProxyRequest as qpr
-        ON br.search_query_uuid == qpr.query_uuid
-        WHERE br.sales_channel_id == sc.sales_channel_id
-        AND br.trade_id == t.trade_id
-        AND br.brand_id == b.brand_id""").createOrReplaceTempView("BookingEnriched")
+        ON br.searchQueryUuid == qpr.query_uuid
+        WHERE br.salesChannelId == sc.sales_channel_id
+        AND br.tradeId == t.trade_id
+        AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
       val bookingCount = spark.sql("""
