@@ -26,7 +26,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Minutes(1) )//Milliseconds(500))
+    ssc = new StreamingContext(spark.sparkContext, Minutes(5) )//Milliseconds(500))
     val numPar=150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
