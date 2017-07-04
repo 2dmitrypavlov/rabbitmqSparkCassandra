@@ -153,8 +153,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           sales_channel,
           trade_group,
           trade_name,
-          trade_parent_group,
-          xml_booking_login
+          trade_parent_group
+
       """).createOrReplaceTempView("BookingCount")
       //val bookCount = Encoders.bean(classOf[BookRequestCount])
       val data= spark.sql("""select booking_count,
@@ -163,8 +163,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                             |          sales_channel,
                             |          trade_group,
                             |          trade_name,
-                            |          trade_parent_group,
-                            |          xml_booking_login
+                            |          trade_parent_group
                             |           from BookingCount""").rdd
         .map { case r:Row => BookRequestCount(r.getAs("booking_count"),r.getAs("tm")
           ,r.getAs("brand_name"),r.getAs("sales_channel"),r.getAs("trade_group"),r.getAs("trade_name")
