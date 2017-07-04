@@ -128,15 +128,11 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
                br.errorStackTrace,
                br.success,
-               xmlBookingLogin as xml_booking_login,
                window(startUtcTimestamp, '5 minutes').end as time
         FROM BookRequest as br,
              SalesChannel as sc,
              Trade as t,
-             Brand as b,
-             QueryProxyRequest
-        LEFT JOIN QueryProxyRequest
-        ON br.searchQueryUUID == QueryProxyRequest.queryUUID
+             Brand as b
         WHERE br.salesChannelId == sc.sales_channel_id
         AND br.tradeId == t.trade_id
         AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
@@ -149,8 +145,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           sales_channel,
           trade_group,
           trade_name,
-          trade_parent_group,
-          xml_booking_login
+          trade_parent_group
       from BookingEnriched
       group by
           time,
@@ -173,7 +168,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                             |           from BookingCount""").rdd
         .map { case r:Row => BookRequestCount(r.getAs("booking_count"),r.getAs("tm")
           ,r.getAs("brand_name"),r.getAs("sales_channel"),r.getAs("trade_group"),r.getAs("trade_name")
-          ,r.getAs("trade_parent_group"),r.getAs("xml_booking_login"))}
+          ,r.getAs("trade_parent_group"),"")}
 
 
       // BOOKING SUCCESS
