@@ -128,7 +128,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
                br.errorStackTrace,
                br.success,
-               xml_booking_login,
+               xmlBookingLogin as xml_booking_login,
                window(startUtcTimestamp, '5 minutes').end as time
         FROM BookRequest as br,
              SalesChannel as sc,
