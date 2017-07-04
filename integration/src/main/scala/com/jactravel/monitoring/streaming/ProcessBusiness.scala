@@ -26,7 +26,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Minutes(5) )//Milliseconds(500))
+    ssc = new StreamingContext(spark.sparkContext, Minutes(1) )//Milliseconds(500))
     val numPar=150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
@@ -161,72 +161,72 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           xml_booking_login
       """).createOrReplaceTempView("BookingCount")
       // BOOKING SUCCESS
-      val bookingSucces = spark.sql("""
-      SELECT COUNT(query_uuid) as booking_success,
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xmL_booking_login
-      FROM BookingEnriched
-      WHERE success IS NOT NULL
-      GROUP BY
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xml_booking_login
-      """).createOrReplaceTempView("BookingSuccess")
-
-      // BOOKING ERROR
-      spark.sql("""
-      SELECT COUNT(query_uuid) as booking_errors,
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xmL_booking_login
-      FROM BookingEnriched
-      WHERE error_stack_trace IS NOT NULL
-      GROUP BY
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xml_booking_login
-      """).createOrReplaceTempView("BookingError")
-      // BOOKING RESPONSE TIME
-      spark.sql("""
-      SELECT COUNT(query_uuid) as booking_errors,
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xmL_booking_login,
-          min(response_time_ms) as min_response_time_ms,
-          max(response_time_ms) as max_response_time_ms,
-          avg(response_time_ms) as avg_response_time_ms
-      FROM BookingEnriched
-      GROUP BY
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xml_booking_login
-      """).createOrReplaceTempView("BookingResponse")
-      rdd.take(1)
+//      val bookingSucces = spark.sql("""
+//      SELECT COUNT(query_uuid) as booking_success,
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xmL_booking_login
+//      FROM BookingEnriched
+//      WHERE success IS NOT NULL
+//      GROUP BY
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xml_booking_login
+//      """).createOrReplaceTempView("BookingSuccess")
+//
+//      // BOOKING ERROR
+//      spark.sql("""
+//      SELECT COUNT(query_uuid) as booking_errors,
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xmL_booking_login
+//      FROM BookingEnriched
+//      WHERE error_stack_trace IS NOT NULL
+//      GROUP BY
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xml_booking_login
+//      """).createOrReplaceTempView("BookingError")
+//      // BOOKING RESPONSE TIME
+//      spark.sql("""
+//      SELECT COUNT(query_uuid) as booking_errors,
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xmL_booking_login,
+//          min(response_time_ms) as min_response_time_ms,
+//          max(response_time_ms) as max_response_time_ms,
+//          avg(response_time_ms) as avg_response_time_ms
+//      FROM BookingEnriched
+//      GROUP BY
+//          time,
+//          brand_name,
+//          sales_channel,
+//          trade_group,
+//          trade_name,
+//          trade_parent_group,
+//          xml_booking_login
+//      """).createOrReplaceTempView("BookingResponse")
+//      rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_batch_request")
 
 
@@ -241,7 +241,9 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                   |          trade_name,
                   |          trade_parent_group,
                   |          xmL_booking_login
-                  |           from BookingCount""").as[BookRequestCount](bookCount).rdd
+                  |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
+
+       //.as[BookRequestCount](bookCount).rdd
 
       // .rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
     data

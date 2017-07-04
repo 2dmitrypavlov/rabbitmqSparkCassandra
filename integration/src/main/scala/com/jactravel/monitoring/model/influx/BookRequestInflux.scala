@@ -14,7 +14,7 @@ object BookRequestInflux {
 
 
   case class BookRequestCount(booking_count: Long,
-                              time: DateTime,
+                              time: org.joda.time.DateTime,
                               brand_name: String,
                               sales_channel: String,
                               trade_group: String,
