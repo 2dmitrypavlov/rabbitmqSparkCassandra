@@ -135,7 +135,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
              Trade as t,
              Brand as b
         LEFT JOIN QueryProxyRequest as qpr
-        ON br.searchQueryUuid == qpr.query_uuid
+        ON br.searchQueryUuid == qpr.queryUUID
         WHERE br.salesChannelId == sc.sales_channel_id
         AND br.tradeId == t.trade_id
         AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
@@ -149,7 +149,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           trade_group,
           trade_name,
           trade_parent_group,
-          xmL_booking_login
+          xml_booking_login
       from BookingEnriched
       group by
           time,
@@ -240,7 +240,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                   |          trade_group,
                   |          trade_name,
                   |          trade_parent_group,
-                  |          xmL_booking_login
+                  |          xml_booking_login
                   |           from BookingCount""").rdd.map { case r:Row => r.getAs[BookRequestCount]("_2")}
 
        //.as[BookRequestCount](bookCount).rdd
