@@ -56,37 +56,37 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler)
 
-
+    val numPar = 200
     // Start up the receiver.
-    bookingStream.repartition(10000).saveToCassandra(keyspaceName, "book_request")
-    preBookingStream.repartition(10000).saveToCassandra(keyspaceName, "pre_book_request")
-    searchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "search_request")
-    supplierBookhRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_book_request")
-    supplierPreBookRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_pre_book_request")
-    supplierSearchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_search_request")
-    queryProxyStream.repartition(10000).saveToCassandra(keyspaceName, "query_proxy_request")
-    cmiRequestStream.repartition(10000).saveToCassandra(keyspaceName, "cmi_request")
-    cmiBatchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "cmi_batch_request")
+    bookingStream.repartition(numPar).saveToCassandra(keyspaceName, "book_request")
+    preBookingStream.repartition(numPar).saveToCassandra(keyspaceName, "pre_book_request")
+    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request")
+    supplierBookhRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_book_request")
+    supplierPreBookRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_pre_book_request")
+    supplierSearchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_search_request")
+    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request")
+    cmiRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "cmi_request")
+    cmiBatchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request")
 
     // Store query uuid
     bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
-    searchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    searchRequestStream.map { br =>QueryUUIDProceed(queryUUID = br.queryUUID)
+    }.repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
 //    supplierBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
     cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-      .saveToCassandra(keyspaceName, "query_uuid_proceed")
+      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
 
 
     // Start the computation
@@ -107,6 +107,13 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , "userName" -> username
       , "password" -> password
       , "routingKey" -> queueName
+     // ,"maxMessagesPerPartition"->"1"
+      ,"maxMessagesPerPartition" -> "100"
+      ,"levelParallelism"->"100"
+      ,"rememberDuration" -> "1800000"
+      ,"maxReceiveTime"->"500"
+      ,"storageLevel"->"MEMORY_AND_DISK_2"
+
     )
   }
 }

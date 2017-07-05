@@ -3,7 +3,6 @@ package com.jactravel.monitoring.streaming
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.jactravel.monitoring.streaming.ProceedToInflux.{conf, dbPassword, dbUseraname}
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.SparkConf
@@ -27,6 +26,8 @@ private[streaming] trait ConfigService {
   /**
     * Spark Properties
     */
+  val aws = Try(config.getString("aws")).getOrElse("")
+
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
     .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
@@ -43,13 +44,9 @@ private[streaming] trait ConfigService {
   val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
   val username = Try(config.getString("amqp.username")).getOrElse("guest")
   val password = Try(config.getString("rabbitmq.password")).getOrElse("guest")
-  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-226-88-116.compute-1.amazonaws.com")
-  val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
-  val dbPassword = Try(config.getString("db.password")).getOrElse("8pAw9Zd56iEo")
+  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
 
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
-  conf.set("spark.cassandra.auth.username", dbUseraname)
-  conf.set("spark.cassandra.auth.password", dbPassword)
 
   /**
     * Cassandra Properties
