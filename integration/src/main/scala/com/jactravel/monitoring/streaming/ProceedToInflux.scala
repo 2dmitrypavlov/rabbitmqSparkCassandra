@@ -105,7 +105,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
       }
     }
 
-    searchRequestSalesChannel.
+//    searchRequestSalesChannel.
 
     ssc.checkpoint(System.getProperty("java.io.tmpdir"))
     // Start the computation
