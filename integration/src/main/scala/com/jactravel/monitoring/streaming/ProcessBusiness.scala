@@ -27,7 +27,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Seconds(1))
+    ssc = new StreamingContext(spark.sparkContext, Seconds(4))
     //Milliseconds(50))
     val numPar = 150
 
@@ -151,15 +151,16 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                br.success,
                window(startUtcTimestamp, '5 minutes').end as time,
                xmlBookingLogin
-        FROM BookRequest as br,
-             SalesChannel as sc,
-             Trade as t,
-             Brand as b
+        FROM BookRequest as br
+        LEFT JOIN Brand as b
+        ON br.brandId == b.brand_id
+        LEFT JOIN Trade as t
+        ON br.tradeId == t.trade_id
         LEFT JOIN QueryProxyRequest as qpr
-        ON br.searchQueryUUID == qpr.queryUUID
-        WHERE br.salesChannelId == sc.sales_channel_id
-        AND br.tradeId == t.trade_id
-        AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
+        ON br.queryUUID == qpr.queryUUID
+        LEFT JOIN SalesChannel as sc
+        ON br.salesChannelId == sc.sales_channel_id
+        """).createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
       spark.sql(
@@ -198,7 +199,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
           , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
         }
-
+      data.saveAsTextFile(aws+"temp")
 
       // BOOKING SUCCESS
       //      val bookingSucces = spark.sql("""
