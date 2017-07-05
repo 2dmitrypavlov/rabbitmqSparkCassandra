@@ -266,11 +266,13 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       //          xml_booking_login
       //      """).createOrReplaceTempView("BookingResponse")
       //      rdd.take(1)
+
       data.rdd
         .map { case r: Row => BookRequestCount(r.getAs("booking_count"), r.getAs("tm")
           , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
           , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
         }
+
     }.saveToCassandra(keyspaceName, "book_request_count")
 
 
