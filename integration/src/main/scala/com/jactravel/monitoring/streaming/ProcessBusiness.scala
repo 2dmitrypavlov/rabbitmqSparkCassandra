@@ -26,7 +26,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Milliseconds(50))
+    ssc = new StreamingContext(spark.sparkContext, Seconds(10) )//Milliseconds(50))
     val numPar=150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
@@ -113,7 +113,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     cmiRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_request")
-    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd,QueryProxyRequest2.getClass).select("queryUUID","xmlBookingLogin").createOrReplaceTempView("QueryProxyRequest")
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd).select("queryUUID","xmlBookingLogin").createOrReplaceTempView("QueryProxyRequest")
 
       //here we put all the sqls
 
