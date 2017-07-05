@@ -3,7 +3,7 @@ package com.jactravel.monitoring.streaming
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{Row, SaveMode, SparkSession}
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 import org.apache.spark.streaming._
 
@@ -67,7 +67,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler).repartition(numPar)
 
-    ssc.remember(Duration(1800000L))
+    ssc.remember(Duration(180000000L))
     //every
     val brand = spark
       .read
@@ -199,8 +199,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
           , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
         }
-      spark.sql("select * from QueryProxyRequest").rdd.saveAsTextFile(aws+"proxy")
-      spark.sql("select * from BookingEnriched").rdd.saveAsTextFile(aws+"book")
+      spark.sql("select * from QueryProxyRequest").write.mode(SaveMode.Append).format("parquet").save(aws+"proxy")
+      spark.sql("select * from BookingEnriched").write.mode(SaveMode.Append).format("parquet").save(aws+"book")
       data.saveAsTextFile(aws+"temp")
 
       // BOOKING SUCCESS
@@ -314,7 +314,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       // ,"maxMessagesPerPartition"->"1"
       , "maxMessagesPerPartition" -> "100"
       , "levelParallelism" -> "100"
-      , "rememberDuration" -> "1800000"
+      , "rememberDuration" -> "180000000"
       , "maxReceiveTime" -> "500"
       , "storageLevel" -> "MEMORY_AND_DISK"
 
