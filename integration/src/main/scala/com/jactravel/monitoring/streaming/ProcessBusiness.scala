@@ -151,15 +151,16 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                br.success,
                window(startUtcTimestamp, '5 minutes').end as time,
                xmlBookingLogin
-        FROM BookRequest as br,
-             SalesChannel as sc,
-             Trade as t,
-             Brand as b
+        FROM BookRequest as br
+        LEFT JOIN Brand as b
+        ON br.brandId == b.brand_id
+        LEFT JOIN Trade as t
+        ON br.tradeId == t.trade_id
         LEFT JOIN QueryProxyRequest as qpr
         ON br.queryUUID == qpr.queryUUID
-        WHERE br.salesChannelId == sc.sales_channel_id
-        AND br.tradeId == t.trade_id
-        AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
+        LEFT JOIN SalesChannel as sc
+        ON br.salesChannelId == sc.sales_channel_id
+        """).createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
       spark.sql(
