@@ -194,14 +194,10 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                                       trade_name,
                                       trade_parent_group,
                                       xmlBookingLogin
-                                       from BookingCount""").rdd
-        .map { case r: Row => BookRequestCount(r.getAs("booking_count"), r.getAs("tm")
-          , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
-          , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
-        }
+                                       from BookingCount""")
       spark.sql("select * from QueryProxyRequest").write.mode(SaveMode.Append).format("parquet").save(aws+"proxy")
       spark.sql("select * from BookingEnriched").write.mode(SaveMode.Append).format("parquet").save(aws+"book")
-      data.saveAsTextFile(aws+"temp")
+      data.write.mode(SaveMode.Append).format("parquet").save(aws+"data")
 
       // BOOKING SUCCESS
       //      val bookingSucces = spark.sql("""
@@ -270,7 +266,11 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       //          xml_booking_login
       //      """).createOrReplaceTempView("BookingResponse")
       //      rdd.take(1)
-      data
+      data.rdd
+        .map { case r: Row => BookRequestCount(r.getAs("booking_count"), r.getAs("tm")
+          , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
+          , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
+        }
     }.saveToCassandra(keyspaceName, "book_request_count")
 
 
