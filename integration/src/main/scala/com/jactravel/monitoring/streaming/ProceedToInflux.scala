@@ -1,6 +1,7 @@
 package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.model._
+import com.jactravel.monitoring.model.influx.RichSearchRequest
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
@@ -12,7 +13,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring_new"
+  override val keyspaceName: String = "jactravel_monitoring"
 
   def main(args: Array[String]): Unit = {
 
@@ -26,17 +27,27 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
 
     val cassandraRDD = ssc.cassandraTable(keyspaceName, "query_uuid_proceed")
-      .select("query_uuid", "proceed").where("proceed < ?", 1)
+      .select("query_uuid", "proceed").where("proceed < ?", 1).limit(250).keyBy("query_uuid")
 
     val dstream = new ConstantInputDStream(ssc, cassandraRDD)
 
-    //val streamBookRequest = dstream.joinWithCassandraTable(keyspaceName, "book_request")
+    val streamSearchRequest = dstream
+      .joinWithCassandraTable[SearchRequest](keyspaceName, "search_request")
+      .map {
+        sr =>
+          RichSearchRequest(queryUUID = sr._2.queryUUID, tradeId = sr._2.requestInfo.tradeId)
+      }
+    //val r = streamSearchRequest.joinWithCassandraTable(keyspaceName, "trade", SomeColumns("trade_id"), SomeColumns("trade_id")).map(o => (o._1, o._2.columnValues.toList))
 
-    dstream.foreachRDD { rdd =>
+    streamSearchRequest.foreachRDD { rdd =>
       // any action will trigger the underlying cassandra query, using collect to have a simple output
-      println("======================================================")
-      println(rdd.collect.mkString("\n"))
-      println("======================================================")
+      try {
+        println("======================================================")
+        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
+        println("======================================================")
+      } catch {
+        case e: Exception => e.printStackTrace
+      }
     }
 
     // Start the computation

@@ -11,7 +11,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring_new"
+  override val keyspaceName: String = "jactravel_monitoring"
 
   def main(args: Array[String]): Unit = {
 
@@ -58,23 +58,23 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
 
 
     // Start up the receiver.
-    bookingStream.saveToCassandra(keyspaceName, "book_request")
-    preBookingStream.saveToCassandra(keyspaceName, "pre_book_request")
-    searchRequestStream.saveToCassandra(keyspaceName, "search_request")
-    supplierBookhRequestStream.saveToCassandra(keyspaceName, "supplier_book_request")
-    supplierPreBookRequestStream.saveToCassandra(keyspaceName, "supplier_pre_book_request")
-    supplierSearchRequestStream.saveToCassandra(keyspaceName, "supplier_search_request")
-    queryProxyStream.saveToCassandra(keyspaceName, "query_proxy_request")
-    cmiRequestStream.saveToCassandra(keyspaceName, "cmi_request")
-    cmiBatchRequestStream.saveToCassandra(keyspaceName, "cmi_batch_request")
-    bookingStream.map(br=>println("++++++++++++++++++++++++"+br.queryUUID))
+    bookingStream.repartition(10000).saveToCassandra(keyspaceName, "book_request")
+    preBookingStream.repartition(10000).saveToCassandra(keyspaceName, "pre_book_request")
+    searchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "search_request")
+    supplierBookhRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_book_request")
+    supplierPreBookRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_pre_book_request")
+    supplierSearchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "supplier_search_request")
+    queryProxyStream.repartition(10000).saveToCassandra(keyspaceName, "query_proxy_request")
+    cmiRequestStream.repartition(10000).saveToCassandra(keyspaceName, "cmi_request")
+    cmiBatchRequestStream.repartition(10000).saveToCassandra(keyspaceName, "cmi_batch_request")
+
     // Store query uuid
     bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
     preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
       .saveToCassandra(keyspaceName, "query_uuid_proceed")
-    searchRequestStream.map { br =>QueryUUIDProceed(queryUUID = br.queryUUID)
-    }.saveToCassandra(keyspaceName, "query_uuid_proceed")
+    searchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+      .saveToCassandra(keyspaceName, "query_uuid_proceed")
 //    supplierBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
 //      .saveToCassandra(keyspaceName, "query_uuid_proceed")
     supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
