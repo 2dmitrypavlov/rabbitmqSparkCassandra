@@ -154,7 +154,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         FROM BookRequest as br,
              SalesChannel as sc,
              Trade as t,
-             Brand as b,
+             Brand as b
         LEFT JOIN QueryProxyRequest as qpr
         ON br.searchQueryUUID == qpr.queryUUID
         WHERE br.salesChannelId == sc.sales_channel_id
