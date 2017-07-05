@@ -4,8 +4,8 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
-import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.SparkConf
+import org.apache.spark.streaming.StreamingContext
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -47,6 +47,8 @@ private[streaming] trait ConfigService {
   val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-226-88-116.compute-1.amazonaws.com")
   val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
   val dbPassword = Try(config.getString("db.password")).getOrElse("8pAw9Zd56iEo")
+  val influxHost = Try(config.getString("influxdb.host")).getOrElse("Some Influx Host")
+  val influxPort = Try(config.getInt("influxdb.port")).getOrElse(8086)
 
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
   conf.set("spark.cassandra.auth.username", dbUseraname)
