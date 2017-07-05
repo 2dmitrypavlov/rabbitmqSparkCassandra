@@ -159,7 +159,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           sales_channel,
           trade_group,
           trade_name,
-          trade_parent_group
+          trade_parent_group,
+          xmlBookingLogin
 
       """).createOrReplaceTempView("BookingCount")
       //val bookCount = Encoders.bean(classOf[BookRequestCount])
