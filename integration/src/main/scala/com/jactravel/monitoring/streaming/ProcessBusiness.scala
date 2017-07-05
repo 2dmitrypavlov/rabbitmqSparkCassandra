@@ -159,8 +159,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         ON br.searchQueryUUID == qpr.queryUUID
         WHERE br.salesChannelId == sc.sales_channel_id
         AND br.tradeId == t.trade_id
-        AND br.brandId == b.brand_id
-        AND  QueryProxyRequest.queryUUID==br.queryUUID""").createOrReplaceTempView("BookingEnriched")
+        AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
       spark.sql(
