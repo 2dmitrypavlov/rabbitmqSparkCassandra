@@ -3,9 +3,12 @@ package com.jactravel.monitoring.streaming
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.RichSearchRequest
 import com.jactravel.monitoring.util.DateTimeUtils
+import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 /**
   * Created by eugene on 6/26/17.
@@ -92,18 +95,30 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
           )).getOrElse(searchRequest)
       }
 
-    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
+//    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
+//
+//    dstream.foreachRDD { rdd =>
+//      // any action will trigger the underlying cassandra query, using collect to have a simple output
+//      try {
+//        println("======================================================")
+//        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
+//        println("======================================================")
+//      } catch {
+//        case e: Exception => e.printStackTrace
+//      }
+//    }
+    searchRequestSalesChannel.foreachPartition { partition =>
+      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase("someDb")
 
-    dstream.foreachRDD { rdd =>
-      // any action will trigger the underlying cassandra query, using collect to have a simple output
-      try {
-        println("======================================================")
-        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
-        println("======================================================")
-      } catch {
-        case e: Exception => e.printStackTrace
-      }
+      partition.map(toPoint).foreach(p => Await.result(db.write(p), 1 seconds))
+
+      db.close()
     }
+
+  def toPoint(entity: RichSearchRequest): Point = {
+    ???
+    // Entity to Point mapping
+  }
 
 //    searchRequestSalesChannel.
 
