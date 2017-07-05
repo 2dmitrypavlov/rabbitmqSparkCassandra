@@ -27,7 +27,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Seconds(20))
+    ssc = new StreamingContext(spark.sparkContext, Minutes(5))
     //Milliseconds(50))
     val numPar = 150
 
@@ -313,9 +313,9 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , "routingKey" -> queueName
       // ,"maxMessagesPerPartition"->"1"
       , "maxMessagesPerPartition" -> "100"
-      , "levelParallelism" -> "100"
+      //, "levelParallelism" -> "100"
       , "rememberDuration" -> "180000000"
-      , "maxReceiveTime" -> "500"
+      //, "maxReceiveTime" -> "500"
       , "storageLevel" -> "MEMORY_AND_DISK"
 
     )
