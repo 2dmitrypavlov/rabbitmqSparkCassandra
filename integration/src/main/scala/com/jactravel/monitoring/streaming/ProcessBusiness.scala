@@ -200,6 +200,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
         }
       spark.sql("select * from QueryProxyRequest").rdd.saveAsTextFile(aws+"proxy")
+      spark.sql("select * from BookingEnriched").rdd.saveAsTextFile(aws+"book")
       data.saveAsTextFile(aws+"temp")
 
       // BOOKING SUCCESS
