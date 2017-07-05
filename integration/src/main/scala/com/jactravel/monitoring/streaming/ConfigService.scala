@@ -26,7 +26,6 @@ private[streaming] trait ConfigService {
   /**
     * Spark Properties
     */
-  val aws = Try(config.getString("aws")).getOrElse("")
 
   val conf = new SparkConf()
     .setAppName("logs-monitoring-receiver")
@@ -37,6 +36,7 @@ private[streaming] trait ConfigService {
     * RabbitMQ Properties
     */
   //val queueName = Try(config.getString("amqp.queueName")).getOrElse("rabbitmq-queue")
+  val aws = Try(config.getString("aws")).getOrElse("")
   val exchangeName = Try(config.getString("amqp.exchangeName")).getOrElse("")
   val exchangeType = Try(config.getString("amqp.exchangeType")).getOrElse("")
   val routingKey = Try(config.getString("rabbitmq.routingKey")).getOrElse("")
@@ -44,9 +44,13 @@ private[streaming] trait ConfigService {
   val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
   val username = Try(config.getString("amqp.username")).getOrElse("guest")
   val password = Try(config.getString("rabbitmq.password")).getOrElse("guest")
-  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
+  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-226-88-116.compute-1.amazonaws.com")
+  val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
+  val dbPassword = Try(config.getString("db.password")).getOrElse("8pAw9Zd56iEo")
 
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
+  conf.set("spark.cassandra.auth.username", dbUseraname)
+  conf.set("spark.cassandra.auth.password", dbPassword)
 
   /**
     * Cassandra Properties

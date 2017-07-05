@@ -10,14 +10,14 @@ import org.apache.spark.streaming._
 /**
   * Created by dmitry on 7/4/17.
   */
-case class Proxy (queryUUID:String,xmlBookingLogin:String)
+
 object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
   override val keyspaceName: String = "jactravel_monitoring_new"
 
   def main(args: Array[String]): Unit = {
 
-    spark= SparkSession
+    val spark = SparkSession
       .builder()
       .config(conf)
       //.enableHiveSupport()
@@ -26,8 +26,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Seconds(10) )//Milliseconds(50))
-    val numPar=150
+    ssc = new StreamingContext(spark.sparkContext, Milliseconds(50))
+    val numPar = 150
 
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
@@ -107,15 +107,13 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     supplierSearchRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "supplier_search_request")
-//    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
-//      rdd.take(1)
-//      rdd }.saveToCassandra(keyspaceName, "query_proxy_request")
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
+      rdd.take(1)
+      rdd }.saveToCassandra(keyspaceName, "query_proxy_request")
     cmiRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_request")
-
-    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd.map(l=>Proxy(l.queryUUID,l.xmlBookingLogin)))
-      .createOrReplaceTempView("QueryProxyRequest")
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd,QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
 
       //here we put all the sqls
 
@@ -130,17 +128,14 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
                br.errorStackTrace,
                br.success,
-               window(startUtcTimestamp, '5 minutes').end as time,
-               xmlBookingLogin
+               window(startUtcTimestamp, '5 minutes').end as time
         FROM BookRequest as br,
              SalesChannel as sc,
              Trade as t,
-             Brand as b,
-             QueryProxyRequest
+             Brand as b
         WHERE br.salesChannelId == sc.sales_channel_id
         AND br.tradeId == t.trade_id
-        AND br.brandId == b.brand_id
-        AND  QueryProxyRequest.queryUUID==br.queryUUID""").createOrReplaceTempView("BookingEnriched")
+        AND br.brandId == b.brand_id""").createOrReplaceTempView("BookingEnriched")
 
       // BOOKING COUNT
       spark.sql("""
@@ -150,8 +145,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           sales_channel,
           trade_group,
           trade_name,
-          trade_parent_group,
-          xmlBookingLogin
+          trade_parent_group
       from BookingEnriched
       group by
           time,
@@ -159,8 +153,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           sales_channel,
           trade_group,
           trade_name,
-          trade_parent_group,
-          xmlBookingLogin
+          trade_parent_group
 
       """).createOrReplaceTempView("BookingCount")
       //val bookCount = Encoders.bean(classOf[BookRequestCount])
@@ -170,12 +163,11 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
                                       sales_channel,
                                       trade_group,
                                       trade_name,
-                                      trade_parent_group,
-                                      xmlBookingLogin
+                                      trade_parent_group
                                        from BookingCount""").rdd
         .map { case r:Row => BookRequestCount(r.getAs("booking_count"),r.getAs("tm")
           ,r.getAs("brand_name"),r.getAs("sales_channel"),r.getAs("trade_group"),r.getAs("trade_name")
-          ,r.getAs("trade_parent_group"),r.getAs("xmlBookingLogin"))}
+          ,r.getAs("trade_parent_group"),"")}
 
 
       // BOOKING SUCCESS

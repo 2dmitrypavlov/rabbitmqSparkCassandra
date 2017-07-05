@@ -2,10 +2,10 @@ package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.RichSearchRequest
+import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.dstream.ConstantInputDStream
-import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
-import org.apache.spark.streaming.{Seconds, StreamingContext}
+import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 
 /**
   * Created by eugene on 6/26/17.
@@ -13,33 +13,88 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring"
-
   def main(args: Array[String]): Unit = {
 
     import com.datastax.spark.connector._
     import com.datastax.spark.connector.streaming._
 
-    ssc = new StreamingContext(conf, Seconds(5))
+    conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
+    ssc = new StreamingContext(conf, Milliseconds(1000))
 
-    // Start up the receiver.
+    val queryUuidRdd = ssc
+      .cassandraTable(keyspaceName, "query_uuid_proceed")
+      .select("query_uuid").where("proceed < ?", 1)
+      .limit(50) //.keyBy("query_uuid")
 
+    queryUuidRdd.cache()
 
-    val cassandraRDD = ssc.cassandraTable(keyspaceName, "query_uuid_proceed")
-      .select("query_uuid", "proceed").where("proceed < ?", 1).limit(250).keyBy("query_uuid")
+    val queryProxyRequest = queryUuidRdd
+      .repartitionByCassandraReplica(keyspaceName, "query_proxy_request")
+      .joinWithCassandraTable[QueryProxyRequest](keyspaceName, "query_proxy_request")
 
-    val dstream = new ConstantInputDStream(ssc, cassandraRDD)
+    queryProxyRequest.cache()
 
-    val streamSearchRequest = dstream
+    val streamSearchRequest = queryUuidRdd
+      .repartitionByCassandraReplica(keyspaceName, "search_request")
       .joinWithCassandraTable[SearchRequest](keyspaceName, "search_request")
       .map {
         sr =>
-          RichSearchRequest(queryUUID = sr._2.queryUUID, tradeId = sr._2.requestInfo.tradeId)
+          RichSearchRequest(
+            queryUUID = sr._2.queryUUID
+            , brand_id = sr._2.requestInfo.brandId
+            , trade_id = sr._2.requestInfo.tradeId
+            , sales_channel_id = sr._2.requestInfo.salesChannelId
+            , responseTimeMillis = DateTimeUtils.datesDiff(sr._2.requestInfo.endUtcTimestamp, sr._2.requestInfo.startUtcTimestamp)
+          )
       }
-    //val r = streamSearchRequest.joinWithCassandraTable(keyspaceName, "trade", SomeColumns("trade_id"), SomeColumns("trade_id")).map(o => (o._1, o._2.columnValues.toList))
 
-    streamSearchRequest.foreachRDD { rdd =>
+    streamSearchRequest.cache()
+
+    val streamSearchRequestWQuery = streamSearchRequest
+      .repartitionByCassandraReplica(keyspaceName, "query_proxy_request")
+      .leftJoinWithCassandraTable[QueryProxyRequest](keyspaceName, "query_proxy_request")
+      .map {
+        case (searchRequest, optQueryProxyRequest) =>
+          optQueryProxyRequest.map(queryProxyRequest => searchRequest.copy(
+            xmlBookingLogin = queryProxyRequest.xmlBookingLogin
+          )).getOrElse(searchRequest)
+      }
+
+//    streamSearchRequestWQuery.cache()
+
+    val searchRequestTrade = streamSearchRequestWQuery
+      .leftJoinWithCassandraTable[Trade](keyspaceName, "trade")
+      .map {
+        case (searchRequest, optTrade) =>
+          optTrade.map(trade => searchRequest.copy(
+            tradeName = trade.tradeName.getOrElse("")
+            , tradeGroup = trade.tradeGroup.getOrElse("")
+            , traderParentGroup = trade.tradeGroup.getOrElse("")
+          )).getOrElse(searchRequest)
+      }
+
+    val searchRequestBrand = searchRequestTrade
+      .leftJoinWithCassandraTable[Brand](keyspaceName, "brand")
+      .map {
+        case (searchRequest, optBrand) =>
+          optBrand.map(brand => searchRequest.copy(
+            brandName = brand.brandName
+          )).getOrElse(searchRequest)
+      }
+
+    val searchRequestSalesChannel = searchRequestTrade
+      .leftJoinWithCassandraTable[SalesChannel](keyspaceName, "sales_channel")
+      .map {
+        case (searchRequest, optSalesChannel) =>
+          optSalesChannel.map(salesChannel => searchRequest.copy(
+            salesChannel = salesChannel.salesChannel
+          )).getOrElse(searchRequest)
+      }
+
+    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
+
+    dstream.foreachRDD { rdd =>
       // any action will trigger the underlying cassandra query, using collect to have a simple output
       try {
         println("======================================================")
@@ -50,6 +105,8 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
       }
     }
 
+
+    ssc.checkpoint(System.getProperty("java.io.tmpdir"))
     // Start the computation
     ssc.start()
 

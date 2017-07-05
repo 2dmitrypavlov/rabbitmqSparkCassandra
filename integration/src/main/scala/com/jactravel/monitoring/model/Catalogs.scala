@@ -13,3 +13,13 @@ case class Trade(
                   tradeName: Option[String],
                   tradeParentGroup: Option[String]
                 )
+
+case class Brand(
+                  brandId: Int,
+                  brandName: String
+                )
+
+case class SalesChannel(
+                         salesChannelId: Int,
+                         salesChannel: String
+                       )

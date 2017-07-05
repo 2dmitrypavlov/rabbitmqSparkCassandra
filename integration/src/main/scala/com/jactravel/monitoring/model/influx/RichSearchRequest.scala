@@ -8,11 +8,13 @@ import org.apache.spark.sql.execution.streaming.FileStreamSource.Timestamp
   * Created by admin on 7/1/17.
   */
 case class RichSearchRequest(queryUUID: String
+                            , brand_id: Int = -1
                             , brandName: String = ""
-                            , tradeId: Int
+                            , trade_id: Int = -1
                             , tradeName: String = ""
                             , tradeGroup: String = ""
                             , traderParentGroup: String = ""
+                            , sales_channel_id: Int = -1
                             , salesChannel: String = ""
                             , responseTimeMillis: Long = 0L
                             , errorStackTrace: String = ""
