@@ -442,7 +442,7 @@ trade_group text,
 trade_name text,
 trade_parent_group text,
 xmL_booking_login text,
-PRIMARY KEY (tm)
+PRIMARY KEY (tm,brand_name,sales_channel,trade_group,booking_count)
 );
 
 
