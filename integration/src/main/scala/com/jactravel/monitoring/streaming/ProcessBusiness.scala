@@ -27,7 +27,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 
     ///use get or create to use check point
-    ssc = new StreamingContext(spark.sparkContext, Seconds(10))
+    ssc = new StreamingContext(spark.sparkContext, Seconds(1))
     //Milliseconds(50))
     val numPar = 150
 
