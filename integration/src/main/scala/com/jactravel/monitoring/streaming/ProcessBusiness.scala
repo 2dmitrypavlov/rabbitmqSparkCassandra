@@ -113,7 +113,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     cmiRequestStream.transform{rdd=>spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
       rdd.take(1)
       rdd }.saveToCassandra(keyspaceName, "cmi_request")
-    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd).select("queryUUID","xmlBookingLogin").createOrReplaceTempView("QueryProxyRequest")
+    case class Proxy (queryUUID:String,xmlBookingLogin:String)
+    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd.map(l=>Proxy(l.queryUUID,l.xmlBookingLogin))).createOrReplaceTempView("QueryProxyRequest")
 
       //here we put all the sqls
 
