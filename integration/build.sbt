@@ -28,6 +28,8 @@ lazy val root = (project in file(".")).
       "com.stratio.receiver"        %  "spark-rabbitmq"            % "0.5.1",
       "org.apache.hadoop" % "hadoop-aws" % "2.6.0" exclude("tomcat", "jasper-compiler") excludeAll ExclusionRule(organization = "javax.servlet")
     )
+
+    // spark influx
     // To cross compile with Dotty and Scala 2
     //crossScalaVersions := Seq(dottyVersion, scala211Version),
     //scalacOptions ++= { if (isDotty.value) Seq("-language:Scala2") else Nil }

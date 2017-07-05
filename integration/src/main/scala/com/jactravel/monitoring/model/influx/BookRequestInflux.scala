@@ -1,6 +1,6 @@
 package com.jactravel.monitoring.model.influx
 
-import org.joda.time.DateTime
+
 
 /**
   * Created by fayaz on 30.06.17.
@@ -14,7 +14,7 @@ object BookRequestInflux {
 
 
   case class BookRequestCount(booking_count: Long,
-                              time: org.joda.time.DateTime,
+                              tm: java.sql.Timestamp,
                               brand_name: String,
                               sales_channel: String,
                               trade_group: String,
@@ -22,7 +22,7 @@ object BookRequestInflux {
                               trade_parent_group: String,
                               xml_booking_login: String)
 
-  case class BookRequestResponseTime(time: DateTime,
+  case class BookRequestResponseTime(time: String,
                                      brandName: String,
                                      salesChannel: String,
                                      tradeGroup: String,

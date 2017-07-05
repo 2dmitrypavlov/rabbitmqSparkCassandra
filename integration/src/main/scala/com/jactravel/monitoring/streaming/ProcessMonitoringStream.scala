@@ -6,6 +6,7 @@ import java.time.temporal.{ChronoUnit, TemporalUnit}
 import java.util.Date
 
 import com.jactravel.monitoring.model._
+import com.jactravel.monitoring.util.DateTimeUtils
 import com.rabbitmq.client.QueueingConsumer.Delivery
 import com.typesafe.scalalogging.LazyLogging
 
@@ -118,10 +119,10 @@ trait ProcessMonitoringStream extends LazyLogging {
       , queryProxyRequest.getClientIP
       , queryProxyRequest.getSearchQueryType.getNumber
       , queryProxyRequest.getHost
-      , parseDate(queryProxyRequest.getClientRequestUtcTimestamp)
-      , parseDate(queryProxyRequest.getClientResponseUtcTimestamp)
-      , parseDate(queryProxyRequest.getForwardedRequestUtcTimestamp)
-      , parseDate(queryProxyRequest.getForwardedResponseUtcTimestamp)
+      , DateTimeUtils.parseDate(queryProxyRequest.getClientRequestUtcTimestamp)
+      , DateTimeUtils.parseDate(queryProxyRequest.getClientResponseUtcTimestamp)
+      , DateTimeUtils.parseDate(queryProxyRequest.getForwardedRequestUtcTimestamp)
+      , DateTimeUtils.parseDate(queryProxyRequest.getForwardedResponseUtcTimestamp)
       , queryProxyRequest.getRequestXML
       , queryProxyRequest.getResponseXML
       , queryProxyRequest.getXmlBookingLogin
@@ -260,19 +261,4 @@ trait ProcessMonitoringStream extends LazyLogging {
         )
     }.toList
   }
-
-  private[streaming] def parseDateTime(dateTime: String, temporalUnit: TemporalUnit = ChronoUnit.SECONDS) = {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]")
-
-    LocalDateTime.parse(dateTime, formatter).truncatedTo(temporalUnit)
-  }
-
-  private[streaming] def toDate(dateTime: LocalDateTime) = {
-    Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant)
-  }
-
-  private[streaming] def parseDate(date: String) = {
-    toDate(parseDateTime(date))
-  }
-
 }

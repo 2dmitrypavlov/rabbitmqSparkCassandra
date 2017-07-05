@@ -39,15 +39,15 @@ insert into sales_channel(sales_channel_id, sales_channel) values(11, 'XML3P Dir
 insert into sales_channel(sales_channel_id, sales_channel) values(12, 'XML3P DirectB2C');
 
 CREATE TABLE jactravel_monitoring.trade (
-trade_id int,
-booking_country_id int,
-selling_country_id int,
-booking_country text,
-selling_country text,
-trade_group text,
-trade_name text,
-trade_parent_group text,
-PRIMARY KEY (trade_id, booking_country_id, selling_country_id)
+  trade_id int,
+  booking_country_id int,
+  selling_country_id int,
+  booking_country text,
+  selling_country text,
+  trade_group text,
+  trade_name text,
+  trade_parent_group text,
+  PRIMARY KEY (trade_id, booking_country_id, selling_country_id)
 );
 
 COPY jactravel_monitoring.trade (trade_id, trade_name, trade_group,	trade_parent_group,	booking_country_id,	booking_country, selling_country_id, selling_country) from 'Trade.txt';
