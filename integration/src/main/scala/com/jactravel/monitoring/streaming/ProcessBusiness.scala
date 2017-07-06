@@ -34,7 +34,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     ///use get or create to use check point
     ssc = new StreamingContext(spark.sparkContext, Seconds(20))
     //Milliseconds(50))
-    val numPar = 150
+    val numPar = 200
 
     val queryProxyStream1 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
       , prepareQueueMap("QueryProxyRequest")
@@ -89,7 +89,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , prepareQueueMap("CMIBatchRequest")
       , messageCmiBatchRequestHandler).repartition(numPar)
 
-    ssc.remember(Duration(180000000L))
+    ssc.remember(Seconds(120))
     //every
 //    val brand = spark
 //      .read
@@ -347,7 +347,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       // ,"maxMessagesPerPartition"->"1"
       //, "maxMessagesPerPartition" -> "100"
       //, "levelParallelism" -> "100"
-      , "rememberDuration" -> "180000000"
+      , "rememberDuration" -> "3000000"
       //, "maxReceiveTime" -> "500"
       , "storageLevel" -> "MEMORY_AND_DISK"
 
