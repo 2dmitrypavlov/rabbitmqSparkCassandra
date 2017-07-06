@@ -1,7 +1,10 @@
 package com.jactravel.monitoring.streaming
 
+import java.sql.Date
+
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
+import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.{Row, SaveMode, SparkSession}
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
@@ -13,6 +16,7 @@ import org.apache.spark.streaming._
 case class Proxy(queryUUID: String, xmlBookingLogin: String)
 
 object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonitoringStream {
+  def convertJavaDateToSqlDate(date: java.util.Date) = new Date(date.getTime)
 
   override val keyspaceName: String = "jactravel_monitoring_new"
 
@@ -31,6 +35,25 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     //Milliseconds(50))
     val numPar = 150
 
+    val queryProxyStream1 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
+      , messageQueryProxyHandler).repartition(numPar)
+    val queryProxyStream2 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
+      , messageQueryProxyHandler).repartition(numPar)
+    val queryProxyStream3 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+      , prepareQueueMap("QueryProxyRequest")
+      , messageQueryProxyHandler).repartition(numPar)
+    //    val queryProxyStream4 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+    //      , prepareQueueMap("QueryProxyRequest")
+    //      , messageQueryProxyHandler).repartition(numPar)
+    //    val queryProxyStream5 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+    //      , prepareQueueMap("QueryProxyRequest")
+    //      , messageQueryProxyHandler).repartition(numPar)
+
+    val queryProxyStream = queryProxyStream1.union(queryProxyStream2)
+      .union(queryProxyStream3)
+    //.union(queryProxyStream4).union(queryProxyStream5)
     val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
       , prepareQueueMap("BookRequest")
       , messageBookingHandler).repartition(numPar)
@@ -55,9 +78,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , prepareQueueMap("SupplierSearchRequest")
       , messageSupplierSearchRequestHandler).repartition(numPar)
     //
-    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
-      , prepareQueueMap("QueryProxyRequest")
-      , messageQueryProxyHandler).repartition(numPar)
+
 
     val cmiRequestStream = RabbitMQUtils.createStream[CmiRequest](ssc
       , prepareQueueMap("CMIRequest")
@@ -69,211 +90,219 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     ssc.remember(Duration(180000000L))
     //every
-    val brand = spark
-      .read
-      .format("com.databricks.spark.csv")
-      .option("header", "true") // Use first line of all files as header
-      .option("inferSchema", "true") // Automatically infer data types
-      .load(aws + "brand.csv")
-    brand.createOrReplaceTempView("Brand")
-    val trade = spark
-      .read
-      .format("com.databricks.spark.csv")
-      .option("header", "true") // Use first line of all files as header
-      .option("inferSchema", "true") // Automatically infer data types
-      .load(aws + "trade.csv")
-    trade.createOrReplaceTempView("Trade")
-    val saleschannel = spark
-      .read
-      .format("com.databricks.spark.csv")
-      .option("header", "true") // Use first line of all files as header
-      .option("inferSchema", "true") // Automatically infer data types
-      .load(aws + "saleschannel.csv")
-    saleschannel.createOrReplaceTempView("SalesChannel")
+//    val brand = spark
+//      .read
+//      .format("com.databricks.spark.csv")
+//      .option("header", "true") // Use first line of all files as header
+//      .option("inferSchema", "true") // Automatically infer data types
+//      .load(aws + "brand.csv")
+//    brand.createOrReplaceTempView("Brand")
+//    val trade = spark
+//      .read
+//      .format("com.databricks.spark.csv")
+//      .option("header", "true") // Use first line of all files as header
+//      .option("inferSchema", "true") // Automatically infer data types
+//      .load(aws + "trade.csv")
+//    trade.createOrReplaceTempView("Trade")
+//    val saleschannel = spark
+//      .read
+//      .format("com.databricks.spark.csv")
+//      .option("header", "true") // Use first line of all files as header
+//      .option("inferSchema", "true") // Automatically infer data types
+//      .load(aws + "saleschannel.csv")
+//    saleschannel.createOrReplaceTempView("SalesChannel")
 
 
     bookingStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("BookRequest")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("BookRequest")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "book_request")
     preBookingStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("pre_book_request")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("pre_book_request")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "pre_book_request")
     searchRequestStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("search_request")
-      rdd.take(1)
-      rdd
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("search_request")
+      //      rdd.take(1)
+      rdd.map(l => SearchRequest2(DateTimeUtils.parseDate(l.requestInfo.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID, l.host, l.requestInfo, l.responseInfo))
     }.saveToCassandra(keyspaceName, "search_request")
     supplierBookhRequestStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_book_request")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_book_request")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "supplier_book_request")
     supplierPreBookRequestStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_pre_book_request")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_pre_book_request")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "supplier_pre_book_request")
     supplierSearchRequestStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "supplier_search_request")
-    //    queryProxyStream.transform{rdd=>spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
-    //      rdd.take(1)
-    //      rdd }.saveToCassandra(keyspaceName, "query_proxy_request")
+    queryProxyStream.transform { rdd =>
+      //spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
+      rdd.map(l => QueryProxyRequest3(l.clientRequestUtcTimestamp.getTime / 1000L, l.queryUUID, l.clientIp, l.searchQueryType
+        , l.host, convertJavaDateToSqlDate(l.clientRequestUtcTimestamp), convertJavaDateToSqlDate(l.clientResponseUtcTimestamp)
+        , convertJavaDateToSqlDate(l.forwardedRequestUtcTimestamp)
+        , convertJavaDateToSqlDate(l.forwardedResponseUtcTimestamp), l.requestXml, l.responseXml, l.xmlBookingLogin,
+        l.success, l.errorMessage, l.requestProcessor, l.requestURL, l.errorStackTrace))
+      //          rdd.take(1)
+    }.saveToCassandra(keyspaceName, "query_proxy_request")
+
     cmiRequestStream.transform { rdd =>
-      spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
-      rdd.take(1)
+      //      spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
+      //      rdd.take(1)
       rdd
     }.saveToCassandra(keyspaceName, "cmi_request")
 
-    queryProxyStream.transform { rdd =>
-      spark.createDataFrame(rdd.map(l => Proxy(l.queryUUID, l.xmlBookingLogin)))
-        .createOrReplaceTempView("QueryProxyRequest")
-
-      //here we put all the sqls
-
-      // BOOKING
-      spark.sql(
-        """
-        SELECT br.queryUUID as query_uuid,
-               brand_name,
-               trade_name,
-               trade_group,
-               trade_parent_group,
-               sales_channel,
-               (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
-               br.errorStackTrace,
-               br.success,
-               window(startUtcTimestamp, '5 minutes').end as time,
-               xmlBookingLogin
-        FROM BookRequest as br
-        LEFT JOIN Brand as b
-        ON br.brandId == b.brand_id
-        LEFT JOIN Trade as t
-        ON br.tradeId == t.trade_id
-        LEFT JOIN QueryProxyRequest as qpr
-        ON br.queryUUID == qpr.queryUUID
-        LEFT JOIN SalesChannel as sc
-        ON br.salesChannelId == sc.sales_channel_id
-        """).createOrReplaceTempView("BookingEnriched")
-
-      // BOOKING COUNT
-      spark.sql(
-        """
-      SELECT COUNT(query_uuid) as booking_count,
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xmlBookingLogin
-      from BookingEnriched
-      group by
-          time,
-          brand_name,
-          sales_channel,
-          trade_group,
-          trade_name,
-          trade_parent_group,
-          xmlBookingLogin
-
-      """).createOrReplaceTempView("BookingCount")
-      //val bookCount = Encoders.bean(classOf[BookRequestCount])
-      val data = spark.sql(
-        """select booking_count,
-                                      time as tm,
-                                      brand_name,
-                                      sales_channel,
-                                      trade_group,
-                                      trade_name,
-                                      trade_parent_group,
-                                      xmlBookingLogin
-                                       from BookingCount""")
-      spark.sql("select * from QueryProxyRequest").write.mode(SaveMode.Append).format("parquet").save(aws+"proxy")
-      spark.sql("select * from BookingEnriched").write.mode(SaveMode.Append).format("parquet").save(aws+"book")
-      data.write.mode(SaveMode.Append).format("parquet").save(aws+"data")
-
-      // BOOKING SUCCESS
-      //      val bookingSucces = spark.sql("""
-      //      SELECT COUNT(query_uuid) as booking_success,
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xmL_booking_login
-      //      FROM BookingEnriched
-      //      WHERE success IS NOT NULL
-      //      GROUP BY
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xml_booking_login
-      //      """).createOrReplaceTempView("BookingSuccess")
-      //
-      //      // BOOKING ERROR
-      //      spark.sql("""
-      //      SELECT COUNT(query_uuid) as booking_errors,
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xmL_booking_login
-      //      FROM BookingEnriched
-      //      WHERE error_stack_trace IS NOT NULL
-      //      GROUP BY
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xml_booking_login
-      //      """).createOrReplaceTempView("BookingError")
-      //      // BOOKING RESPONSE TIME
-      //      spark.sql("""
-      //      SELECT COUNT(query_uuid) as booking_errors,
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xmL_booking_login,
-      //          min(response_time_ms) as min_response_time_ms,
-      //          max(response_time_ms) as max_response_time_ms,
-      //          avg(response_time_ms) as avg_response_time_ms
-      //      FROM BookingEnriched
-      //      GROUP BY
-      //          time,
-      //          brand_name,
-      //          sales_channel,
-      //          trade_group,
-      //          trade_name,
-      //          trade_parent_group,
-      //          xml_booking_login
-      //      """).createOrReplaceTempView("BookingResponse")
-      //      rdd.take(1)
-
-      data.rdd
-        .map { case r: Row => BookRequestCount(r.getAs("booking_count"), r.getAs("tm")
-          , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
-          , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
-        }
-
-    }.saveToCassandra(keyspaceName, "book_request_count")
+    //    queryProxyStream.transform { rdd =>
+    //      spark.createDataFrame(rdd.map(l => Proxy(l.queryUUID, l.xmlBookingLogin)))
+    //        .createOrReplaceTempView("QueryProxyRequest")
+    //
+    //      //here we put all the sqls
+    //
+    //      // BOOKING
+    //      spark.sql(
+    //        """
+    //        SELECT br.queryUUID as query_uuid,
+    //               brand_name,
+    //               trade_name,
+    //               trade_group,
+    //               trade_parent_group,
+    //               sales_channel,
+    //               (unix_timestamp(endUtcTimestamp) - unix_timestamp(startUtcTimestamp)) * 1000 as response_time_ms,
+    //               br.errorStackTrace,
+    //               br.success,
+    //               window(startUtcTimestamp, '5 minutes').end as time,
+    //               xmlBookingLogin
+    //        FROM BookRequest as br
+    //        LEFT JOIN Brand as b
+    //        ON br.brandId == b.brand_id
+    //        LEFT JOIN Trade as t
+    //        ON br.tradeId == t.trade_id
+    //        LEFT JOIN QueryProxyRequest as qpr
+    //        ON br.queryUUID == qpr.queryUUID
+    //        LEFT JOIN SalesChannel as sc
+    //        ON br.salesChannelId == sc.sales_channel_id
+    //        """).createOrReplaceTempView("BookingEnriched")
+    //
+    //      // BOOKING COUNT
+    //      spark.sql(
+    //        """
+    //      SELECT COUNT(query_uuid) as booking_count,
+    //          time,
+    //          brand_name,
+    //          sales_channel,
+    //          trade_group,
+    //          trade_name,
+    //          trade_parent_group,
+    //          xmlBookingLogin
+    //      from BookingEnriched
+    //      group by
+    //          time,
+    //          brand_name,
+    //          sales_channel,
+    //          trade_group,
+    //          trade_name,
+    //          trade_parent_group,
+    //          xmlBookingLogin
+    //
+    //      """).createOrReplaceTempView("BookingCount")
+    //      //val bookCount = Encoders.bean(classOf[BookRequestCount])
+    //      val data = spark.sql(
+    //        """select booking_count,
+    //                                      time as tm,
+    //                                      brand_name,
+    //                                      sales_channel,
+    //                                      trade_group,
+    //                                      trade_name,
+    //                                      trade_parent_group,
+    //                                      xmlBookingLogin
+    //                                       from BookingCount""")
+    //      spark.sql("select * from QueryProxyRequest").write.mode(SaveMode.Append).format("parquet").save(aws+"proxy")
+    //      spark.sql("select * from BookingEnriched").write.mode(SaveMode.Append).format("parquet").save(aws+"book")
+    //      data.write.mode(SaveMode.Append).format("parquet").save(aws+"data")
+    //
+    //      // BOOKING SUCCESS
+    //      //      val bookingSucces = spark.sql("""
+    //      //      SELECT COUNT(query_uuid) as booking_success,
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xmL_booking_login
+    //      //      FROM BookingEnriched
+    //      //      WHERE success IS NOT NULL
+    //      //      GROUP BY
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xml_booking_login
+    //      //      """).createOrReplaceTempView("BookingSuccess")
+    //      //
+    //      //      // BOOKING ERROR
+    //      //      spark.sql("""
+    //      //      SELECT COUNT(query_uuid) as booking_errors,
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xmL_booking_login
+    //      //      FROM BookingEnriched
+    //      //      WHERE error_stack_trace IS NOT NULL
+    //      //      GROUP BY
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xml_booking_login
+    //      //      """).createOrReplaceTempView("BookingError")
+    //      //      // BOOKING RESPONSE TIME
+    //      //      spark.sql("""
+    //      //      SELECT COUNT(query_uuid) as booking_errors,
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xmL_booking_login,
+    //      //          min(response_time_ms) as min_response_time_ms,
+    //      //          max(response_time_ms) as max_response_time_ms,
+    //      //          avg(response_time_ms) as avg_response_time_ms
+    //      //      FROM BookingEnriched
+    //      //      GROUP BY
+    //      //          time,
+    //      //          brand_name,
+    //      //          sales_channel,
+    //      //          trade_group,
+    //      //          trade_name,
+    //      //          trade_parent_group,
+    //      //          xml_booking_login
+    //      //      """).createOrReplaceTempView("BookingResponse")
+    //      //      rdd.take(1)
+    //
+    //      data.rdd
+    //        .map { case r: Row => BookRequestCount(r.getAs("booking_count"), r.getAs("tm")
+    //          , r.getAs("brand_name"), r.getAs("sales_channel"), r.getAs("trade_group"), r.getAs("trade_name")
+    //          , r.getAs("trade_parent_group"), r.getAs("xmlBookingLogin"))
+    //        }
+    //
+    //    }.saveAsTextFiles(aws+"")
 
 
     //    cmiBatchRequestStream.transform{rdd=>
@@ -314,7 +343,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , "password" -> password
       , "routingKey" -> queueName
       // ,"maxMessagesPerPartition"->"1"
-      , "maxMessagesPerPartition" -> "100"
+      //, "maxMessagesPerPartition" -> "100"
       //, "levelParallelism" -> "100"
       , "rememberDuration" -> "180000000"
       //, "maxReceiveTime" -> "500"

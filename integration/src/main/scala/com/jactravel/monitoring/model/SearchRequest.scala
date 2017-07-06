@@ -10,6 +10,13 @@ case class SearchRequest(
                           requestInfo: RequestInfo,
                           responseInfo: ResponseInfo
                         )
+case class SearchRequest2(
+                          querySecond:Long,
+                          queryUUID: String,
+                          host: String,
+                          requestInfo: RequestInfo,
+                          responseInfo: ResponseInfo
+                        )
 
 case class RoomRequest(
                         adults: Int,

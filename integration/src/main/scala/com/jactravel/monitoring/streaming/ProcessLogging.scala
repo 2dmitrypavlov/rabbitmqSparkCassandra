@@ -74,9 +74,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     val numPar = 200
     // Start up the receiver.
     queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
+    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
     bookingStream.repartition(numPar).saveToCassandra(keyspaceName, "book_request_time")
     preBookingStream.repartition(numPar).saveToCassandra(keyspaceName, "pre_book_request_time")
-    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
     supplierBookhRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_book_request")
     supplierPreBookRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_pre_book_request")
     supplierSearchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "supplier_search_request")

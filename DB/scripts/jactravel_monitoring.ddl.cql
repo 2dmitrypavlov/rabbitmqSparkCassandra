@@ -487,3 +487,33 @@ request_url text,
 error_stack_trace text,
 PRIMARY KEY (client_request_utc_timestamp)
 );
+
+CREATE TABLE jactravel_monitoring_new.query_proxy_request_second (
+query_second bigint,
+query_uuid text,
+client_ip text,
+client_request_utc_timestamp text,
+client_response_utc_timestamp text,
+error_message text,
+error_stack_trace text,
+forwarded_request_utc_timestamp text,
+forwarded_response_utc_timestamp text,
+host text,
+request_processor int,
+request_url text,
+request_xml text,
+response_xml text,
+search_query_type int,
+success text,
+xml_booking_login text,
+PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
+
+CREATE TABLE jactravel_monitoring_new.search_request_second (
+query_second bigint,
+query_uuid text,
+host text,
+request_info FROZEN<request_info>,
+response_info FROZEN<response_info >,
+PRIMARY KEY (query_uuid)
+);

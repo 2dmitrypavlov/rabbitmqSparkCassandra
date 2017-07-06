@@ -99,3 +99,4 @@ GROUP BY
     trade_name,
     trade_parent_group,
     xml_booking_login
+
