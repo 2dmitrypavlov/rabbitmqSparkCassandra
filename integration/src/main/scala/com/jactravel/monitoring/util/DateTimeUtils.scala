@@ -1,6 +1,6 @@
 package com.jactravel.monitoring.util
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import java.time.temporal.{ChronoUnit, TemporalUnit}
 import java.util.Date
@@ -11,13 +11,13 @@ import java.util.Date
 object DateTimeUtils {
 
   def parseDateTime(dateTime: String, temporalUnit: TemporalUnit = ChronoUnit.SECONDS) = {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss[.SSS]").withZone(ZoneId.of("UTC"))
 
-    LocalDateTime.parse(dateTime, formatter).truncatedTo(temporalUnit)
+    ZonedDateTime.parse(dateTime, formatter)
   }
 
-  def toDate(dateTime: LocalDateTime) = {
-    Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant)
+  def toDate(dateTime: ZonedDateTime) = {
+    Date.from(dateTime.toInstant)
   }
 
   private[monitoring] def parseDate(date: String) = {

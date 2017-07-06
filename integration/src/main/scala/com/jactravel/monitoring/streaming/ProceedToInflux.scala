@@ -3,8 +3,9 @@ package com.jactravel.monitoring.streaming
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.RichSearchRequest
 import com.jactravel.monitoring.util.DateTimeUtils
-import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
+//import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 
 import scala.concurrent.Await
@@ -23,14 +24,16 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
     conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
-    ssc = new StreamingContext(conf, Milliseconds(1000))
+    ssc = new StreamingContext(conf, Milliseconds(10000))
 
     val queryUuidRdd = ssc.sparkContext
       .cassandraTable(keyspaceName, "query_uuid_proceed")
-      .select("query_uuid").where("proceed < ?", 1)
-      .limit(50) //.keyBy("query_uuid")
+      .select("query_uuid")
+      .where("proceed = ?", "0")
+//      .where("proceed < ?", 1)
+      .limit(1000) //.keyBy("query_uuid")
 
-    queryUuidRdd.cache()
+    queryUuidRdd.collect()
 
     val queryProxyRequest = queryUuidRdd
       .repartitionByCassandraReplica(keyspaceName, "query_proxy_request")
@@ -66,7 +69,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
 //    streamSearchRequestWQuery.cache()
 
-    val searchRequestTrade = streamSearchRequestWQuery
+    val searchRequestTrade = streamSearchRequest
       .leftJoinWithCassandraTable[Trade](keyspaceName, "trade")
       .map {
         case (searchRequest, optTrade) =>
@@ -95,34 +98,34 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
           )).getOrElse(searchRequest)
       }
 
-//    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
-//
-//    dstream.foreachRDD { rdd =>
-//      // any action will trigger the underlying cassandra query, using collect to have a simple output
-//      try {
-//        println("======================================================")
-//        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
-//        println("======================================================")
-//      } catch {
-//        case e: Exception => e.printStackTrace
-//      }
-//    }
-    searchRequestSalesChannel.foreachPartition { partition =>
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
 
-      partition
-        .map(toPoint)
-        .foreach(p => Await.result(db.write(p), 1 seconds))
-
-      db.close()
+    dstream.foreachRDD { rdd =>
+      // any action will trigger the underlying cassandra query, using collect to have a simple output
+      try {
+        println("======================================================")
+        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
+        println("======================================================")
+      } catch {
+        case e: Exception => e.printStackTrace
+      }
     }
-
-  def toPoint(rsr: RichSearchRequest): Point = {
-    //todo: expand to original model
-    Point("search_request")
-      .addTag("queryUUID", rsr.queryUUID)
-      .addField("brand_id", rsr.brand_id)
-  }
+//    searchRequestSalesChannel.foreachPartition { partition =>
+//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+//
+//      partition
+//        .map(toPoint)
+//        .foreach(p => Await.result(db.write(p), 1 seconds))
+//
+//      db.close()
+//    }
+//
+//  def toPoint(rsr: RichSearchRequest): Point = {
+//    //todo: expand to original model
+//    Point("search_request")
+//      .addTag("queryUUID", rsr.queryUUID)
+//      .addField("brand_id", rsr.brand_id)
+//  }
 
 //    queryUUID: String
 //    , brand_id: Int = -1
@@ -139,13 +142,13 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 //    , xmlBookingLogin: String = ""
 //    , requestTime: LocalDateTime = null
 
-    ssc.sparkContext.stop()
-//    ssc.checkpoint(System.getProperty("java.io.tmpdir"))
-//    // Start the computation
-//    ssc.start()
-//
-//    // Termination
-//    ssc.awaitTermination()
+//    ssc.sparkContext.stop()
+    ssc.checkpoint(System.getProperty("java.io.tmpdir"))
+    // Start the computation
+    ssc.start()
+
+    // Termination
+    ssc.awaitTermination()
 
   }
 

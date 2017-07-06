@@ -107,24 +107,24 @@ message PreBookRequest {
 */
 
 CREATE TABLE jactravel_monitoring_new.pre_book_request (
-  query_uuid text,
-  search_query_uuid text,
-  search_processor int,
-  host text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
-  trade_id int,
-  brand_id int,
-  sales_channel_id int,
-  property_id int,
-  arrival_date text,
-  duration int,
-  rooms FROZEN<LIST<book_room_info>>,
-  currency_id int,
-  success text,
-  error_message text,
-  error_stack_trace text,
-  PRIMARY KEY (trade_id, query_uuid)
+query_uuid text,
+search_query_uuid text,
+search_processor int,
+host text,
+start_utc_timestamp text,
+end_utc_timestamp text,
+trade_id int,
+brand_id int,
+sales_channel_id int,
+property_id int,
+arrival_date text,
+duration int,
+rooms FROZEN<LIST<book_room_info>>,
+currency_id int,
+success text,
+error_message text,
+error_stack_trace text,
+PRIMARY KEY (trade_id, query_uuid)
 );
 
 /*
