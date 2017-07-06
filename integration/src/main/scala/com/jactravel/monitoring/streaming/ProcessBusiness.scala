@@ -4,6 +4,7 @@ import java.sql.Date
 
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
+import com.jactravel.monitoring.streaming.ProcessLogging.keyspaceName
 import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.{Row, SaveMode, SparkSession}
@@ -112,7 +113,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 //      .load(aws + "saleschannel.csv")
 //    saleschannel.createOrReplaceTempView("SalesChannel")
 
-
+    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
+    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
     bookingStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("BookRequest")
       //      rdd.take(1)
@@ -128,7 +130,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       //      rdd.take(1)
       rdd.map(l => SearchRequest2(DateTimeUtils.parseDate(l.requestInfo.startUtcTimestamp).getTime / 1000L
         , l.queryUUID, l.host, l.requestInfo, l.responseInfo))
-    }.saveToCassandra(keyspaceName, "search_request")
+    }.saveToCassandra(keyspaceName, "search_request_second")
     supplierBookhRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_book_request")
       //      rdd.take(1)
@@ -152,7 +154,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         , convertJavaDateToSqlDate(l.forwardedResponseUtcTimestamp), l.requestXml, l.responseXml, l.xmlBookingLogin,
         l.success, l.errorMessage, l.requestProcessor, l.requestURL, l.errorStackTrace))
       //          rdd.take(1)
-    }.saveToCassandra(keyspaceName, "query_proxy_request")
+    }.saveToCassandra(keyspaceName, "query_proxy_request_second")
 
     cmiRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
