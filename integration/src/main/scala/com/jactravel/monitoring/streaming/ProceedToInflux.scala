@@ -17,6 +17,9 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
   def main(args: Array[String]): Unit = {
 
+    val startDateTime = "2017-07-04 00:00:00"
+    val endDateTime = "2017-07-04 00:05:00"
+
     conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
     val spark =  SparkSession
@@ -26,6 +29,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
     import spark.implicits._
 
+    // Loading tables
     val brand = spark
       .read
       .format("com.databricks.spark.csv")
@@ -53,21 +57,64 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
       .options(Map("table" -> "query_proxy_request", "keyspace" -> "jactravel_monitoring_new"))
       .load()
 
-    val book_request = spark
+    val bookRequest = spark
       .read
       .format("org.apache.spark.sql.cassandra")
       .options(Map("table" -> "book_request", "keyspace" -> "jactravel_monitoring_new"))
       .load()
+      .filter($"start_utc_timestamp" > startDateTime)
+      .filter($"start_utc_timestamp" < endDateTime)
 
     brand.createOrReplaceTempView("Brand")
     trade.createOrReplaceTempView("Trade")
     salesChannel.createOrReplaceTempView("SalesChannel")
     queryProxyRequest.createOrReplaceTempView("QueryProxyRequest")
-    book_request.createOrReplaceTempView("BookRequest")
+    bookRequest.createOrReplaceTempView("BookRequest")
 
-    spark.sql("resources/sql/booking/RichBooking.sql").createOrReplaceTempView("RichBooking")
+    // Our sqls
+    spark.sql(
+      """SELECT br.query_uuid AS query_uuid,
+        |	brand_name,
+        |	trade_name,
+        |	trade_group,
+        |	trade_parent_group,
+        |	sales_channel,
+        |	(unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 AS response_time_ms,
+        |	br.error_stack_trace,
+        |	br.success,
+        |	xml_booking_login,
+        |	window(start_utc_timestamp, '5 minutes').end AS time
+        |FROM BookRequest AS br,
+        |	SalesChannel AS sc,
+        |	Trade AS t,
+        |	Brand AS b
+        |	LEFT JOIN QueryProxyRequest AS qpr
+        |		ON br.query_uuid == qpr.query_uuid
+        |WHERE br.sales_channel_id == sc.sales_channel_id
+        |AND br.trade_id == t.trade_id
+        |AND br.brand_id == b.brand_id""".stripMargin)
+      .createOrReplaceTempView("RichBooking")
 
-    spark.sql("resources/sql/booking/BookingCount.sql").as[BookRequestCount]
+    spark.sql(
+      """SELECT COUNT(query_uuid) AS booking_count,
+        |	time AS tm,
+        |	brand_name,
+        |	sales_channel,
+        |	trade_group,
+        |	trade_name,
+        |	trade_parent_group,
+        |	xml_booking_login
+        |FROM RichBooking
+        |GROUP BY
+        |	time,
+        |	brand_name,
+        |	sales_channel,
+        |	trade_group,
+        |	trade_name,
+        |	trade_parent_group,
+        |	xml_booking_login
+      """.stripMargin)
+      .as[BookRequestCount]
       .foreachPartition { partition =>
 
         // Open connection to Influxdb
@@ -81,17 +128,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
         db.close()
       }
 
-   def toPoint(brq: BookRequestCount): Point = {
-      Point("booking_count")
-        .addTag("tm", brq.tm.toString)
-        .addTag("brand_name", brq.brand_name)
-        .addTag("sales_channel", brq.sales_channel)
-        .addTag("trade_group", brq.trade_group)
-        .addTag("trade_name", brq.trade_name)
-        .addTag("trade_parent_group", brq.trade_parent_group)
-        .addTag("xml_booking_login", brq.xml_booking_login)
-        .addField("booking_count", brq.booking_count)
-   }
+
 
 //    val queryUuidRdd = ssc.sparkContext
 //      .cassandraTable(keyspaceName, "query_uuid_proceed")
@@ -217,15 +254,27 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
   }
 
-  private[this] def prepareQueueMap(queueName: String) = {
-    Map(
-      "hosts" -> hosts
-      , "queueName" -> queueName
-      , "exchangeName" -> exchangeName
-      , "exchangeType" -> exchangeType
-      , "vHost" -> vHost
-      , "userName" -> username
-      , "password" -> password
-    )
+//  private[this] def prepareQueueMap(queueName: String) = {
+//    Map(
+//      "hosts" -> hosts
+//      , "queueName" -> queueName
+//      , "exchangeName" -> exchangeName
+//      , "exchangeType" -> exchangeType
+//      , "vHost" -> vHost
+//      , "userName" -> username
+//      , "password" -> password
+//    )
+//  }
+
+  private[this] def toPoint(brq: BookRequestCount): Point = {
+    Point("booking_count")
+      .addTag("tm", brq.tm.toString)
+      .addTag("brand_name", brq.brand_name)
+      .addTag("sales_channel", brq.sales_channel)
+      .addTag("trade_group", brq.trade_group)
+      .addTag("trade_name", brq.trade_name)
+      .addTag("trade_parent_group", brq.trade_parent_group)
+      .addTag("xml_booking_login", brq.xml_booking_login)
+      .addField("booking_count", brq.booking_count)
   }
 }
