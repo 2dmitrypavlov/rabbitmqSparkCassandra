@@ -113,8 +113,8 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 //      .load(aws + "saleschannel.csv")
 //    saleschannel.createOrReplaceTempView("SalesChannel")
 
-    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
-    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
+//    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
+//    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
     bookingStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("BookRequest")
       //      rdd.take(1)
