@@ -12,7 +12,7 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-  override val keyspaceName: String = "jactravel_monitoring"
+//  override val keyspaceName: String = "jactravel_monitoring"
 
   def main(args: Array[String]): Unit = {
 
