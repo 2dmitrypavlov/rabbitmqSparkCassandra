@@ -1,5 +1,6 @@
 package com.jactravel.monitoring.streaming
 
+import java.sql.Timestamp
 import java.time._
 import java.util.Date
 
@@ -8,6 +9,7 @@ import com.jactravel.monitoring.model.tmp.{BookRequestTime, PreBookRequestTime, 
 import com.jactravel.monitoring.util.DateTimeUtils
 import com.rabbitmq.client.QueueingConsumer.Delivery
 import com.typesafe.scalalogging.LazyLogging
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.collection.JavaConverters._
 
@@ -49,7 +51,7 @@ trait ProcessMonitoringStream extends LazyLogging {
 
     BookRequestTime(
       bookRequestProto.getQueryUUID
-      , Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant)
+      , DateTime.now(DateTimeZone.UTC).toDateTime
       , bookRequestProto.getSearchQueryUUID
       , bookRequestProto.getPreBookQueryUUID
       , bookRequestProto.getSearchProcessor.getNumber
@@ -75,7 +77,7 @@ trait ProcessMonitoringStream extends LazyLogging {
 
     PreBookRequestTime(
       preBookRequestProto.getQueryUUID
-      , Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant)
+      , DateTime.now(DateTimeZone.UTC).toDateTime
       , preBookRequestProto.getSearchQueryUUID
       , preBookRequestProto.getSearchProcessor.getNumber
       , preBookRequestProto.getHost
@@ -136,7 +138,7 @@ trait ProcessMonitoringStream extends LazyLogging {
 
     SearchRequestTime(
       searchRequestProto.getQueryUUID
-      , Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant)
+      , DateTime.now(DateTimeZone.UTC).toDateTime
       , searchRequestProto.getHost
       , searchRequestInfoRes
       , searchResponseInfoRes
@@ -150,14 +152,14 @@ trait ProcessMonitoringStream extends LazyLogging {
 
     QueryProxyRequestTime(
       queryProxyRequest.getQueryUUID
-      , Date.from(ZonedDateTime.now(ZoneOffset.UTC).toInstant)
+      , DateTime.now(DateTimeZone.UTC).toDateTime
       , queryProxyRequest.getClientIP
       , queryProxyRequest.getSearchQueryType.getNumber
       , queryProxyRequest.getHost
-      , DateTimeUtils.parseDate(queryProxyRequest.getClientRequestUtcTimestamp)
-      , DateTimeUtils.parseDate(queryProxyRequest.getClientResponseUtcTimestamp)
-      , DateTimeUtils.parseDate(queryProxyRequest.getForwardedRequestUtcTimestamp)
-      , DateTimeUtils.parseDate(queryProxyRequest.getForwardedResponseUtcTimestamp)
+      , queryProxyRequest.getClientRequestUtcTimestamp
+      , queryProxyRequest.getClientResponseUtcTimestamp
+      , queryProxyRequest.getForwardedRequestUtcTimestamp
+      , queryProxyRequest.getForwardedResponseUtcTimestamp
       , queryProxyRequest.getRequestXML
       , queryProxyRequest.getResponseXML
       , queryProxyRequest.getXmlBookingLogin

@@ -44,9 +44,9 @@ private[streaming] trait ConfigService {
   val hosts = Try(config.getStringList("amqp.addresses.host").get(0)).getOrElse("ec2-34-225-142-10.compute-1.amazonaws.com")
   val username = Try(config.getString("amqp.username")).getOrElse("guest")
   val password = Try(config.getString("rabbitmq.password")).getOrElse("guest")
-  val dbServer = Try(config.getString("db.server")).getOrElse("ec2-34-226-88-116.compute-1.amazonaws.com")
+  val dbServer = Try(config.getString("db.server")).getOrElse("34.230.10.7")
   val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
-  val dbPassword = Try(config.getString("db.password")).getOrElse("8pAw9Zd56iEo")
+  val dbPassword = Try(config.getString("db.password")).getOrElse("xs9Zr6hfogrx")
 
   val influxHost = Try(config.getString("influxdb.host")).getOrElse("52.87.0.147")
   val influxPort = Try(config.getInt("influxdb.port")).getOrElse(8086)
@@ -59,5 +59,5 @@ private[streaming] trait ConfigService {
   /**
     * Cassandra Properties
     */
-  val keyspaceName = Try(config.getString("db.keyspaceName")).getOrElse("jactravel_monitoring")
+  val keyspaceName = Try(config.getString("db.keyspaceName")).getOrElse("jactravel_monitoring_new")
 }

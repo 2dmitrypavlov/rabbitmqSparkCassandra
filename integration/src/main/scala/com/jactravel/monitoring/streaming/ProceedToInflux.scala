@@ -1,12 +1,18 @@
 package com.jactravel.monitoring.streaming
 
+import java.time.temporal.ChronoUnit
+import java.time.{ZoneId, ZoneOffset, ZonedDateTime}
+import java.util.Date
+
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.influx.RichSearchRequest
+import com.jactravel.monitoring.model.tmp.SearchRequestTime
 import com.jactravel.monitoring.util.DateTimeUtils
+import org.apache.spark.streaming.Seconds
 //import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.dstream.ConstantInputDStream
-import org.apache.spark.streaming.{Milliseconds, StreamingContext}
+import org.apache.spark.streaming.{Milliseconds, Minutes, StreamingContext}
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,24 +30,32 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
     conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
-    ssc = new StreamingContext(conf, Milliseconds(10000))
+    ssc = new StreamingContext(conf, Minutes(1))
 
-    val queryUuidRdd = ssc.sparkContext
-      .cassandraTable(keyspaceName, "query_uuid_proceed")
-      .select("query_uuid")
-      .where("proceed = ?", "0")
-//      .where("proceed < ?", 1)
-      .limit(1000) //.keyBy("query_uuid")
+    val startDateTime = Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toInstant)
+    val endDateTime = Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(60, ChronoUnit.SECONDS).toInstant)
 
-    queryUuidRdd.collect()
+    val searchRequestStream = ssc.sparkContext
+      .cassandraTable[SearchRequestTime](keyspaceName, "search_request_time")
+      .where("request_utc_timestamp > ? and request_utc_timestamp < ?",
+        Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toInstant),
+        Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(60, ChronoUnit.SECONDS).toInstant))
+//      .keyBy("query_uuid")
 
-    val queryProxyRequest = queryUuidRdd
-      .repartitionByCassandraReplica(keyspaceName, "query_proxy_request")
-      .joinWithCassandraTable[QueryProxyRequest](keyspaceName, "query_proxy_request")
+    searchRequestStream.cache()
 
-    queryProxyRequest.cache()
+    println("=========================================================================================")
+    println(s"S: ${ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toString}  E: ${endDateTime.toString}")
+    println(s"Count: ${searchRequestStream.count()}")
+    println("-----------------------------------------------------------------------------------------")
 
-    val streamSearchRequest = queryUuidRdd
+    val queryProxyRequestStream = searchRequestStream
+      .repartitionByCassandraReplica(keyspaceName, "query_proxy_request_time")
+      .leftJoinWithCassandraTable[QueryProxyRequest](keyspaceName, "query_proxy_request_time")
+
+    queryProxyRequestStream.cache()
+
+    /*val streamSearchRequest = queryUuidRdd
       .repartitionByCassandraReplica(keyspaceName, "search_request")
       .joinWithCassandraTable[SearchRequest](keyspaceName, "search_request")
       .map {
@@ -97,17 +111,18 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
             salesChannel = salesChannel.salesChannel
           )).getOrElse(searchRequest)
       }
+      */
 
-    val dstream = new ConstantInputDStream(ssc, searchRequestSalesChannel)
+    val dstream = new ConstantInputDStream(ssc, searchRequestStream)
 
     dstream.foreachRDD { rdd =>
       // any action will trigger the underlying cassandra query, using collect to have a simple output
       try {
         println("======================================================")
-        println(s"--------------------------------- ${rdd.collect.mkString("\n")}")
+        println(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++ ${rdd.collect.mkString("\n")}")
         println("======================================================")
       } catch {
-        case e: Exception => e.printStackTrace
+        case e: Exception => e.printStackTrace()
       }
     }
 //    searchRequestSalesChannel.foreachPartition { partition =>

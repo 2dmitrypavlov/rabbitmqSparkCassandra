@@ -1,20 +1,20 @@
 package com.jactravel.monitoring.model.tmp
 
-import java.util.Date
+import org.joda.time.DateTime
 
 /**
   * Created by admin on 6/13/17.
   */
 case class QueryProxyRequestTime(
                               queryUUID: String,
-                              requestUtcTimestamp: Date,
+                              requestUtcTimestamp: DateTime,
                               clientIp: String,
                               searchQueryType: Int,
                               host: String,
-                              clientRequestUtcTimestamp: Date,
-                              clientResponseUtcTimestamp: Date,
-                              forwardedRequestUtcTimestamp: Date,
-                              forwardedResponseUtcTimestamp: Date,
+                              clientRequestUtcTimestamp: String,
+                              clientResponseUtcTimestamp: String,
+                              forwardedRequestUtcTimestamp: String,
+                              forwardedResponseUtcTimestamp: String,
                               requestXml: String,
                               responseXml: String,
                               xmlBookingLogin: String,

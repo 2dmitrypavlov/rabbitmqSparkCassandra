@@ -1,15 +1,14 @@
 package com.jactravel.monitoring.model.tmp
 
-import java.util.Date
-
 import com.jactravel.monitoring.model.BookRoomInfo
+import org.joda.time.DateTime
 
 /**
   * Created by admin on 6/10/17.
   */
 case class PreBookRequestTime(
                            queryUUID: String,
-                           requestUtcTimestamp: Date,
+                           requestUtcTimestamp: DateTime,
                            searchQueryUUID: String,
                            searchProcessor: Int,
                            host: String,
