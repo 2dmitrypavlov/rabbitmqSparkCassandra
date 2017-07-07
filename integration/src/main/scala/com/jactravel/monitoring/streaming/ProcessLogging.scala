@@ -54,12 +54,18 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .map(t => t.trade_id -> t)
       .collect().toMap
 
-    val saleschannels = spark
-      .read
-      .option("header", "true") // Use first line of all files as header
-      .option("inferSchema", "true") // Automatically infer data types
-      .load(aws + "saleschannel.csv")
-      .as[SalesChannel]
+//    val saleschannels = spark
+//      .read
+//      .option("header", "true") // Use first line of all files as header
+//      .option("inferSchema", "true") // Automatically infer data types
+//      .load(aws + "saleschannel.csv")
+//      .as[SalesChannel]
+//      .map(s => s.sales_channel_id -> s.sales_channel)
+//      .collect().toMap
+
+
+    val saleschannels = ssc
+      .cassandraTable[SalesChannel](keyspaceName, "sales_channel")
       .map(s => s.sales_channel_id -> s.sales_channel)
       .collect().toMap
 
