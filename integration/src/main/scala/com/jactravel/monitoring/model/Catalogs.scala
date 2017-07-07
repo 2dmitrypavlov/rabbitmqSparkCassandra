@@ -10,7 +10,7 @@ case class Trade(
                   trade_parent_group: Option[String],
                   booking_country_id: Option[String],
                   booking_country: Option[String],
-                  selling_country_id: Option[Int],
+                  selling_country_id: Option[String],
                   selling_country: Option[String]
 
 

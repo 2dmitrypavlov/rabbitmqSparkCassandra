@@ -53,6 +53,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .as[Trade]
       .map(t => t.trade_id -> t)
       .collect().toMap
+
     val saleschannels = spark
       .read
       .option("header", "true") // Use first line of all files as header
