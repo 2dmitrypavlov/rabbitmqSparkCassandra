@@ -515,5 +515,5 @@ query_uuid text,
 host text,
 request_info FROZEN<request_info>,
 response_info FROZEN<response_info >,
-PRIMARY KEY (query_uuid)
-);
+PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
