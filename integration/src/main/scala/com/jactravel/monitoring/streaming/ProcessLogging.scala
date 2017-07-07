@@ -42,7 +42,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .option("inferSchema", "true") // Automatically infer data types
       .csv(aws + "brand.csv")
       .as[Brand]
-      .map(b => b.brandId -> b.brandName)
+      .map(b => b.brand_id -> b.brand_name)
       .collect().toMap
 
     val trades = spark
@@ -51,7 +51,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .option("inferSchema", "true") // Automatically infer data types
       .csv(aws + "trade.csv")
       .as[Trade]
-      .map(t => t.tradeId -> t)
+      .map(t => t.trade_id -> t)
       .collect().toMap
     val saleschannels = spark
       .read
@@ -59,7 +59,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .option("inferSchema", "true") // Automatically infer data types
       .load(aws + "saleschannel.csv")
       .as[SalesChannel]
-      .map(s => s.salesChannelId -> s.salesChannel)
+      .map(s => s.sales_channel_id -> s.sales_channel)
       .collect().toMap
 
     val bookingStream = RabbitMQUtils.createStream[BookRequestTime](ssc
@@ -130,9 +130,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
           QueryProxyRequestExt(
             queryUuid = data.queryUUID,
             brandName = brands.get(data.brandId),
-            tradeName = trades.get(data.tradeId).map(_.tradeName.getOrElse("")),
-            tradeGroup = trades.get(data.tradeId).map(_.tradeGroup.getOrElse("")),
-            tradeGroupParent = trades.get(data.tradeId).map(_.tradeParentGroup.getOrElse("")),
+            tradeName = trades.get(data.tradeId).map(_.trade_name.getOrElse("")),
+            tradeGroup = trades.get(data.tradeId).map(_.trade_group.getOrElse("")),
+            tradeGroupParent = trades.get(data.tradeId).map(_.trade_parent_group.getOrElse("")),
             salesChannel = saleschannels.get(data.salesChannelId),
             deltaRequestTime = Some(DateTimeUtils.datesDiff(data.endUtcTimestamp, data.startUtcTimestamp, ChronoUnit.SECONDS)),
             errorStackTrace = Some(data.errorStackTrace),

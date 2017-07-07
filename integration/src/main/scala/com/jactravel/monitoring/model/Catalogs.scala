@@ -4,22 +4,22 @@ package com.jactravel.monitoring.model
   * Created by admin on 7/5/17.
   */
 case class Trade(
-                  tradeId: Int,
-                  bookingCountryId: Option[Int],
-                  sellingCountryId: Option[Int],
-                  bookingCountry: Option[String],
-                  sellingCountry: Option[String],
-                  tradeGroup: Option[String],
-                  tradeName: Option[String],
-                  tradeParentGroup: Option[String]
+                  trade_id: Int,
+                  booking_country_id: Option[Int],
+                  selling_country_id: Option[Int],
+                  booking_country: Option[String],
+                  selling_country: Option[String],
+                  trade_group: Option[String],
+                  trade_name: Option[String],
+                  trade_parent_group: Option[String]
                 )
 
 case class Brand(
-                  brandId: Int,
-                  brandName: String
+                  brand_id: Int,
+                  brand_name: String
                 )
 
 case class SalesChannel(
-                         salesChannelId: Int,
-                         salesChannel: String
+                         sales_channel_id: Int,
+                         sales_channel: String
                        )
