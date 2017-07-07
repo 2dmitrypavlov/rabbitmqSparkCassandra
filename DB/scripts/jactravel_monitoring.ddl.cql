@@ -517,3 +517,30 @@ request_info FROZEN<request_info>,
 response_info FROZEN<response_info >,
 PRIMARY KEY (query_uuid)
 );
+
+
+CREATE TABLE jactravel_monitoring_new.query_proxy_request_ext (
+  query_uuid text,
+  brand_id int,
+  brand_name text,
+  trade_id int,
+  trade_name text,
+  trade_group text,
+  trade_group_parent text,
+  sales_channel_id int,
+  sales_channel text,
+  delta_request_time decimal,
+  error_stack_trace text,
+  success text,
+  xml_booking_login text,
+  time_in decimal,
+  table_name text,
+  PRIMARY KEY (query_uuid)
+);
+
+CREATE MATERIALIZED VIEW jactravel_monitoring_new.rich_book_request AS
+  SELECT query_uuid, brand_name, delta_request_time, error_stack_trace, sales_channel, success, table_name, time_in,
+  trade_group, trade_group_parent, trade_name, xml_booking_login
+  FROM query_proxy_request_ext
+  WHERE time_in IS NOT NULL AND query_uuid IS NOT NULL AND table_name IS NOT NULL
+  PRIMARY KEY ( time_in, query_uuid );

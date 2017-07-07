@@ -9,14 +9,11 @@ import com.jactravel.monitoring.model.influx.RichSearchRequest
 import com.jactravel.monitoring.model.tmp.SearchRequestTime
 import com.jactravel.monitoring.util.DateTimeUtils
 import org.apache.spark.streaming.Seconds
+import org.joda.time.{DateTime, DateTimeZone}
 //import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.streaming.dstream.ConstantInputDStream
-import org.apache.spark.streaming.{Milliseconds, Minutes, StreamingContext}
-
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import org.apache.spark.streaming.{Minutes, StreamingContext}
 
 /**
   * Created by eugene on 6/26/17.
@@ -32,28 +29,25 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
 
     ssc = new StreamingContext(conf, Minutes(1))
 
-    val startDateTime = Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toInstant)
-    val endDateTime = Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(60, ChronoUnit.SECONDS).toInstant)
+    var lower = DateTime.now().withZone(DateTimeZone.UTC).minusMinutes(2).getMillis
+    val upper = DateTime.now().withZone(DateTimeZone.UTC).minusMinutes(1).getMillis
 
-    val searchRequestStream = ssc.sparkContext
-      .cassandraTable[SearchRequestTime](keyspaceName, "search_request_time")
-      .where("request_utc_timestamp > ? and request_utc_timestamp < ?",
-        Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toInstant),
-        Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(60, ChronoUnit.SECONDS).toInstant))
+    val range = lower to upper by 1000
+
+    val bookRequestStream = ssc.sparkContext
+      .cassandraTable[QueryProxyRequestExt](keyspaceName, "query_proxy_request_ext")
+      .where("time_in in ? AND table_name = ?", range.mkString(","), "book_request")
 //      .keyBy("query_uuid")
 
-    searchRequestStream.cache()
+//    searchRequestStream.cache()
 
     println("=========================================================================================")
-    println(s"S: ${ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toString}  E: ${endDateTime.toString}")
-    println(s"Count: ${searchRequestStream.count()}")
+//    println(s"S: ${ZonedDateTime.now(ZoneOffset.UTC).minus(360, ChronoUnit.SECONDS).toString}  E: ${Date.from(ZonedDateTime.now(ZoneOffset.UTC).minus(60, ChronoUnit.SECONDS).toInstant)}")
+    println(s"Count: ${range.mkString(",")}")
     println("-----------------------------------------------------------------------------------------")
 
-    val queryProxyRequestStream = searchRequestStream
-      .repartitionByCassandraReplica(keyspaceName, "query_proxy_request_time")
-      .leftJoinWithCassandraTable[QueryProxyRequest](keyspaceName, "query_proxy_request_time")
 
-    queryProxyRequestStream.cache()
+    //queryProxyRequestStream.cache()
 
     /*val streamSearchRequest = queryUuidRdd
       .repartitionByCassandraReplica(keyspaceName, "search_request")
@@ -113,13 +107,14 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
       }
       */
 
-    val dstream = new ConstantInputDStream(ssc, searchRequestStream)
+    val dstream = new ConstantInputDStream(ssc, bookRequestStream)
 
     dstream.foreachRDD { rdd =>
       // any action will trigger the underlying cassandra query, using collect to have a simple output
       try {
         println("======================================================")
-        println(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++ ${rdd.collect.mkString("\n")}")
+        rdd.foreach(o => println(o.queryUuid))
+        println(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++ Count: ${rdd.count}")
         println("======================================================")
       } catch {
         case e: Exception => e.printStackTrace()
