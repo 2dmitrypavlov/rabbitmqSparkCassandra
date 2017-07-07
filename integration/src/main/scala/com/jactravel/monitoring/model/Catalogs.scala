@@ -11,7 +11,7 @@ case class Trade(
                   booking_country_id: Option[Int],
                   booking_country: Option[String],
                   selling_country_id: Option[Int],
-                  selling_country: Option[String],
+                  selling_country: Option[String]
 
 
                 )
