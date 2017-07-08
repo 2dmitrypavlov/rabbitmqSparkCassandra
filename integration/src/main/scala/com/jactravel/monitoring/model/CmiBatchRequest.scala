@@ -17,3 +17,17 @@ case class CmiBatchRequest(
                        errorStackTrace: String
                      )
 
+case class CmiBatchRequest2(
+                           querySecond:Long,
+                            queryUUID: String,
+                            supplierIp: String,
+                            cmiQueryType: Int,
+                            host: String,
+                            requestUtcTimestamp: String,
+                            responseUtcTimestamp: String,
+                            requestXml: String,
+                            responseXml: String,
+                            success: String,
+                            errorMessage: String,
+                            errorStackTrace: String
+                          )
