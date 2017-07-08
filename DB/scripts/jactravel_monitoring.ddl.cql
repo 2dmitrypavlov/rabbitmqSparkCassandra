@@ -519,28 +519,35 @@ PRIMARY KEY (query_uuid)
 );
 
 
-CREATE TABLE jactravel_monitoring_new.query_proxy_request_ext (
-  query_uuid text,
-  brand_id int,
-  brand_name text,
+CREATE TABLE jactravel_monitoring_new.trade_search_archive (
+  search_date date,
   trade_id int,
-  trade_name text,
-  trade_group text,
-  trade_group_parent text,
+  xml_book_login text,
+  search_hour tinyint,
+  request_processor text,
+  brand_id int,
   sales_channel_id int,
-  sales_channel text,
-  delta_request_time decimal,
-  error_stack_trace text,
+  search_geo_level text,
+  geo_level1_id int,
+  geo_level2_id int,
+  arrival_date date,
+  duration tinyint,
+  adults tinyint,
+  children tinyint,
   success text,
-  xml_booking_login text,
-  time_in decimal,
-  table_name text,
-  PRIMARY KEY (query_uuid)
-);
-
-CREATE MATERIALIZED VIEW jactravel_monitoring_new.rich_book_request AS
-  SELECT query_uuid, brand_name, delta_request_time, error_stack_trace, sales_channel, success, table_name, time_in,
-  trade_group, trade_group_parent, trade_name, xml_booking_login
-  FROM query_proxy_request_ext
-  WHERE time_in IS NOT NULL AND query_uuid IS NOT NULL AND table_name IS NOT NULL
-  PRIMARY KEY ( time_in, query_uuid );
+  property_reference_count int,			// Sum of all propertyReferenceCount
+  property_count int,
+  priced_room_count int,
+  total_time decimal,					// Sum of all QueryProxyTime (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p50 decimal,				// 50% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p95 decimal,				// 95% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p99 decimal,				// 99% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  processing_time decimal,				// Sum of all SearchRequest times (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p50 decimal,			// 50% percentile (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p95 decimal,			// 95% percentile (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p99 decimal,			// 99% percentile (endUtcTimestamp - startUtcTimestamp)
+  search_count int,					// count of all searches
+  primary key (search_date, trade_id, xml_book_login, search_hour, request_processor, brand_id, sales_channel_id,
+      search_geo_level, geo_level1_id, geo_level2_id, arrival_date, duration, adults, children, success)
+) with CLUSTERING ORDER BY (trade_id asc, xml_book_login asc, search_hour asc, request_processor asc, brand_id asc, sales_channel_id asc, search_geo_level asc,
+geo_level1_id asc, geo_level2_id asc, arrival_date asc, duration asc, adults asc, children asc, success asc);

@@ -35,7 +35,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
     val range = lower to upper by 1000
 
     val bookRequestStream = ssc.sparkContext
-      .cassandraTable[QueryProxyRequestExt](keyspaceName, "query_proxy_request_ext")
+      .cassandraTable[RichBookRequest](keyspaceName, "rich_book_request")
       .where("time_in in ? AND table_name = ?", range.mkString(","), "book_request")
 //      .keyBy("query_uuid")
 
@@ -113,7 +113,7 @@ object ProceedToInflux extends LazyLogging with ConfigService with ProcessMonito
       // any action will trigger the underlying cassandra query, using collect to have a simple output
       try {
         println("======================================================")
-        rdd.foreach(o => println(o.queryUuid))
+        rdd.foreach(o => println(o))
         println(s"++++++++++++++++++++++++++++++++++++++++++++++++++++++ Count: ${rdd.count}")
         println("======================================================")
       } catch {
