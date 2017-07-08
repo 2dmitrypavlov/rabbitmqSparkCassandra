@@ -135,8 +135,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // PRE-BOOKING STREAM
     preBookingStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("pre_book_request")
-      //      rdd.take(1)
+
       rdd.map(l => PreBookRequest2(
         DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
