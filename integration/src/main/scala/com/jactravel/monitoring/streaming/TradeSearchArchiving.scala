@@ -1,5 +1,7 @@
 package com.jactravel.monitoring.streaming
 
+import java.sql.Timestamp
+
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.tmp.{BookRequestTime, PreBookRequestTime, QueryProxyRequestTime, SearchRequestTime}
 import com.jactravel.monitoring.streaming.ProceedToInflux.{conf, keyspaceName, ssc}
@@ -12,6 +14,7 @@ import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 import org.apache.spark.streaming.{Minutes, StreamingContext}
 import org.joda.time.{DateTime, DateTimeZone}
 
+import org.apache.spark.sql.functions._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -61,17 +64,25 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
 
 
     val dfSearchRequestFiltered = dfSearchRequest
-      .where($"query_second".isin(range.toList:_*))
+//      .where($"query_second".isin(range.toList:_*))
     val dfQueryProxyRequestRenamed = dfQueryProxRequest
       .withColumnRenamed("query_second", "query_proxy_second")
-      .where($"query_proxy_second".isin(range.toList:_*))
+//      .where($"query_proxy_second".isin(range.toList:_*))
     val dfFiltered = dfSearchRequestFiltered
       .join(dfQueryProxyRequestRenamed, dfSearchRequestFiltered("query_uuid") === dfQueryProxyRequestRenamed("query_uuid"), "left_outer")
 
 
-    println(s"Count: ${dfFiltered.count()} ")
+    val df = dfFiltered
+      .withColumn("timestamp", current_timestamp())
+//      .withWatermark("timestamp", "10 minutes")
+      .groupBy(window($"timestamp", "5 minutes", "1 seconds"),
+      $"query_second").count()
 
-    dfFiltered.printSchema()
+      //
+      //.agg("query_second", window("timestamp"))
+    println(s"Count: ${df.count()} ")
+
+    df.printSchema()
 
 //    val searchRequestStream = ssc
 //      .cassandraTable[SearchRequest2](keyspaceName, "search_request_second")

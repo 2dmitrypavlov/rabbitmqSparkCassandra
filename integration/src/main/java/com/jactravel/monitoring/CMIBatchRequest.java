@@ -100,18 +100,28 @@ public  final class CMIBatchRequest extends
             responseXML_ = input.readBytes();
             break;
           }
-          case 106: {
+          case 98: {
             bitField0_ |= 0x00000100;
-            success_ = input.readBytes();
+            login_ = input.readBytes();
+            break;
+          }
+          case 106: {
+            bitField0_ |= 0x00000200;
+            propertyCode_ = input.readBytes();
             break;
           }
           case 114: {
-            bitField0_ |= 0x00000200;
+            bitField0_ |= 0x00000400;
+            success_ = input.readBytes();
+            break;
+          }
+          case 122: {
+            bitField0_ |= 0x00000800;
             errorMessage_ = input.readBytes();
             break;
           }
-          case 138: {
-            bitField0_ |= 0x00000400;
+          case 130: {
+            bitField0_ |= 0x00001000;
             errorStackTrace_ = input.readBytes();
             break;
           }
@@ -472,17 +482,103 @@ public  final class CMIBatchRequest extends
     }
   }
 
-  // optional string success = 13;
-  public static final int SUCCESS_FIELD_NUMBER = 13;
-  private java.lang.Object success_;
+  // optional string login = 12;
+  public static final int LOGIN_FIELD_NUMBER = 12;
+  private java.lang.Object login_;
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string login = 12;</code>
    */
-  public boolean hasSuccess() {
+  public boolean hasLogin() {
     return ((bitField0_ & 0x00000100) == 0x00000100);
   }
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string login = 12;</code>
+   */
+  public java.lang.String getLogin() {
+    java.lang.Object ref = login_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        login_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string login = 12;</code>
+   */
+  public com.google.protobuf.ByteString
+      getLoginBytes() {
+    java.lang.Object ref = login_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      login_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional string propertyCode = 13;
+  public static final int PROPERTYCODE_FIELD_NUMBER = 13;
+  private java.lang.Object propertyCode_;
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  public boolean hasPropertyCode() {
+    return ((bitField0_ & 0x00000200) == 0x00000200);
+  }
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  public java.lang.String getPropertyCode() {
+    java.lang.Object ref = propertyCode_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        propertyCode_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  public com.google.protobuf.ByteString
+      getPropertyCodeBytes() {
+    java.lang.Object ref = propertyCode_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      propertyCode_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional string success = 14;
+  public static final int SUCCESS_FIELD_NUMBER = 14;
+  private java.lang.Object success_;
+  /**
+   * <code>optional string success = 14;</code>
+   */
+  public boolean hasSuccess() {
+    return ((bitField0_ & 0x00000400) == 0x00000400);
+  }
+  /**
+   * <code>optional string success = 14;</code>
    */
   public java.lang.String getSuccess() {
     java.lang.Object ref = success_;
@@ -499,7 +595,7 @@ public  final class CMIBatchRequest extends
     }
   }
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 14;</code>
    */
   public com.google.protobuf.ByteString
       getSuccessBytes() {
@@ -515,17 +611,17 @@ public  final class CMIBatchRequest extends
     }
   }
 
-  // optional string errorMessage = 14;
-  public static final int ERRORMESSAGE_FIELD_NUMBER = 14;
+  // optional string errorMessage = 15;
+  public static final int ERRORMESSAGE_FIELD_NUMBER = 15;
   private java.lang.Object errorMessage_;
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   public boolean hasErrorMessage() {
-    return ((bitField0_ & 0x00000200) == 0x00000200);
+    return ((bitField0_ & 0x00000800) == 0x00000800);
   }
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   public java.lang.String getErrorMessage() {
     java.lang.Object ref = errorMessage_;
@@ -542,7 +638,7 @@ public  final class CMIBatchRequest extends
     }
   }
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   public com.google.protobuf.ByteString
       getErrorMessageBytes() {
@@ -558,17 +654,17 @@ public  final class CMIBatchRequest extends
     }
   }
 
-  // optional string errorStackTrace = 17;
-  public static final int ERRORSTACKTRACE_FIELD_NUMBER = 17;
+  // optional string errorStackTrace = 16;
+  public static final int ERRORSTACKTRACE_FIELD_NUMBER = 16;
   private java.lang.Object errorStackTrace_;
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   public boolean hasErrorStackTrace() {
-    return ((bitField0_ & 0x00000400) == 0x00000400);
+    return ((bitField0_ & 0x00001000) == 0x00001000);
   }
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   public java.lang.String getErrorStackTrace() {
     java.lang.Object ref = errorStackTrace_;
@@ -585,7 +681,7 @@ public  final class CMIBatchRequest extends
     }
   }
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   public com.google.protobuf.ByteString
       getErrorStackTraceBytes() {
@@ -610,6 +706,8 @@ public  final class CMIBatchRequest extends
     responseUtcTimestamp_ = "";
     requestXML_ = "";
     responseXML_ = "";
+    login_ = "";
+    propertyCode_ = "";
     success_ = "";
     errorMessage_ = "";
     errorStackTrace_ = "";
@@ -651,13 +749,19 @@ public  final class CMIBatchRequest extends
       output.writeBytes(11, getResponseXMLBytes());
     }
     if (((bitField0_ & 0x00000100) == 0x00000100)) {
-      output.writeBytes(13, getSuccessBytes());
+      output.writeBytes(12, getLoginBytes());
     }
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
-      output.writeBytes(14, getErrorMessageBytes());
+      output.writeBytes(13, getPropertyCodeBytes());
     }
     if (((bitField0_ & 0x00000400) == 0x00000400)) {
-      output.writeBytes(17, getErrorStackTraceBytes());
+      output.writeBytes(14, getSuccessBytes());
+    }
+    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+      output.writeBytes(15, getErrorMessageBytes());
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      output.writeBytes(16, getErrorStackTraceBytes());
     }
     getUnknownFields().writeTo(output);
   }
@@ -702,15 +806,23 @@ public  final class CMIBatchRequest extends
     }
     if (((bitField0_ & 0x00000100) == 0x00000100)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(13, getSuccessBytes());
+        .computeBytesSize(12, getLoginBytes());
     }
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(14, getErrorMessageBytes());
+        .computeBytesSize(13, getPropertyCodeBytes());
     }
     if (((bitField0_ & 0x00000400) == 0x00000400)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(17, getErrorStackTraceBytes());
+        .computeBytesSize(14, getSuccessBytes());
+    }
+    if (((bitField0_ & 0x00000800) == 0x00000800)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(15, getErrorMessageBytes());
+    }
+    if (((bitField0_ & 0x00001000) == 0x00001000)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(16, getErrorStackTraceBytes());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -844,12 +956,16 @@ public  final class CMIBatchRequest extends
       bitField0_ = (bitField0_ & ~0x00000040);
       responseXML_ = "";
       bitField0_ = (bitField0_ & ~0x00000080);
-      success_ = "";
+      login_ = "";
       bitField0_ = (bitField0_ & ~0x00000100);
-      errorMessage_ = "";
+      propertyCode_ = "";
       bitField0_ = (bitField0_ & ~0x00000200);
-      errorStackTrace_ = "";
+      success_ = "";
       bitField0_ = (bitField0_ & ~0x00000400);
+      errorMessage_ = "";
+      bitField0_ = (bitField0_ & ~0x00000800);
+      errorStackTrace_ = "";
+      bitField0_ = (bitField0_ & ~0x00001000);
       return this;
     }
 
@@ -913,13 +1029,21 @@ public  final class CMIBatchRequest extends
       if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
         to_bitField0_ |= 0x00000100;
       }
-      result.success_ = success_;
+      result.login_ = login_;
       if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
         to_bitField0_ |= 0x00000200;
       }
-      result.errorMessage_ = errorMessage_;
+      result.propertyCode_ = propertyCode_;
       if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
         to_bitField0_ |= 0x00000400;
+      }
+      result.success_ = success_;
+      if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        to_bitField0_ |= 0x00000800;
+      }
+      result.errorMessage_ = errorMessage_;
+      if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
+        to_bitField0_ |= 0x00001000;
       }
       result.errorStackTrace_ = errorStackTrace_;
       result.bitField0_ = to_bitField0_;
@@ -976,18 +1100,28 @@ public  final class CMIBatchRequest extends
         responseXML_ = other.responseXML_;
         onChanged();
       }
-      if (other.hasSuccess()) {
+      if (other.hasLogin()) {
         bitField0_ |= 0x00000100;
+        login_ = other.login_;
+        onChanged();
+      }
+      if (other.hasPropertyCode()) {
+        bitField0_ |= 0x00000200;
+        propertyCode_ = other.propertyCode_;
+        onChanged();
+      }
+      if (other.hasSuccess()) {
+        bitField0_ |= 0x00000400;
         success_ = other.success_;
         onChanged();
       }
       if (other.hasErrorMessage()) {
-        bitField0_ |= 0x00000200;
+        bitField0_ |= 0x00000800;
         errorMessage_ = other.errorMessage_;
         onChanged();
       }
       if (other.hasErrorStackTrace()) {
-        bitField0_ |= 0x00000400;
+        bitField0_ |= 0x00001000;
         errorStackTrace_ = other.errorStackTrace_;
         onChanged();
       }
@@ -1572,16 +1706,164 @@ public  final class CMIBatchRequest extends
       return this;
     }
 
-    // optional string success = 13;
-    private java.lang.Object success_ = "";
+    // optional string login = 12;
+    private java.lang.Object login_ = "";
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string login = 12;</code>
      */
-    public boolean hasSuccess() {
+    public boolean hasLogin() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string login = 12;</code>
+     */
+    public java.lang.String getLogin() {
+      java.lang.Object ref = login_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        login_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string login = 12;</code>
+     */
+    public com.google.protobuf.ByteString
+        getLoginBytes() {
+      java.lang.Object ref = login_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        login_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string login = 12;</code>
+     */
+    public Builder setLogin(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000100;
+      login_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string login = 12;</code>
+     */
+    public Builder clearLogin() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      login_ = getDefaultInstance().getLogin();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string login = 12;</code>
+     */
+    public Builder setLoginBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000100;
+      login_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string propertyCode = 13;
+    private java.lang.Object propertyCode_ = "";
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public boolean hasPropertyCode() {
+      return ((bitField0_ & 0x00000200) == 0x00000200);
+    }
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public java.lang.String getPropertyCode() {
+      java.lang.Object ref = propertyCode_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        propertyCode_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPropertyCodeBytes() {
+      java.lang.Object ref = propertyCode_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        propertyCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public Builder setPropertyCode(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+      propertyCode_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public Builder clearPropertyCode() {
+      bitField0_ = (bitField0_ & ~0x00000200);
+      propertyCode_ = getDefaultInstance().getPropertyCode();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string propertyCode = 13;</code>
+     */
+    public Builder setPropertyCodeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+      propertyCode_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string success = 14;
+    private java.lang.Object success_ = "";
+    /**
+     * <code>optional string success = 14;</code>
+     */
+    public boolean hasSuccess() {
+      return ((bitField0_ & 0x00000400) == 0x00000400);
+    }
+    /**
+     * <code>optional string success = 14;</code>
      */
     public java.lang.String getSuccess() {
       java.lang.Object ref = success_;
@@ -1595,7 +1877,7 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 14;</code>
      */
     public com.google.protobuf.ByteString
         getSuccessBytes() {
@@ -1611,51 +1893,51 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 14;</code>
      */
     public Builder setSuccess(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000100;
+  bitField0_ |= 0x00000400;
       success_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 14;</code>
      */
     public Builder clearSuccess() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000400);
       success_ = getDefaultInstance().getSuccess();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 14;</code>
      */
     public Builder setSuccessBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000100;
+  bitField0_ |= 0x00000400;
       success_ = value;
       onChanged();
       return this;
     }
 
-    // optional string errorMessage = 14;
+    // optional string errorMessage = 15;
     private java.lang.Object errorMessage_ = "";
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public boolean hasErrorMessage() {
-      return ((bitField0_ & 0x00000200) == 0x00000200);
+      return ((bitField0_ & 0x00000800) == 0x00000800);
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public java.lang.String getErrorMessage() {
       java.lang.Object ref = errorMessage_;
@@ -1669,7 +1951,7 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public com.google.protobuf.ByteString
         getErrorMessageBytes() {
@@ -1685,51 +1967,51 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public Builder setErrorMessage(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000200;
+  bitField0_ |= 0x00000800;
       errorMessage_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public Builder clearErrorMessage() {
-      bitField0_ = (bitField0_ & ~0x00000200);
+      bitField0_ = (bitField0_ & ~0x00000800);
       errorMessage_ = getDefaultInstance().getErrorMessage();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 15;</code>
      */
     public Builder setErrorMessageBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000200;
+  bitField0_ |= 0x00000800;
       errorMessage_ = value;
       onChanged();
       return this;
     }
 
-    // optional string errorStackTrace = 17;
+    // optional string errorStackTrace = 16;
     private java.lang.Object errorStackTrace_ = "";
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public boolean hasErrorStackTrace() {
-      return ((bitField0_ & 0x00000400) == 0x00000400);
+      return ((bitField0_ & 0x00001000) == 0x00001000);
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public java.lang.String getErrorStackTrace() {
       java.lang.Object ref = errorStackTrace_;
@@ -1743,7 +2025,7 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public com.google.protobuf.ByteString
         getErrorStackTraceBytes() {
@@ -1759,36 +2041,36 @@ public  final class CMIBatchRequest extends
       }
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public Builder setErrorStackTrace(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000400;
+  bitField0_ |= 0x00001000;
       errorStackTrace_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public Builder clearErrorStackTrace() {
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00001000);
       errorStackTrace_ = getDefaultInstance().getErrorStackTrace();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 16;</code>
      */
     public Builder setErrorStackTraceBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000400;
+  bitField0_ |= 0x00001000;
       errorStackTrace_ = value;
       onChanged();
       return this;

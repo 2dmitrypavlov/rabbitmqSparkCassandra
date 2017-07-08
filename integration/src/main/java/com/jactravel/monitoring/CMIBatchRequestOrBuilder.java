@@ -121,47 +121,77 @@ public interface CMIBatchRequestOrBuilder
   com.google.protobuf.ByteString
       getResponseXMLBytes();
 
-  // optional string success = 13;
+  // optional string login = 12;
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string login = 12;</code>
+   */
+  boolean hasLogin();
+  /**
+   * <code>optional string login = 12;</code>
+   */
+  java.lang.String getLogin();
+  /**
+   * <code>optional string login = 12;</code>
+   */
+  com.google.protobuf.ByteString
+      getLoginBytes();
+
+  // optional string propertyCode = 13;
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  boolean hasPropertyCode();
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  java.lang.String getPropertyCode();
+  /**
+   * <code>optional string propertyCode = 13;</code>
+   */
+  com.google.protobuf.ByteString
+      getPropertyCodeBytes();
+
+  // optional string success = 14;
+  /**
+   * <code>optional string success = 14;</code>
    */
   boolean hasSuccess();
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 14;</code>
    */
   java.lang.String getSuccess();
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 14;</code>
    */
   com.google.protobuf.ByteString
       getSuccessBytes();
 
-  // optional string errorMessage = 14;
+  // optional string errorMessage = 15;
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   boolean hasErrorMessage();
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   java.lang.String getErrorMessage();
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 15;</code>
    */
   com.google.protobuf.ByteString
       getErrorMessageBytes();
 
-  // optional string errorStackTrace = 17;
+  // optional string errorStackTrace = 16;
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   boolean hasErrorStackTrace();
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   java.lang.String getErrorStackTrace();
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 16;</code>
    */
   com.google.protobuf.ByteString
       getErrorStackTraceBytes();
