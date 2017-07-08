@@ -5,11 +5,11 @@ SELECT br.query_uuid AS query_uuid,
 	trade_group,
 	trade_parent_group,
 	sales_channel,
-			 (unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 AS response_time_ms,
+	(unix_timestamp(end_utc_timestamp) - unix_timestamp(start_utc_timestamp)) * 1000 AS response_time_ms,
 	error_stack_trace,
 	success,
 	xml_booking_login,
-			 window(start_utc_timestamp, '5 minutes').end AS time
+	window(start_utc_timestamp, '5 minutes').end AS time
 FROM BookRequest AS br,
 	SalesChannel AS sc,
 	Trade AS t,

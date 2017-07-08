@@ -1,9 +1,5 @@
 package com.jactravel.monitoring.streaming
 
-import java.sql.Timestamp
-import java.time._
-import java.util.Date
-
 import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.tmp.{BookRequestTime, PreBookRequestTime, QueryProxyRequestTime, SearchRequestTime}
 import com.jactravel.monitoring.util.DateTimeUtils
@@ -350,7 +346,8 @@ trait ProcessMonitoringStream extends LazyLogging {
       , cmiRequestProto.getForwardedResponseUtcTimestamp
       , cmiRequestProto.getRequestXML
       , cmiRequestProto.getResponseXML
-      , cmiRequestProto.getXmlBookingLogin
+      , cmiRequestProto.getLogin
+      , cmiRequestProto.getPropertyCode
       , cmiRequestProto.getSuccess
       , cmiRequestProto.getErrorMessage
       , cmiRequestProto.getRequestProcessor.getNumber
@@ -371,6 +368,8 @@ trait ProcessMonitoringStream extends LazyLogging {
       , cmiBatchRequestProto.getResponseUtcTimestamp
       , cmiBatchRequestProto.getRequestXML
       , cmiBatchRequestProto.getResponseXML
+      , cmiBatchRequestProto.getLogin
+      , cmiBatchRequestProto.getPropertyCode
       , cmiBatchRequestProto.getSuccess
       , cmiBatchRequestProto.getErrorMessage
       , cmiBatchRequestProto.getErrorStackTrace

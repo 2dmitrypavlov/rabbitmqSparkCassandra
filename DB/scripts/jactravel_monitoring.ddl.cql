@@ -376,7 +376,8 @@ message CMIRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_request (
+CREATE TABLE jactravel_monitoring_new.cmi_request_second (
+  query_second bigint,
   query_uuid text,
   supplier_ip text,
   cmi_query_type int,
@@ -387,14 +388,15 @@ CREATE TABLE jactravel_monitoring_new.cmi_request (
   forwarded_response_utc_timestamp text,
   request_xml text,
   response_xml text,
-  xml_booking_login text,
+  login text,
+  property_code text,
   success text,
   error_message text,
   request_processor int,
   request_url text,
   error_stack_trace text,
-  PRIMARY KEY (query_uuid)
-);
+  PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
 
 /*
 message CMIBatchRequest {
@@ -412,7 +414,8 @@ message CMIBatchRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_batch_request (
+CREATE TABLE jactravel_monitoring_new.cmi_batch_request_second (
+  query_second bigint
   query_uuid text,
   supplier_ip text,
   cmi_query_type int,
@@ -421,11 +424,13 @@ CREATE TABLE jactravel_monitoring_new.cmi_batch_request (
   response_utc_timestamp text,
   request_xml text,
   response_xml text,
+  login text,
+  property_code text,
   success text,
   error_message text,
   error_stack_trace text,
-  PRIMARY KEY (query_uuid)
-);
+  PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
 
 CREATE TABLE jactravel_monitoring_new.query_uuid_proceed (
   query_uuid text,

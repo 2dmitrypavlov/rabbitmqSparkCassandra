@@ -12,6 +12,8 @@ case class CmiBatchRequest(
                        responseUtcTimestamp: String,
                        requestXml: String,
                        responseXml: String,
+                       login: String,
+                       propertyCode: String,
                        success: String,
                        errorMessage: String,
                        errorStackTrace: String
@@ -27,6 +29,8 @@ case class CmiBatchRequest2(
                             responseUtcTimestamp: String,
                             requestXml: String,
                             responseXml: String,
+                            login: String,
+                            propertyCode: String,
                             success: String,
                             errorMessage: String,
                             errorStackTrace: String
