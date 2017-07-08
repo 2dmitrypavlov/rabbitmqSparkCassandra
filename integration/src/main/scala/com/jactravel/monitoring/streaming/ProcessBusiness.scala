@@ -285,7 +285,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         , l.requestURL
         , l.errorStackTrace
       ))
-    }.saveToCassandra(keyspaceName, "cmi_request_second")
+    }.saveToCassandra(keyspaceName, "cmi_request_updated_second")
 
 
     cmiBatchRequestStream.transform { rdd =>
@@ -307,7 +307,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           , l.errorStackTrace)
       }
 
-    }.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request")
+    }.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request_updated_second")
 
 
     ssc.start()
