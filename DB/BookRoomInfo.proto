@@ -17,5 +17,4 @@ message BookRoomInfo {
 	optional string priceDiff = 7;
 	optional int32 roomCount = 8;
 	optional string preBookingToken = 9;
-	optional string BookingToken = 10;
 }
