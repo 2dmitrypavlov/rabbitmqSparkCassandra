@@ -376,7 +376,8 @@ message CMIRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_request (
+CREATE TABLE jactravel_monitoring_new.cmi_request_second (
+  query_second bigint,
   query_uuid text,
   supplier_ip text,
   cmi_query_type int,
@@ -387,14 +388,15 @@ CREATE TABLE jactravel_monitoring_new.cmi_request (
   forwarded_response_utc_timestamp text,
   request_xml text,
   response_xml text,
-  xml_booking_login text,
+  login text,
+  property_code text,
   success text,
   error_message text,
   request_processor int,
   request_url text,
   error_stack_trace text,
-  PRIMARY KEY (query_uuid)
-);
+  PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
 
 /*
 message CMIBatchRequest {
@@ -412,7 +414,8 @@ message CMIBatchRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_batch_request (
+CREATE TABLE jactravel_monitoring_new.cmi_batch_request_second (
+  query_second bigint
   query_uuid text,
   supplier_ip text,
   cmi_query_type int,
@@ -421,11 +424,13 @@ CREATE TABLE jactravel_monitoring_new.cmi_batch_request (
   response_utc_timestamp text,
   request_xml text,
   response_xml text,
+  login text,
+  property_code text,
   success text,
   error_message text,
   error_stack_trace text,
-  PRIMARY KEY (query_uuid)
-);
+  PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
 
 CREATE TABLE jactravel_monitoring_new.query_uuid_proceed (
   query_uuid text,
@@ -433,183 +438,121 @@ CREATE TABLE jactravel_monitoring_new.query_uuid_proceed (
   PRIMARY KEY (query_uuid)
 );
 
-////############### second
+CREATE TABLE jactravel_monitoring_new.book_request_count (
+booking_count text,
+tm text,
+brand_name text,
+sales_channel text,
+trade_group text,
+trade_name text,
+trade_parent_group text,
+xmL_booking_login text,
+PRIMARY KEY (tm,brand_name,sales_channel,trade_group,booking_count)
+);
+
+
+CREATE TABLE jactravel_monitoring_new.book_request_t (
+query_uuid text,
+search_query_uuid text,
+pre_book_query_uuid text,
+search_processor int,
+host text,
+start_utc_timestamp text,
+end_utc_timestamp text,
+trade_id int,
+brand_id int,
+sales_channel_id int,
+property_id int,
+arrival_date text,
+duration int,
+rooms FROZEN<LIST<book_room_info>>,
+currency_id int,
+success text,
+error_message text,
+error_stack_trace text,
+PRIMARY KEY (start_utc_timestamp)
+);
+
+CREATE TABLE jactravel_monitoring_new.query_proxy_request_t (
+query_uuid text,
+client_ip text,
+search_query_type int,
+host text,
+client_request_utc_timestamp text,
+client_response_utc_timestamp text,
+forwarded_request_utc_timestamp text,
+forwarded_response_utc_timestamp text,
+request_xml text,
+response_xml text,
+xml_booking_login text,
+success text,
+error_message text,
+request_processor int,
+request_url text,
+error_stack_trace text,
+PRIMARY KEY (client_request_utc_timestamp)
+);
+
 CREATE TABLE jactravel_monitoring_new.query_proxy_request_second (
-  query_second bigint,
-  query_uuid text,
-  client_ip text,
-  client_request_utc_timestamp text,
-  client_response_utc_timestamp text,
-  error_message text,
-  error_stack_trace text,
-  forwarded_request_utc_timestamp text,
-  forwarded_response_utc_timestamp text,
-  host text,
-  request_processor int,
-  request_url text,
-  request_xml text,
-  response_xml text,
-  search_query_type int,
-  success text,
-  xml_booking_login text,
-PRIMARY KEY (query_second,query_uuid)
-)
+query_second bigint,
+query_uuid text,
+client_ip text,
+client_request_utc_timestamp text,
+client_response_utc_timestamp text,
+error_message text,
+error_stack_trace text,
+forwarded_request_utc_timestamp text,
+forwarded_response_utc_timestamp text,
+host text,
+request_processor int,
+request_url text,
+request_xml text,
+response_xml text,
+search_query_type int,
+success text,
+xml_booking_login text,
+PRIMARY KEY (query_second, query_uuid)
+) WITH CLUSTERING ORDER BY (query_uuid asc);
 
 CREATE TABLE jactravel_monitoring_new.search_request_second (
-  query_second bigint,
-  query_uuid text,
-  host text,
-  request_info FROZEN<request_info>,
-  response_info FROZEN<response_info >,
-PRIMARY KEY (query_second,query_uuid)
+query_second bigint,
+query_uuid text,
+host text,
+request_info FROZEN<request_info>,
+response_info FROZEN<response_info >,
+PRIMARY KEY (query_uuid)
 );
 
-CREATE TABLE jactravel_monitoring_new.book_request_second (
-  query_second bigint,
-  query_uuid text,
-  search_query_uuid text,
-  pre_book_query_uuid text,
-  search_processor int,
-  host text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
+
+CREATE TABLE jactravel_monitoring_new.trade_search_archive (
+  search_date date,
   trade_id int,
+  xml_book_login text,
+  search_hour tinyint,
+  request_processor text,
   brand_id int,
   sales_channel_id int,
-  property_id int,
-  arrival_date text,
-  duration int,
-  rooms FROZEN<LIST<book_room_info>>,
-  currency_id int,
+  search_geo_level text,
+  geo_level1_id int,
+  geo_level2_id int,
+  arrival_date date,
+  duration tinyint,
+  adults tinyint,
+  children tinyint,
   success text,
-  error_message text,
-  error_stack_trace text,
-PRIMARY KEY (query_second,query_uuid)
-);
-
-CREATE TABLE jactravel_monitoring_new.pre_book_request_second (
-  query_second bigint,
-  query_uuid text,
-  search_query_uuid text,
-  search_processor int,
-  host text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
-  trade_id int,
-  brand_id int,
-  sales_channel_id int,
-  property_id int,
-  arrival_date text,
-  duration int,
-  rooms FROZEN<LIST<book_room_info>>,
-  currency_id int,
-  success text,
-  error_message text,
-  error_stack_trace text,
-  PRIMARY KEY (query_second,query_uuid)
-);
-
-CREATE TABLE jactravel_monitoring_new.supplier_book_request_second (
-  query_second bigint,
-  query_uuid text,
-  host text,
-  source text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
-  timeout int,
+  property_reference_count int,			// Sum of all propertyReferenceCount
   property_count int,
-  success text,
-  error_message text,
-  error_stack_trace text,
-  request_xml text,
-  response_xml text,
-  request_count int,
-  PRIMARY KEY (query_second, query_uuid)
-);
-
-CREATE TABLE jactravel_monitoring_new.supplier_pre_book_request_second (
-  query_second bigint,
-  query_uuid text,
-  host text,
-  source text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
-  timeout int,
-  property_count int,
-  success text,
-  error_message text,
-  error_stack_trace text,
-  request_xml text,
-  response_xml text,
-  request_count int,
-  PRIMARY KEY (query_second,query_uuid)
-);
-
-CREATE TABLE jactravel_monitoring_new.supplier_search_request_second (
-  query_second bigint,
-  query_uuid text,
-  host text,
-  source text,
-  start_utc_timestamp text,
-  end_utc_timestamp text,
-  timeout int,
-  property_count int,
-  success text,
-  error_message text,
-  error_stack_trace text,
-  request_xml text,
-  response_xml text,
-  request_count int,
-  PRIMARY KEY (query_second,query_uuid)
-);
-
-CREATE TABLE jactravel_monitoring_new.cmi_request_second (
-  query_second bigint,
-  query_uuid text,
-  supplier_ip text,
-  cmi_query_type int,
-  host text,
-  client_request_utc_timestamp text,
-  client_response_utc_timestamp text,
-  forwarded_request_utc_timestamp text,
-  forwarded_response_utc_timestamp text,
-  request_xml text,
-  response_xml text,
-  xml_booking_login text,
-  success text,
-  error_message text,
-  request_processor int,
-  request_url text,
-  error_stack_trace text,
-  PRIMARY KEY (query_second, query_uuid)
-);
-
-
-CREATE TABLE jactravel_monitoring_new.query_proxy_request_ext (
-  query_uuid text,
-  brand_id int,
-  brand_name text,
-  trade_id int,
-  trade_name text,
-  trade_group text,
-  trade_group_parent text,
-  sales_channel_id int,
-  sales_channel text,
-  delta_request_time decimal,
-  error_stack_trace text,
-  success text,
-  xml_booking_login text,
-  time_in decimal,
-  table_name text,
-  PRIMARY KEY (query_uuid)
-);
-
-CREATE MATERIALIZED VIEW jactravel_monitoring_new.rich_book_request AS
-  SELECT query_uuid, brand_name, delta_request_time, error_stack_trace, sales_channel, success, table_name, time_in,
-  trade_group, trade_group_parent, trade_name, xml_booking_login
-  FROM query_proxy_request_ext
-  WHERE time_in IS NOT NULL AND query_uuid IS NOT NULL AND table_name IS NOT NULL
-  PRIMARY KEY ( time_in, query_uuid );
-
-
-
+  priced_room_count int,
+  total_time decimal,					// Sum of all QueryProxyTime (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p50 decimal,				// 50% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p95 decimal,				// 95% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  total_time_p99 decimal,				// 99% percentile (clientResponseUtcTimestamp - clientRequestUtcTimestamp)
+  processing_time decimal,				// Sum of all SearchRequest times (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p50 decimal,			// 50% percentile (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p95 decimal,			// 95% percentile (endUtcTimestamp - startUtcTimestamp)
+  processing_time_p99 decimal,			// 99% percentile (endUtcTimestamp - startUtcTimestamp)
+  search_count int,					// count of all searches
+  primary key (search_date, trade_id, xml_book_login, search_hour, request_processor, brand_id, sales_channel_id,
+      search_geo_level, geo_level1_id, geo_level2_id, arrival_date, duration, adults, children, success)
+) with CLUSTERING ORDER BY (trade_id asc, xml_book_login asc, search_hour asc, request_processor asc, brand_id asc, sales_channel_id asc, search_geo_level asc,
+geo_level1_id asc, geo_level2_id asc, arrival_date asc, duration asc, adults asc, children asc, success asc);

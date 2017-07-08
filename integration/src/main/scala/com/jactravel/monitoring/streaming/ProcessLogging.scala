@@ -136,15 +136,6 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
         data =>
           QueryProxyRequestExt(
             queryUuid = data.queryUUID,
-            brandName = brands.get(data.brandId),
-            tradeName = trades.get(data.tradeId).map(_.trade_name.getOrElse("")),
-            tradeGroup = trades.get(data.tradeId).map(_.trade_group.getOrElse("")),
-            tradeGroupParent = trades.get(data.tradeId).map(_.trade_parent_group.getOrElse("")),
-            salesChannel = saleschannels.get(data.salesChannelId),
-            deltaRequestTime = Some(DateTimeUtils.datesDiff(data.endUtcTimestamp, data.startUtcTimestamp, ChronoUnit.SECONDS)),
-            errorStackTrace = Some(data.errorStackTrace),
-            success = Some(data.success),
-            timeIn = Some(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
             tableName = Some("book_request")
           )
       }
@@ -165,9 +156,7 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       .map {
         data =>
           QueryProxyRequestExt(
-            queryUuid = data.queryUUID,
-            timeIn = Some(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
-            xmlBookingLogin = Some(data.xmlBookingLogin)
+            queryUuid = data.queryUUID
           )
       }
       .saveToCassandra(keyspaceName, "query_proxy_request_ext", writeConf = WriteConf(ttl = TTLOption.constant(15.minutes)))

@@ -20,7 +20,9 @@ message CMIBatchRequest {
 	optional string responseUtcTimestamp = 7;
 	optional string requestXML = 10;
 	optional string responseXML = 11;
-	optional string success = 13;
-	optional string errorMessage = 14;
-	optional string errorStackTrace = 17;
+	optional string login = 12;
+	optional string propertyCode = 13;
+	optional string success = 14;
+	optional string errorMessage = 15;
+	optional string errorStackTrace = 16;
 }
