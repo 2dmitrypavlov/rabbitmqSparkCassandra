@@ -1,10 +1,20 @@
 package com.jactravel.monitoring.streaming
 
+import java.time.temporal.ChronoUnit
+import java.util.concurrent.TimeUnit
+
+import com.datastax.spark.connector.writer.{TTLOption, WriteConf}
 import com.jactravel.monitoring.model._
+//import com.jactravel.monitoring.model.Ca
 import com.jactravel.monitoring.model.tmp.{BookRequestTime, PreBookRequestTime, QueryProxyRequestTime, SearchRequestTime}
+import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by eugene on 5/30/17.
@@ -12,32 +22,68 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitoringStream {
 
-//  override val keyspaceName: String = "jactravel_monitoring"
+  //  override val keyspaceName: String = "jactravel_monitoring"
 
   def main(args: Array[String]): Unit = {
 
     import com.datastax.spark.connector.streaming._
 
-    ssc = new StreamingContext(conf, Seconds(1))
+    val spark = SparkSession
+      .builder()
+      .config(conf)
+      .getOrCreate()
 
-    //    val bookingStream = RabbitMQUtils.createStream[BookRequest](ssc
-    //      , prepareQueueMap("BookRequest")
-    //      , messageBookingHandler)
+    ssc = new StreamingContext(spark.sparkContext, Seconds(1))
+
+    import spark.implicits._
+
+    val brands = spark.read
+      .option("header", "true") // Use first line of all files as header
+      .option("inferSchema", "true") // Automatically infer data types
+      .csv(aws + "brand.csv")
+      .as[Brand]
+      .map(b => b.brand_id -> b.brand_name)
+      .collect().toMap
+
+    val trades = spark
+      .read
+      .option("header", "true") // Use first line of all files as header
+      .option("inferSchema", "true") // Automatically infer data types
+      .csv(aws + "trade.csv")
+      .as[Trade]
+      .map(t => t.trade_id -> t)
+      .collect().toMap
+
+//    val saleschannels = spark
+//      .read
+//      .option("header", "true") // Use first line of all files as header
+//      .option("inferSchema", "true") // Automatically infer data types
+//      .load(aws + "saleschannel.csv")
+//      .as[SalesChannel]
+//      .map(s => s.sales_channel_id -> s.sales_channel)
+//      .collect().toMap
+
+
+    val saleschannels = ssc
+      .cassandraTable[SalesChannel](keyspaceName, "sales_channel")
+      .map(s => s.sales_channel_id -> s.sales_channel)
+      .collect().toMap
+
     val bookingStream = RabbitMQUtils.createStream[BookRequestTime](ssc
       , prepareQueueMap("BookRequest")
       , messageBookingTimeHandler)
 
-//    val preBookingStream = RabbitMQUtils.createStream[PreBookRequest](ssc
-//      , prepareQueueMap("PreBookRequest")
-//      , messagePreBookingHandler)
+    //    val preBookingStream = RabbitMQUtils.createStream[PreBookRequest](ssc
+    //      , prepareQueueMap("PreBookRequest")
+    //      , messagePreBookingHandler)
 
     val preBookingStream = RabbitMQUtils.createStream[PreBookRequestTime](ssc
       , prepareQueueMap("PreBookRequest")
       , messagePreBookingTimeHandler)
 
-//    val searchRequestStream = RabbitMQUtils.createStream[SearchRequest](ssc
-//      , prepareQueueMap("SearchRequest")
-//      , messageSearchRequestHandler)
+    //    val searchRequestStream = RabbitMQUtils.createStream[SearchRequest](ssc
+    //      , prepareQueueMap("SearchRequest")
+    //      , messageSearchRequestHandler)
 
     val searchRequestStream = RabbitMQUtils.createStream[SearchRequestTime](ssc
       , prepareQueueMap("SearchRequest")
@@ -55,9 +101,9 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
       , prepareQueueMap("SupplierSearchRequest")
       , messageSupplierSearchRequestHandler)
 
-//    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
-//      , prepareQueueMap("QueryProxyRequest")
-//      , messageQueryProxyHandler)
+    //    val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequest](ssc
+    //      , prepareQueueMap("QueryProxyRequest")
+    //      , messageQueryProxyHandler)
 
     val queryProxyStream = RabbitMQUtils.createStream[QueryProxyRequestTime](ssc
       , prepareQueueMap("QueryProxyRequest")
@@ -84,24 +130,51 @@ object ProcessLogging extends LazyLogging with ConfigService with ProcessMonitor
     cmiBatchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request")
 
     // Store query uuid
-//    bookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    searchRequestStream.map { br => QueryUUIDProceed(queryUUID = br.queryUUID)
-//    }.repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    //    supplierBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    queryProxyStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
-//    cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
-//      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    bookingStream
+      .repartition(numPar)
+      .map {
+        data =>
+          QueryProxyRequestExt(
+            queryUuid = data.queryUUID,
+            brandName = brands.get(data.brandId),
+            tradeName = trades.get(data.tradeId).map(_.trade_name.getOrElse("")),
+            tradeGroup = trades.get(data.tradeId).map(_.trade_group.getOrElse("")),
+            tradeGroupParent = trades.get(data.tradeId).map(_.trade_parent_group.getOrElse("")),
+            salesChannel = saleschannels.get(data.salesChannelId),
+            deltaRequestTime = Some(DateTimeUtils.datesDiff(data.endUtcTimestamp, data.startUtcTimestamp, ChronoUnit.SECONDS)),
+            errorStackTrace = Some(data.errorStackTrace),
+            success = Some(data.success),
+            timeIn = Some(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+            tableName = Some("book_request")
+          )
+      }
+      .saveToCassandra(keyspaceName, "query_proxy_request_ext", writeConf = WriteConf(ttl = TTLOption.constant(15.minutes)))
+    //    preBookingStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    //    searchRequestStream.map { br => QueryUUIDProceed(queryUUID = br.queryUUID)
+    //    }.repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    //    //    supplierBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    //    supplierPreBookRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    //    supplierSearchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+
+
+    queryProxyStream.repartition(numPar)
+      .map {
+        data =>
+          QueryProxyRequestExt(
+            queryUuid = data.queryUUID,
+            timeIn = Some(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())),
+            xmlBookingLogin = Some(data.xmlBookingLogin)
+          )
+      }
+      .saveToCassandra(keyspaceName, "query_proxy_request_ext", writeConf = WriteConf(ttl = TTLOption.constant(15.minutes)))
+    //    cmiRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
+    //    cmiBatchRequestStream.map(br => QueryUUIDProceed(queryUUID = br.queryUUID))
+    //      .repartition(numPar).saveToCassandra(keyspaceName, "query_uuid_proceed")
 
 
     // Start the computation

@@ -3,13 +3,11 @@ package com.jactravel.monitoring.streaming
 import java.sql.Date
 
 import com.jactravel.monitoring.model._
-import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
-import com.jactravel.monitoring.streaming.ProcessLogging.keyspaceName
 import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
-import org.apache.spark.sql.{Row, SaveMode, SparkSession}
-import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.rabbitmq.RabbitMQUtils
 
 /**
   * Created by dmitry on 7/4/17.
@@ -115,52 +113,194 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
 //    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
 //    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
+
+    // BOOKING STREAM
     bookingStream.transform { rdd =>
+
       //      spark.createDataFrame(rdd).createOrReplaceTempView("BookRequest")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "book_request")
+
+      rdd.map(l => BookRequest2(
+        DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.searchQueryUUID
+        , l.preBookQueryUUID
+        , l.searchProcessor
+        , l.host
+        , l.startUtcTimestamp
+        , l.endUtcTimestamp
+        , l.tradeId
+        , l.brandId
+        , l.salesChannelId
+        , l.propertyId
+        , l.arrivalDate
+        , l.duration
+        , l.rooms
+        , l.currencyId
+        , l.success
+        , l.errorMessage
+        , l.errorStackTrace))
+    }.saveToCassandra(keyspaceName, "book_request_second")
+
+    // PRE-BOOKING STREAM
     preBookingStream.transform { rdd =>
+
       //      spark.createDataFrame(rdd).createOrReplaceTempView("pre_book_request")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "pre_book_request")
+
+      rdd.map(l => PreBookRequest2(
+        DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.searchQueryUUID
+        , l.searchProcessor
+        , l.host
+        , l.startUtcTimestamp
+        , l.endUtcTimestamp
+        , l.tradeId
+        , l.brandId
+        , l.salesChannelId
+        , l.propertyId
+        , l.arrivalDate
+        , l.duration
+        , l.rooms
+        , l.currencyId
+        , l.success
+        , l.errorMessage
+        , l.errorStackTrace))
+    }.saveToCassandra(keyspaceName, "pre_book_request_second")
+
+    // SEARCH REQUEST STREAM
     searchRequestStream.transform { rdd =>
+
       //      spark.createDataFrame(rdd).createOrReplaceTempView("search_request")
       //      rdd.take(1)
-      rdd.map(l => SearchRequest2(DateTimeUtils.parseDate(l.requestInfo.startUtcTimestamp).getTime / 1000L
-        , l.queryUUID, l.host, l.requestInfo, l.responseInfo))
+      rdd.map(l => SearchRequest2(
+        DateTimeUtils.parseDate(l.requestInfo.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.host
+        , l.requestInfo
+        , l.responseInfo
+      ))
     }.saveToCassandra(keyspaceName, "search_request_second")
+
+    // SUPPLIER BOOK REQUEST STREAM
     supplierBookhRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_book_request")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "supplier_book_request")
+      rdd.map(l => SupplierBookRequest2(
+        DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.host
+        , l.source
+        , l.startUtcTimestamp
+        , l.endUtcTimestamp
+        , l.timeout
+        , l.propertyCount
+        , l.success
+        , l.errorMessage
+        , l.errorStackTrace
+        , l.requestXml
+        , l.responseXml
+        , l.requestCount
+      ))
+    }.saveToCassandra(keyspaceName, "supplier_book_request_second")
+
+    // SUPPLIER PRE BOOK REQUEST STREAM
     supplierPreBookRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_pre_book_request")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "supplier_pre_book_request")
+      rdd.map(l => SupplierPreBookRequest2(
+        DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.host
+        , l.source
+        , l.startUtcTimestamp
+        , l.endUtcTimestamp
+        , l.timeout
+        , l.propertyCount
+        , l.success
+        , l.errorMessage
+        , l.errorStackTrace
+        , l.requestXml
+        , l.responseXml
+        , l.requestCount
+      ))
+    }.saveToCassandra(keyspaceName, "supplier_pre_book_request_second")
+
+    // SUPPLIER SEARCH REQUEST STREAM
     supplierSearchRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "supplier_search_request")
+      rdd.map(l => SupplierSearchRequest2(
+        DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.host
+        , l.source
+        , l.startUtcTimestamp
+        , l.endUtcTimestamp
+        , l.timeout
+        , l.propertyCount
+        , l.success
+        , l.errorMessage
+        , l.errorStackTrace
+        , l.requestXml
+        , l.responseXml
+        , l.requestCount
+      ))
+    }.saveToCassandra(keyspaceName, "supplier_search_request_second")
+
+    // QUERY PROXY REQUEST STREAM
     queryProxyStream.transform { rdd =>
-      //spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
-      rdd.map(l => QueryProxyRequest3(l.clientRequestUtcTimestamp.getTime / 1000L, l.queryUUID, l.clientIp, l.searchQueryType
-        , l.host, convertJavaDateToSqlDate(l.clientRequestUtcTimestamp), convertJavaDateToSqlDate(l.clientResponseUtcTimestamp)
-        , convertJavaDateToSqlDate(l.forwardedRequestUtcTimestamp)
-        , convertJavaDateToSqlDate(l.forwardedResponseUtcTimestamp), l.requestXml, l.responseXml, l.xmlBookingLogin,
-        l.success, l.errorMessage, l.requestProcessor, l.requestURL, l.errorStackTrace))
+
+      //          spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
       //          rdd.take(1)
+
+    rdd.map(l => QueryProxyRequest3(
+      l.clientRequestUtcTimestamp.getTime / 1000L
+      , l.queryUUID
+      , l.clientIp
+      , l.searchQueryType
+      , l.host
+      , convertJavaDateToSqlDate(l.clientRequestUtcTimestamp)
+      , convertJavaDateToSqlDate(l.clientResponseUtcTimestamp)
+      , convertJavaDateToSqlDate(l.forwardedRequestUtcTimestamp)
+      , convertJavaDateToSqlDate(l.forwardedResponseUtcTimestamp)
+      , l.requestXml
+      , l.responseXml
+      , l.xmlBookingLogin
+      , l.success
+      , l.errorMessage
+      , l.requestProcessor
+      , l.requestURL
+      , l.errorStackTrace
+    ))
     }.saveToCassandra(keyspaceName, "query_proxy_request_second")
 
+
+    // CMI REQUEST STREAMING
     cmiRequestStream.transform { rdd =>
       //      spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
       //      rdd.take(1)
-      rdd
-    }.saveToCassandra(keyspaceName, "cmi_request")
+      rdd.map(l => CmiRequest2(
+        DateTimeUtils.parseDate(l.clientRequestUtcTimestamp).getTime / 1000L
+        , l.queryUUID
+        , l.supplierIp
+        , l.cmiQueryType
+        , l.host
+        , l.clientRequestUtcTimestamp
+        , l.clientResponseUtcTimestamp
+        , l.forwardedRequestUtcTimestamp
+        , l.forwardedResponseUtcTimestamp
+        , l.requestXml
+        , l.responseXml
+        , l.xmlBookingLogin
+        , l.success
+        , l.errorMessage
+        , l.requestProcessor
+        , l.requestURL
+        , l.errorStackTrace
+      ))
+    }.saveToCassandra(keyspaceName, "cmi_request_second")
 
     //    queryProxyStream.transform { rdd =>
     //      spark.createDataFrame(rdd.map(l => Proxy(l.queryUUID, l.xmlBookingLogin)))
