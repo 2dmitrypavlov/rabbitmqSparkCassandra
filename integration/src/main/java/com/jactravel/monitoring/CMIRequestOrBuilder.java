@@ -151,87 +151,102 @@ public interface CMIRequestOrBuilder
   com.google.protobuf.ByteString
       getResponseXMLBytes();
 
-  // optional string xmlBookingLogin = 12;
+  // optional string login = 13;
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
-  boolean hasXmlBookingLogin();
+  boolean hasLogin();
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
-  java.lang.String getXmlBookingLogin();
+  java.lang.String getLogin();
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
   com.google.protobuf.ByteString
-      getXmlBookingLoginBytes();
+      getLoginBytes();
 
-  // optional string success = 13;
+  // optional string propertyCode = 14;
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string propertyCode = 14;</code>
+   */
+  boolean hasPropertyCode();
+  /**
+   * <code>optional string propertyCode = 14;</code>
+   */
+  java.lang.String getPropertyCode();
+  /**
+   * <code>optional string propertyCode = 14;</code>
+   */
+  com.google.protobuf.ByteString
+      getPropertyCodeBytes();
+
+  // optional string success = 15;
+  /**
+   * <code>optional string success = 15;</code>
    */
   boolean hasSuccess();
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 15;</code>
    */
   java.lang.String getSuccess();
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 15;</code>
    */
   com.google.protobuf.ByteString
       getSuccessBytes();
 
-  // optional string errorMessage = 14;
+  // optional string errorMessage = 16;
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   boolean hasErrorMessage();
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   java.lang.String getErrorMessage();
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   com.google.protobuf.ByteString
       getErrorMessageBytes();
 
-  // optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;
+  // optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;
   /**
-   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
    */
   boolean hasRequestProcessor();
   /**
-   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
    */
   com.jactravel.monitoring.PlatformType getRequestProcessor();
 
-  // optional string requestURL = 16;
+  // optional string requestURL = 18;
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   boolean hasRequestURL();
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   java.lang.String getRequestURL();
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   com.google.protobuf.ByteString
       getRequestURLBytes();
 
-  // optional string errorStackTrace = 17;
+  // optional string errorStackTrace = 19;
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   boolean hasErrorStackTrace();
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   java.lang.String getErrorStackTrace();
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   com.google.protobuf.ByteString
       getErrorStackTraceBytes();

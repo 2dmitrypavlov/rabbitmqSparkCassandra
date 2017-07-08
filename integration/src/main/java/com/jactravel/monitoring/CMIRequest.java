@@ -110,39 +110,44 @@ public  final class CMIRequest extends
             responseXML_ = input.readBytes();
             break;
           }
-          case 98: {
-            bitField0_ |= 0x00000400;
-            xmlBookingLogin_ = input.readBytes();
-            break;
-          }
           case 106: {
-            bitField0_ |= 0x00000800;
-            success_ = input.readBytes();
+            bitField0_ |= 0x00000400;
+            login_ = input.readBytes();
             break;
           }
           case 114: {
+            bitField0_ |= 0x00000800;
+            propertyCode_ = input.readBytes();
+            break;
+          }
+          case 122: {
             bitField0_ |= 0x00001000;
+            success_ = input.readBytes();
+            break;
+          }
+          case 130: {
+            bitField0_ |= 0x00002000;
             errorMessage_ = input.readBytes();
             break;
           }
-          case 120: {
+          case 136: {
             int rawValue = input.readEnum();
             com.jactravel.monitoring.PlatformType value = com.jactravel.monitoring.PlatformType.valueOf(rawValue);
             if (value == null) {
-              unknownFields.mergeVarintField(15, rawValue);
+              unknownFields.mergeVarintField(17, rawValue);
             } else {
-              bitField0_ |= 0x00002000;
+              bitField0_ |= 0x00004000;
               requestProcessor_ = value;
             }
             break;
           }
-          case 130: {
-            bitField0_ |= 0x00004000;
+          case 146: {
+            bitField0_ |= 0x00008000;
             requestURL_ = input.readBytes();
             break;
           }
-          case 138: {
-            bitField0_ |= 0x00008000;
+          case 154: {
+            bitField0_ |= 0x00010000;
             errorStackTrace_ = input.readBytes();
             break;
           }
@@ -589,20 +594,20 @@ public  final class CMIRequest extends
     }
   }
 
-  // optional string xmlBookingLogin = 12;
-  public static final int XMLBOOKINGLOGIN_FIELD_NUMBER = 12;
-  private java.lang.Object xmlBookingLogin_;
+  // optional string login = 13;
+  public static final int LOGIN_FIELD_NUMBER = 13;
+  private java.lang.Object login_;
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
-  public boolean hasXmlBookingLogin() {
+  public boolean hasLogin() {
     return ((bitField0_ & 0x00000400) == 0x00000400);
   }
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
-  public java.lang.String getXmlBookingLogin() {
-    java.lang.Object ref = xmlBookingLogin_;
+  public java.lang.String getLogin() {
+    java.lang.Object ref = login_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
@@ -610,39 +615,82 @@ public  final class CMIRequest extends
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
       if (bs.isValidUtf8()) {
-        xmlBookingLogin_ = s;
+        login_ = s;
       }
       return s;
     }
   }
   /**
-   * <code>optional string xmlBookingLogin = 12;</code>
+   * <code>optional string login = 13;</code>
    */
   public com.google.protobuf.ByteString
-      getXmlBookingLoginBytes() {
-    java.lang.Object ref = xmlBookingLogin_;
+      getLoginBytes() {
+    java.lang.Object ref = login_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      xmlBookingLogin_ = b;
+      login_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  // optional string success = 13;
-  public static final int SUCCESS_FIELD_NUMBER = 13;
-  private java.lang.Object success_;
+  // optional string propertyCode = 14;
+  public static final int PROPERTYCODE_FIELD_NUMBER = 14;
+  private java.lang.Object propertyCode_;
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string propertyCode = 14;</code>
    */
-  public boolean hasSuccess() {
+  public boolean hasPropertyCode() {
     return ((bitField0_ & 0x00000800) == 0x00000800);
   }
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string propertyCode = 14;</code>
+   */
+  public java.lang.String getPropertyCode() {
+    java.lang.Object ref = propertyCode_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        propertyCode_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>optional string propertyCode = 14;</code>
+   */
+  public com.google.protobuf.ByteString
+      getPropertyCodeBytes() {
+    java.lang.Object ref = propertyCode_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      propertyCode_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  // optional string success = 15;
+  public static final int SUCCESS_FIELD_NUMBER = 15;
+  private java.lang.Object success_;
+  /**
+   * <code>optional string success = 15;</code>
+   */
+  public boolean hasSuccess() {
+    return ((bitField0_ & 0x00001000) == 0x00001000);
+  }
+  /**
+   * <code>optional string success = 15;</code>
    */
   public java.lang.String getSuccess() {
     java.lang.Object ref = success_;
@@ -659,7 +707,7 @@ public  final class CMIRequest extends
     }
   }
   /**
-   * <code>optional string success = 13;</code>
+   * <code>optional string success = 15;</code>
    */
   public com.google.protobuf.ByteString
       getSuccessBytes() {
@@ -675,17 +723,17 @@ public  final class CMIRequest extends
     }
   }
 
-  // optional string errorMessage = 14;
-  public static final int ERRORMESSAGE_FIELD_NUMBER = 14;
+  // optional string errorMessage = 16;
+  public static final int ERRORMESSAGE_FIELD_NUMBER = 16;
   private java.lang.Object errorMessage_;
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   public boolean hasErrorMessage() {
-    return ((bitField0_ & 0x00001000) == 0x00001000);
+    return ((bitField0_ & 0x00002000) == 0x00002000);
   }
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   public java.lang.String getErrorMessage() {
     java.lang.Object ref = errorMessage_;
@@ -702,7 +750,7 @@ public  final class CMIRequest extends
     }
   }
   /**
-   * <code>optional string errorMessage = 14;</code>
+   * <code>optional string errorMessage = 16;</code>
    */
   public com.google.protobuf.ByteString
       getErrorMessageBytes() {
@@ -718,33 +766,33 @@ public  final class CMIRequest extends
     }
   }
 
-  // optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;
-  public static final int REQUESTPROCESSOR_FIELD_NUMBER = 15;
+  // optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;
+  public static final int REQUESTPROCESSOR_FIELD_NUMBER = 17;
   private com.jactravel.monitoring.PlatformType requestProcessor_;
   /**
-   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
    */
   public boolean hasRequestProcessor() {
-    return ((bitField0_ & 0x00002000) == 0x00002000);
+    return ((bitField0_ & 0x00004000) == 0x00004000);
   }
   /**
-   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+   * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
    */
   public com.jactravel.monitoring.PlatformType getRequestProcessor() {
     return requestProcessor_;
   }
 
-  // optional string requestURL = 16;
-  public static final int REQUESTURL_FIELD_NUMBER = 16;
+  // optional string requestURL = 18;
+  public static final int REQUESTURL_FIELD_NUMBER = 18;
   private java.lang.Object requestURL_;
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   public boolean hasRequestURL() {
-    return ((bitField0_ & 0x00004000) == 0x00004000);
+    return ((bitField0_ & 0x00008000) == 0x00008000);
   }
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   public java.lang.String getRequestURL() {
     java.lang.Object ref = requestURL_;
@@ -761,7 +809,7 @@ public  final class CMIRequest extends
     }
   }
   /**
-   * <code>optional string requestURL = 16;</code>
+   * <code>optional string requestURL = 18;</code>
    */
   public com.google.protobuf.ByteString
       getRequestURLBytes() {
@@ -777,17 +825,17 @@ public  final class CMIRequest extends
     }
   }
 
-  // optional string errorStackTrace = 17;
-  public static final int ERRORSTACKTRACE_FIELD_NUMBER = 17;
+  // optional string errorStackTrace = 19;
+  public static final int ERRORSTACKTRACE_FIELD_NUMBER = 19;
   private java.lang.Object errorStackTrace_;
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   public boolean hasErrorStackTrace() {
-    return ((bitField0_ & 0x00008000) == 0x00008000);
+    return ((bitField0_ & 0x00010000) == 0x00010000);
   }
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   public java.lang.String getErrorStackTrace() {
     java.lang.Object ref = errorStackTrace_;
@@ -804,7 +852,7 @@ public  final class CMIRequest extends
     }
   }
   /**
-   * <code>optional string errorStackTrace = 17;</code>
+   * <code>optional string errorStackTrace = 19;</code>
    */
   public com.google.protobuf.ByteString
       getErrorStackTraceBytes() {
@@ -831,7 +879,8 @@ public  final class CMIRequest extends
     forwardedResponseUtcTimestamp_ = "";
     requestXML_ = "";
     responseXML_ = "";
-    xmlBookingLogin_ = "";
+    login_ = "";
+    propertyCode_ = "";
     success_ = "";
     errorMessage_ = "";
     requestProcessor_ = com.jactravel.monitoring.PlatformType.UnknownPlatform;
@@ -881,22 +930,25 @@ public  final class CMIRequest extends
       output.writeBytes(11, getResponseXMLBytes());
     }
     if (((bitField0_ & 0x00000400) == 0x00000400)) {
-      output.writeBytes(12, getXmlBookingLoginBytes());
+      output.writeBytes(13, getLoginBytes());
     }
     if (((bitField0_ & 0x00000800) == 0x00000800)) {
-      output.writeBytes(13, getSuccessBytes());
+      output.writeBytes(14, getPropertyCodeBytes());
     }
     if (((bitField0_ & 0x00001000) == 0x00001000)) {
-      output.writeBytes(14, getErrorMessageBytes());
+      output.writeBytes(15, getSuccessBytes());
     }
     if (((bitField0_ & 0x00002000) == 0x00002000)) {
-      output.writeEnum(15, requestProcessor_.getNumber());
+      output.writeBytes(16, getErrorMessageBytes());
     }
     if (((bitField0_ & 0x00004000) == 0x00004000)) {
-      output.writeBytes(16, getRequestURLBytes());
+      output.writeEnum(17, requestProcessor_.getNumber());
     }
     if (((bitField0_ & 0x00008000) == 0x00008000)) {
-      output.writeBytes(17, getErrorStackTraceBytes());
+      output.writeBytes(18, getRequestURLBytes());
+    }
+    if (((bitField0_ & 0x00010000) == 0x00010000)) {
+      output.writeBytes(19, getErrorStackTraceBytes());
     }
     getUnknownFields().writeTo(output);
   }
@@ -949,27 +1001,31 @@ public  final class CMIRequest extends
     }
     if (((bitField0_ & 0x00000400) == 0x00000400)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(12, getXmlBookingLoginBytes());
+        .computeBytesSize(13, getLoginBytes());
     }
     if (((bitField0_ & 0x00000800) == 0x00000800)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(13, getSuccessBytes());
+        .computeBytesSize(14, getPropertyCodeBytes());
     }
     if (((bitField0_ & 0x00001000) == 0x00001000)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(14, getErrorMessageBytes());
+        .computeBytesSize(15, getSuccessBytes());
     }
     if (((bitField0_ & 0x00002000) == 0x00002000)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(15, requestProcessor_.getNumber());
+        .computeBytesSize(16, getErrorMessageBytes());
     }
     if (((bitField0_ & 0x00004000) == 0x00004000)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(16, getRequestURLBytes());
+        .computeEnumSize(17, requestProcessor_.getNumber());
     }
     if (((bitField0_ & 0x00008000) == 0x00008000)) {
       size += com.google.protobuf.CodedOutputStream
-        .computeBytesSize(17, getErrorStackTraceBytes());
+        .computeBytesSize(18, getRequestURLBytes());
+    }
+    if (((bitField0_ & 0x00010000) == 0x00010000)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBytesSize(19, getErrorStackTraceBytes());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -1107,18 +1163,20 @@ public  final class CMIRequest extends
       bitField0_ = (bitField0_ & ~0x00000100);
       responseXML_ = "";
       bitField0_ = (bitField0_ & ~0x00000200);
-      xmlBookingLogin_ = "";
+      login_ = "";
       bitField0_ = (bitField0_ & ~0x00000400);
-      success_ = "";
+      propertyCode_ = "";
       bitField0_ = (bitField0_ & ~0x00000800);
-      errorMessage_ = "";
+      success_ = "";
       bitField0_ = (bitField0_ & ~0x00001000);
-      requestProcessor_ = com.jactravel.monitoring.PlatformType.UnknownPlatform;
+      errorMessage_ = "";
       bitField0_ = (bitField0_ & ~0x00002000);
-      requestURL_ = "";
+      requestProcessor_ = com.jactravel.monitoring.PlatformType.UnknownPlatform;
       bitField0_ = (bitField0_ & ~0x00004000);
-      errorStackTrace_ = "";
+      requestURL_ = "";
       bitField0_ = (bitField0_ & ~0x00008000);
+      errorStackTrace_ = "";
+      bitField0_ = (bitField0_ & ~0x00010000);
       return this;
     }
 
@@ -1190,25 +1248,29 @@ public  final class CMIRequest extends
       if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
         to_bitField0_ |= 0x00000400;
       }
-      result.xmlBookingLogin_ = xmlBookingLogin_;
+      result.login_ = login_;
       if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
         to_bitField0_ |= 0x00000800;
       }
-      result.success_ = success_;
+      result.propertyCode_ = propertyCode_;
       if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
         to_bitField0_ |= 0x00001000;
       }
-      result.errorMessage_ = errorMessage_;
+      result.success_ = success_;
       if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
         to_bitField0_ |= 0x00002000;
       }
-      result.requestProcessor_ = requestProcessor_;
+      result.errorMessage_ = errorMessage_;
       if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
         to_bitField0_ |= 0x00004000;
       }
-      result.requestURL_ = requestURL_;
+      result.requestProcessor_ = requestProcessor_;
       if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
         to_bitField0_ |= 0x00008000;
+      }
+      result.requestURL_ = requestURL_;
+      if (((from_bitField0_ & 0x00010000) == 0x00010000)) {
+        to_bitField0_ |= 0x00010000;
       }
       result.errorStackTrace_ = errorStackTrace_;
       result.bitField0_ = to_bitField0_;
@@ -1275,18 +1337,23 @@ public  final class CMIRequest extends
         responseXML_ = other.responseXML_;
         onChanged();
       }
-      if (other.hasXmlBookingLogin()) {
+      if (other.hasLogin()) {
         bitField0_ |= 0x00000400;
-        xmlBookingLogin_ = other.xmlBookingLogin_;
+        login_ = other.login_;
+        onChanged();
+      }
+      if (other.hasPropertyCode()) {
+        bitField0_ |= 0x00000800;
+        propertyCode_ = other.propertyCode_;
         onChanged();
       }
       if (other.hasSuccess()) {
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         success_ = other.success_;
         onChanged();
       }
       if (other.hasErrorMessage()) {
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00002000;
         errorMessage_ = other.errorMessage_;
         onChanged();
       }
@@ -1294,12 +1361,12 @@ public  final class CMIRequest extends
         setRequestProcessor(other.getRequestProcessor());
       }
       if (other.hasRequestURL()) {
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
         requestURL_ = other.requestURL_;
         onChanged();
       }
       if (other.hasErrorStackTrace()) {
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00010000;
         errorStackTrace_ = other.errorStackTrace_;
         onChanged();
       }
@@ -2032,90 +2099,164 @@ public  final class CMIRequest extends
       return this;
     }
 
-    // optional string xmlBookingLogin = 12;
-    private java.lang.Object xmlBookingLogin_ = "";
+    // optional string login = 13;
+    private java.lang.Object login_ = "";
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
-    public boolean hasXmlBookingLogin() {
+    public boolean hasLogin() {
       return ((bitField0_ & 0x00000400) == 0x00000400);
     }
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
-    public java.lang.String getXmlBookingLogin() {
-      java.lang.Object ref = xmlBookingLogin_;
+    public java.lang.String getLogin() {
+      java.lang.Object ref = login_;
       if (!(ref instanceof java.lang.String)) {
         java.lang.String s = ((com.google.protobuf.ByteString) ref)
             .toStringUtf8();
-        xmlBookingLogin_ = s;
+        login_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
     public com.google.protobuf.ByteString
-        getXmlBookingLoginBytes() {
-      java.lang.Object ref = xmlBookingLogin_;
+        getLoginBytes() {
+      java.lang.Object ref = login_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        xmlBookingLogin_ = b;
+        login_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
-    public Builder setXmlBookingLogin(
+    public Builder setLogin(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000400;
-      xmlBookingLogin_ = value;
+      login_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
-    public Builder clearXmlBookingLogin() {
+    public Builder clearLogin() {
       bitField0_ = (bitField0_ & ~0x00000400);
-      xmlBookingLogin_ = getDefaultInstance().getXmlBookingLogin();
+      login_ = getDefaultInstance().getLogin();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string xmlBookingLogin = 12;</code>
+     * <code>optional string login = 13;</code>
      */
-    public Builder setXmlBookingLoginBytes(
+    public Builder setLoginBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000400;
-      xmlBookingLogin_ = value;
+      login_ = value;
       onChanged();
       return this;
     }
 
-    // optional string success = 13;
-    private java.lang.Object success_ = "";
+    // optional string propertyCode = 14;
+    private java.lang.Object propertyCode_ = "";
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string propertyCode = 14;</code>
      */
-    public boolean hasSuccess() {
+    public boolean hasPropertyCode() {
       return ((bitField0_ & 0x00000800) == 0x00000800);
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string propertyCode = 14;</code>
+     */
+    public java.lang.String getPropertyCode() {
+      java.lang.Object ref = propertyCode_;
+      if (!(ref instanceof java.lang.String)) {
+        java.lang.String s = ((com.google.protobuf.ByteString) ref)
+            .toStringUtf8();
+        propertyCode_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string propertyCode = 14;</code>
+     */
+    public com.google.protobuf.ByteString
+        getPropertyCodeBytes() {
+      java.lang.Object ref = propertyCode_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        propertyCode_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string propertyCode = 14;</code>
+     */
+    public Builder setPropertyCode(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000800;
+      propertyCode_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string propertyCode = 14;</code>
+     */
+    public Builder clearPropertyCode() {
+      bitField0_ = (bitField0_ & ~0x00000800);
+      propertyCode_ = getDefaultInstance().getPropertyCode();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string propertyCode = 14;</code>
+     */
+    public Builder setPropertyCodeBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000800;
+      propertyCode_ = value;
+      onChanged();
+      return this;
+    }
+
+    // optional string success = 15;
+    private java.lang.Object success_ = "";
+    /**
+     * <code>optional string success = 15;</code>
+     */
+    public boolean hasSuccess() {
+      return ((bitField0_ & 0x00001000) == 0x00001000);
+    }
+    /**
+     * <code>optional string success = 15;</code>
      */
     public java.lang.String getSuccess() {
       java.lang.Object ref = success_;
@@ -2129,7 +2270,7 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 15;</code>
      */
     public com.google.protobuf.ByteString
         getSuccessBytes() {
@@ -2145,51 +2286,51 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 15;</code>
      */
     public Builder setSuccess(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000800;
+  bitField0_ |= 0x00001000;
       success_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 15;</code>
      */
     public Builder clearSuccess() {
-      bitField0_ = (bitField0_ & ~0x00000800);
+      bitField0_ = (bitField0_ & ~0x00001000);
       success_ = getDefaultInstance().getSuccess();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string success = 13;</code>
+     * <code>optional string success = 15;</code>
      */
     public Builder setSuccessBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000800;
+  bitField0_ |= 0x00001000;
       success_ = value;
       onChanged();
       return this;
     }
 
-    // optional string errorMessage = 14;
+    // optional string errorMessage = 16;
     private java.lang.Object errorMessage_ = "";
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public boolean hasErrorMessage() {
-      return ((bitField0_ & 0x00001000) == 0x00001000);
+      return ((bitField0_ & 0x00002000) == 0x00002000);
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public java.lang.String getErrorMessage() {
       java.lang.Object ref = errorMessage_;
@@ -2203,7 +2344,7 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public com.google.protobuf.ByteString
         getErrorMessageBytes() {
@@ -2219,87 +2360,87 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public Builder setErrorMessage(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00001000;
+  bitField0_ |= 0x00002000;
       errorMessage_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public Builder clearErrorMessage() {
-      bitField0_ = (bitField0_ & ~0x00001000);
+      bitField0_ = (bitField0_ & ~0x00002000);
       errorMessage_ = getDefaultInstance().getErrorMessage();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorMessage = 14;</code>
+     * <code>optional string errorMessage = 16;</code>
      */
     public Builder setErrorMessageBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00001000;
+  bitField0_ |= 0x00002000;
       errorMessage_ = value;
       onChanged();
       return this;
     }
 
-    // optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;
+    // optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;
     private com.jactravel.monitoring.PlatformType requestProcessor_ = com.jactravel.monitoring.PlatformType.UnknownPlatform;
     /**
-     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
      */
     public boolean hasRequestProcessor() {
-      return ((bitField0_ & 0x00002000) == 0x00002000);
+      return ((bitField0_ & 0x00004000) == 0x00004000);
     }
     /**
-     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
      */
     public com.jactravel.monitoring.PlatformType getRequestProcessor() {
       return requestProcessor_;
     }
     /**
-     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
      */
     public Builder setRequestProcessor(com.jactravel.monitoring.PlatformType value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00004000;
       requestProcessor_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 15;</code>
+     * <code>optional .Jactravel.Monitoring.PlatformType requestProcessor = 17;</code>
      */
     public Builder clearRequestProcessor() {
-      bitField0_ = (bitField0_ & ~0x00002000);
+      bitField0_ = (bitField0_ & ~0x00004000);
       requestProcessor_ = com.jactravel.monitoring.PlatformType.UnknownPlatform;
       onChanged();
       return this;
     }
 
-    // optional string requestURL = 16;
+    // optional string requestURL = 18;
     private java.lang.Object requestURL_ = "";
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public boolean hasRequestURL() {
-      return ((bitField0_ & 0x00004000) == 0x00004000);
+      return ((bitField0_ & 0x00008000) == 0x00008000);
     }
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public java.lang.String getRequestURL() {
       java.lang.Object ref = requestURL_;
@@ -2313,7 +2454,7 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public com.google.protobuf.ByteString
         getRequestURLBytes() {
@@ -2329,51 +2470,51 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public Builder setRequestURL(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00004000;
+  bitField0_ |= 0x00008000;
       requestURL_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public Builder clearRequestURL() {
-      bitField0_ = (bitField0_ & ~0x00004000);
+      bitField0_ = (bitField0_ & ~0x00008000);
       requestURL_ = getDefaultInstance().getRequestURL();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string requestURL = 16;</code>
+     * <code>optional string requestURL = 18;</code>
      */
     public Builder setRequestURLBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00004000;
+  bitField0_ |= 0x00008000;
       requestURL_ = value;
       onChanged();
       return this;
     }
 
-    // optional string errorStackTrace = 17;
+    // optional string errorStackTrace = 19;
     private java.lang.Object errorStackTrace_ = "";
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public boolean hasErrorStackTrace() {
-      return ((bitField0_ & 0x00008000) == 0x00008000);
+      return ((bitField0_ & 0x00010000) == 0x00010000);
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public java.lang.String getErrorStackTrace() {
       java.lang.Object ref = errorStackTrace_;
@@ -2387,7 +2528,7 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public com.google.protobuf.ByteString
         getErrorStackTraceBytes() {
@@ -2403,36 +2544,36 @@ public  final class CMIRequest extends
       }
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public Builder setErrorStackTrace(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00008000;
+  bitField0_ |= 0x00010000;
       errorStackTrace_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public Builder clearErrorStackTrace() {
-      bitField0_ = (bitField0_ & ~0x00008000);
+      bitField0_ = (bitField0_ & ~0x00010000);
       errorStackTrace_ = getDefaultInstance().getErrorStackTrace();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string errorStackTrace = 17;</code>
+     * <code>optional string errorStackTrace = 19;</code>
      */
     public Builder setErrorStackTraceBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00008000;
+  bitField0_ |= 0x00010000;
       errorStackTrace_ = value;
       onChanged();
       return this;

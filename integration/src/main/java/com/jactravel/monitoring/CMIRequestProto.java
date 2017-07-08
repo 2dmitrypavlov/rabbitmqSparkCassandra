@@ -24,20 +24,20 @@ public final class CMIRequestProto {
     java.lang.String[] descriptorData = {
       "\n\020CMIRequest.proto\022\024Jactravel.Monitoring" +
       "\032\022PlatformType.proto\032\022CMIQueryType.proto" +
-      "\"\343\003\n\nCMIRequest\022\021\n\tqueryUUID\030\001 \001(\t\022\022\n\nsu" +
+      "\"\357\003\n\nCMIRequest\022\021\n\tqueryUUID\030\001 \001(\t\022\022\n\nsu" +
       "pplierIP\030\002 \001(\t\0228\n\014CMIQueryType\030\003 \001(\0162\".J" +
       "actravel.Monitoring.CMIQueryType\022\014\n\004host" +
       "\030\005 \001(\t\022!\n\031clientRequestUtcTimestamp\030\006 \001(" +
       "\t\022\"\n\032clientResponseUtcTimestamp\030\007 \001(\t\022$\n" +
       "\034forwardedRequestUtcTimestamp\030\010 \001(\t\022%\n\035f" +
       "orwardedResponseUtcTimestamp\030\t \001(\t\022\022\n\nre" +
-      "questXML\030\n \001(\t\022\023\n\013responseXML\030\013 \001(\t\022\027\n\017x",
-      "mlBookingLogin\030\014 \001(\t\022\017\n\007success\030\r \001(\t\022\024\n" +
-      "\014errorMessage\030\016 \001(\t\022<\n\020requestProcessor\030" +
-      "\017 \001(\0162\".Jactravel.Monitoring.PlatformTyp" +
-      "e\022\022\n\nrequestURL\030\020 \001(\t\022\027\n\017errorStackTrace" +
-      "\030\021 \001(\tB-\n\030com.jactravel.monitoringB\017CMIR" +
-      "equestProtoP\001"
+      "questXML\030\n \001(\t\022\023\n\013responseXML\030\013 \001(\t\022\r\n\005l",
+      "ogin\030\r \001(\t\022\024\n\014propertyCode\030\016 \001(\t\022\017\n\007succ" +
+      "ess\030\017 \001(\t\022\024\n\014errorMessage\030\020 \001(\t\022<\n\020reque" +
+      "stProcessor\030\021 \001(\0162\".Jactravel.Monitoring" +
+      ".PlatformType\022\022\n\nrequestURL\030\022 \001(\t\022\027\n\017err" +
+      "orStackTrace\030\023 \001(\tB-\n\030com.jactravel.moni" +
+      "toringB\017CMIRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -49,7 +49,7 @@ public final class CMIRequestProto {
           internal_static_Jactravel_Monitoring_CMIRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Jactravel_Monitoring_CMIRequest_descriptor,
-              new java.lang.String[] { "QueryUUID", "SupplierIP", "CMIQueryType", "Host", "ClientRequestUtcTimestamp", "ClientResponseUtcTimestamp", "ForwardedRequestUtcTimestamp", "ForwardedResponseUtcTimestamp", "RequestXML", "ResponseXML", "XmlBookingLogin", "Success", "ErrorMessage", "RequestProcessor", "RequestURL", "ErrorStackTrace", });
+              new java.lang.String[] { "QueryUUID", "SupplierIP", "CMIQueryType", "Host", "ClientRequestUtcTimestamp", "ClientResponseUtcTimestamp", "ForwardedRequestUtcTimestamp", "ForwardedResponseUtcTimestamp", "RequestXML", "ResponseXML", "Login", "PropertyCode", "Success", "ErrorMessage", "RequestProcessor", "RequestURL", "ErrorStackTrace", });
           return null;
         }
       };

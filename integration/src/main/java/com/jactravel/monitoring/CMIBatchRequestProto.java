@@ -24,15 +24,16 @@ public final class CMIBatchRequestProto {
     java.lang.String[] descriptorData = {
       "\n\025CMIBatchRequest.proto\022\024Jactravel.Monit" +
       "oring\032\022PlatformType.proto\032\022CMIQueryType." +
-      "proto\"\244\002\n\017CMIBatchRequest\022\021\n\tqueryUUID\030\001" +
+      "proto\"\311\002\n\017CMIBatchRequest\022\021\n\tqueryUUID\030\001" +
       " \001(\t\022\022\n\nsupplierIP\030\002 \001(\t\0228\n\014CMIQueryType" +
       "\030\003 \001(\0162\".Jactravel.Monitoring.CMIQueryTy" +
       "pe\022\014\n\004host\030\005 \001(\t\022\033\n\023requestUtcTimestamp\030" +
       "\006 \001(\t\022\034\n\024responseUtcTimestamp\030\007 \001(\t\022\022\n\nr" +
-      "equestXML\030\n \001(\t\022\023\n\013responseXML\030\013 \001(\t\022\017\n\007" +
-      "success\030\r \001(\t\022\024\n\014errorMessage\030\016 \001(\t\022\027\n\017e" +
-      "rrorStackTrace\030\021 \001(\tB2\n\030com.jactravel.mo",
-      "nitoringB\024CMIBatchRequestProtoP\001"
+      "equestXML\030\n \001(\t\022\023\n\013responseXML\030\013 \001(\t\022\r\n\005" +
+      "login\030\014 \001(\t\022\024\n\014propertyCode\030\r \001(\t\022\017\n\007suc" +
+      "cess\030\016 \001(\t\022\024\n\014errorMessage\030\017 \001(\t\022\027\n\017erro",
+      "rStackTrace\030\020 \001(\tB2\n\030com.jactravel.monit" +
+      "oringB\024CMIBatchRequestProtoP\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -44,7 +45,7 @@ public final class CMIBatchRequestProto {
           internal_static_Jactravel_Monitoring_CMIBatchRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_Jactravel_Monitoring_CMIBatchRequest_descriptor,
-              new java.lang.String[] { "QueryUUID", "SupplierIP", "CMIQueryType", "Host", "RequestUtcTimestamp", "ResponseUtcTimestamp", "RequestXML", "ResponseXML", "Success", "ErrorMessage", "ErrorStackTrace", });
+              new java.lang.String[] { "QueryUUID", "SupplierIP", "CMIQueryType", "Host", "RequestUtcTimestamp", "ResponseUtcTimestamp", "RequestXML", "ResponseXML", "Login", "PropertyCode", "Success", "ErrorMessage", "ErrorStackTrace", });
           return null;
         }
       };
