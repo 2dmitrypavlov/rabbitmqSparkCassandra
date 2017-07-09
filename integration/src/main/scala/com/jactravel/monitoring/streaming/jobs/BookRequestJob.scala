@@ -162,7 +162,7 @@ object BookRequestJob extends ConfigService  {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", nullFilter:+"book_count")
      .as[BookRequestCount]
 
     // BOOK SUCCESS
@@ -185,7 +185,7 @@ object BookRequestJob extends ConfigService  {
                   trade_name,
                   trade_parent_group,
                   xml_booking_logiN"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", nullFilter:+"success_count")
      .as[BookRequestSuccessCount]
 
     // BOOK ERROR
@@ -208,7 +208,7 @@ object BookRequestJob extends ConfigService  {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", nullFilter:+"errors_count")
      .as[BookRequestErrorsCount]
 
     // BOOK RESPONSE TIME
@@ -232,7 +232,7 @@ object BookRequestJob extends ConfigService  {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", nullFilter:+"min_response_time_ms":+"max_response_time_ms":+"perc_response_time_ms")
      .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
