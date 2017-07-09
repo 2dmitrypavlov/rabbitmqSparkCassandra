@@ -1,16 +1,16 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.BookRequestJobInfo
+//import com.jactravel.monitoring.model.influx.BookRequestInflux.BookRequestCount
+import com.jactravel.monitoring.model.jobs._
 import com.jactravel.monitoring.streaming.ConfigService
 import com.paulgoldbaum.influxdbclient._
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-
 /**
   * Created by fayaz on 09.07.17.
   */
-object BookRequestJob extends ConfigService with BookRequestJobInfo {
+object BookRequestJob extends ConfigService  with BookRequestJobInfo{
 
   def main(args: Array[String]): Unit = {
 
