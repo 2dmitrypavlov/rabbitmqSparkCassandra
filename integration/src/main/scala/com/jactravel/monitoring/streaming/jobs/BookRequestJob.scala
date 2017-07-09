@@ -238,18 +238,18 @@ object BookRequestJob extends ConfigService  {
     // SAVING TO INFLUXDB
 
     // SAVING BOOK COUNT TO INFLUXDB
-    bookCount.foreachPartition { partition =>
-
-      // Open connection to Influxdb
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-
-      partition
-        .map(toBookCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
-
-      // Close connection
-      db.close()
-    }
+//    bookCount.foreachPartition { partition =>
+//
+//      // Open connection to Influxdb
+//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+//
+//      partition
+//        .map(toBookCountPoint)
+//        .foreach(p => Await.result(db.write(p), influxTimeout))
+//
+//      // Close connection
+//      db.close()
+//    }
 
     // SAVING BOOK SUCCESS TO INFLUXDB
     bookSuccess.foreachPartition { partition =>
