@@ -3,6 +3,7 @@ package com.jactravel.monitoring.model.jobs
 /**
   * Created by dmitry on 7/9/17.
   */
+object CaseClassed {
 
   case class BookRequestCount(
                                book_count: Long,
@@ -50,3 +51,4 @@ package com.jactravel.monitoring.model.jobs
                                       perc_response_time_ms: Double
                                     )
 
+}
