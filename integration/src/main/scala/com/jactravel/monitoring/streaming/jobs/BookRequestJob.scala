@@ -214,7 +214,7 @@ object BookRequestJob extends ConfigService  {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter :+ "book_count")
+    ).na.fill("stub", nullFilter )
       .as[BookRequestCount]
 
     // BOOK SUCCESS
