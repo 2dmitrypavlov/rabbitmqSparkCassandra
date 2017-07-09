@@ -10,9 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object BookRequestJob extends ConfigService with BookRequestJobInfo with BaseJob {
-
-  override val appName: String = "book_request_job"
+object BookRequestJob extends ConfigService with BookRequestJobInfo {
 
   def main(args: Array[String]): Unit = {
 

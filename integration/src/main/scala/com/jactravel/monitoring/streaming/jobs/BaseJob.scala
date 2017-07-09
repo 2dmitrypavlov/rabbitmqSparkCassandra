@@ -14,9 +14,7 @@ import scala.concurrent.duration._
   */
 trait BaseJob {
 
-  // Job name
-  val appName: String
-
+  //todo: delete or expand in future
   // Date query
   val lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10).getMillis / 1000
   val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
@@ -29,7 +27,7 @@ trait BaseJob {
 
   // Spark conf
   val sparkConf = new SparkConf()
-    .setAppName(appName)
+    .setAppName("request-job")
     .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
 
   // Spark Session

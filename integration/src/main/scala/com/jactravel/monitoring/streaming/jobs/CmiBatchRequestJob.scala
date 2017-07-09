@@ -10,9 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object CmiBatchRequestJob extends ConfigService with CmiBatchRequestJobInfo with BaseJob {
-
-  override val appName: String = "cmi_batch_request_job"
+object CmiBatchRequestJob extends ConfigService with CmiBatchRequestJobInfo {
 
   def main(args: Array[String]): Unit = {
 
