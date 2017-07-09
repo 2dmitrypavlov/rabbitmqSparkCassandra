@@ -5,6 +5,7 @@ import com.jactravel.monitoring.streaming.ConfigService
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by fayaz on 09.07.17.
@@ -194,7 +195,7 @@ object SearchRequestJob  extends ConfigService with SearchRequestJobInfo with Ba
 
       partition
         .map(toSearchCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -208,7 +209,7 @@ object SearchRequestJob  extends ConfigService with SearchRequestJobInfo with Ba
 
       partition
         .map(toSuccessCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -222,7 +223,7 @@ object SearchRequestJob  extends ConfigService with SearchRequestJobInfo with Ba
 
       partition
         .map(toErrorsCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -236,7 +237,7 @@ object SearchRequestJob  extends ConfigService with SearchRequestJobInfo with Ba
 
       partition
         .map(toResponseTimePoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()

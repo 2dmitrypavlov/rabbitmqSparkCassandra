@@ -197,7 +197,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo with BaseJob
 
       partition
         .map(toBookCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -211,7 +211,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo with BaseJob
 
       partition
         .map(toSuccessCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -225,7 +225,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo with BaseJob
 
       partition
         .map(toErrorsCountPoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
@@ -239,7 +239,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo with BaseJob
 
       partition
         .map(toResponseTimePoint)
-        .foreach(p => Await.result(db.write(p), timeout))
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
