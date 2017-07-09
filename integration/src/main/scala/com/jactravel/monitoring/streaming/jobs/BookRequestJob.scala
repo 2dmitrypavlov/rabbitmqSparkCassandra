@@ -18,6 +18,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo {
 
     import spark.implicits._
 
+
     // BRAND TABLE
     spark
       .read
@@ -92,6 +93,7 @@ object BookRequestJob extends ConfigService with BookRequestJobInfo {
               AND br.brand_id == b.brand_id
           """
     ).createOrReplaceTempView("RichBookRequest")
+
 
     // BOOK COUNT
     val bookCount = spark.sql(

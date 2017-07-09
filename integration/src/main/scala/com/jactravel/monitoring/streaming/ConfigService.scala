@@ -77,14 +77,14 @@ private[streaming] trait ConfigService {
   val influxTimeout = 1 second
 
   // Spark conf
-  val sparkConf = new SparkConf()
-    .setAppName("request-job")
-    .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
+//  val sparkConf = new SparkConf()
+//    .setAppName("request-job")
+//    .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
 
   // Spark Session
   val spark = SparkSession
     .builder()
-    .config(sparkConf)
+    .config(conf)
     .getOrCreate()
     .setCassandraConf(CassandraConnectorConf.KeepAliveMillisParam.option(10000))
     .setCassandraConf("Cluster1", "ks1", ReadConf.SplitSizeInMBParam.option(128))

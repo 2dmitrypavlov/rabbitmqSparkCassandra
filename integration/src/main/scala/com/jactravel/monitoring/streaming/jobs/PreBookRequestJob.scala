@@ -230,6 +230,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo {
     // SAVING BOOK RESPONSE TO INFLUXDB
     preBookResponseTime.foreachPartition { partition =>
 
+      import InfluxDB._
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
