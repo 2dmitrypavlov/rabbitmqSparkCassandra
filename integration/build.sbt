@@ -4,7 +4,7 @@ version := "1.0"
 
 val dottyVersion = "0.1.2-RC1"
 val scala211Version = "2.11.8"
-val sparkVersion = "2.1.0"
+val sparkVersion = "2.1.1"
 val akkaVersion = "2.4.11"
 
 lazy val root = (project in file(".")).
