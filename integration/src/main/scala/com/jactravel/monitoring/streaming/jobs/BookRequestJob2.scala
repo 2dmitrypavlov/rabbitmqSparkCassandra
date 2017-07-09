@@ -25,7 +25,51 @@ import scala.concurrent.duration._
 
 
 object BookRequestJob2 extends ConfigService {
+  case class BookRequestCount(
+                               book_count: Long,
+                               time: String,
+                               brand_name: String,
+                               sales_channel: String,
+                               trade_group: String,
+                               trade_name: String,
+                               trade_parent_group: String,
+                               xml_booking_login: String
+                             )
 
+  case class BookRequestSuccessCount(
+                                      success_count: Long,
+                                      time: String,
+                                      brand_name: String,
+                                      sales_channel: String,
+                                      trade_group: String,
+                                      trade_name: String,
+                                      trade_parent_group: String,
+                                      xml_booking_login: String
+                                    )
+
+  case class BookRequestErrorsCount(
+                                     errors_count: Long,
+                                     time: String,
+                                     brand_name: String,
+                                     sales_channel: String,
+                                     trade_group: String,
+                                     trade_name: String,
+                                     trade_parent_group: String,
+                                     xml_booking_login: String
+                                   )
+
+  case class BookRequestResponseTime(
+                                      time: String,
+                                      brand_name: String,
+                                      sales_channel: String,
+                                      trade_group: String,
+                                      trade_name: String,
+                                      trade_parent_group: String,
+                                      xml_booking_login: String,
+                                      min_response_time_ms: Long,
+                                      max_response_time_ms: Long,
+                                      perc_response_time_ms: Double
+                                    )
   def main(args: Array[String]): Unit = {
 
     val brand = spark
@@ -33,21 +77,21 @@ object BookRequestJob2 extends ConfigService {
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://AKIAJFURHUDJRCND52ZQ:kDhZsa2uFmi7bddGENGGhpQftg6VMbDWvthEaqGW@jacmappings/mappings/brand.csv")
+      .load("s3n://jacmappings/mappings/brand.csv")
     brand.createOrReplaceTempView("Brand")
     val trade = spark
       .read
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://AKIAJFURHUDJRCND52ZQ:kDhZsa2uFmi7bddGENGGhpQftg6VMbDWvthEaqGW@jacmappings/mappings/trade.csv")
+      .load("s3n://@jacmappings/mappings/trade.csv")
     trade.createOrReplaceTempView("Trade")
     val saleschannel = spark
       .read
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://AKIAJFURHUDJRCND52ZQ:kDhZsa2uFmi7bddGENGGhpQftg6VMbDWvthEaqGW@jacmappings/mappings/saleschannel.csv")
+      .load("s3n://jacmappings/mappings/saleschannel.csv")
     saleschannel.createOrReplaceTempView("SalesChannel")
     var lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10).getMillis / 1000
     val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
@@ -78,51 +122,7 @@ object BookRequestJob2 extends ConfigService {
 
     query_proxy_request.createOrReplaceTempView("QueryProxyRequest")
     book_request.createOrReplaceTempView("PureBookRequest")
-    case class BookRequestCount(
-                                 book_count: Long,
-                                 time: String,
-                                 brand_name: String,
-                                 sales_channel: String,
-                                 trade_group: String,
-                                 trade_name: String,
-                                 trade_parent_group: String,
-                                 xml_booking_login: String
-                               )
 
-    case class BookRequestSuccessCount(
-                                        success_count: Long,
-                                        time: String,
-                                        brand_name: String,
-                                        sales_channel: String,
-                                        trade_group: String,
-                                        trade_name: String,
-                                        trade_parent_group: String,
-                                        xml_booking_login: String
-                                      )
-
-    case class BookRequestErrorsCount(
-                                       errors_count: Long,
-                                       time: String,
-                                       brand_name: String,
-                                       sales_channel: String,
-                                       trade_group: String,
-                                       trade_name: String,
-                                       trade_parent_group: String,
-                                       xml_booking_login: String
-                                     )
-
-    case class BookRequestResponseTime(
-                                        time: String,
-                                        brand_name: String,
-                                        sales_channel: String,
-                                        trade_group: String,
-                                        trade_name: String,
-                                        trade_parent_group: String,
-                                        xml_booking_login: String,
-                                        min_response_time_ms: Long,
-                                        max_response_time_ms: Long,
-                                        perc_response_time_ms: Double
-                                      )
     def toBookCountPoint(brc: BookRequestCount): Point = {
       Point("book_request_count")
         .addTag("mtime", brc.time)
