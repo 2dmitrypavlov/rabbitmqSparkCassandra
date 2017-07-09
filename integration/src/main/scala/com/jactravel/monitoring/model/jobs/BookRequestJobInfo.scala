@@ -1,6 +1,5 @@
 package com.jactravel.monitoring.model.jobs
 
-import com.jactravel.monitoring.model.influx.BookRequestInflux._
 import com.paulgoldbaum.influxdbclient.Point
 import com.jactravel.monitoring.model.jobs._
 
