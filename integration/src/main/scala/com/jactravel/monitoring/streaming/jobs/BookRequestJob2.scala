@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.spark.sql.cassandra._
 import com.datastax.spark.connector.cql.CassandraConnectorConf
 import com.datastax.spark.connector.rdd.ReadConf
-import com.jactravel.monitoring.streaming.jobs.BookRequestJob.spark
+import com.jactravel.monitoring.streaming.jobs.BookRequestJob.{aws, spark}
 import com.paulgoldbaum.influxdbclient._
 import org.joda.time.{DateTime, DateTimeZone}
 import org.apache.spark.sql.functions._
@@ -72,27 +72,32 @@ object BookRequestJob2 extends ConfigService {
                                     )
   def main(args: Array[String]): Unit = {
     import spark.implicits._
-    val brand = spark
+    // BRAND TABLE
+    spark
       .read
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://jacmappings/mappings/brand.csv")
-    brand.createOrReplaceTempView("Brand")
-    val trade = spark
+      .load(aws + "brand.csv")
+      .createOrReplaceTempView("Brand")
+
+    // TRADE TABLE
+    spark
       .read
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://@jacmappings/mappings/trade.csv")
-    trade.createOrReplaceTempView("Trade")
-    val saleschannel = spark
+      .load(aws + "trade.csv")
+      .createOrReplaceTempView("Trade")
+
+    // SALES CHANNEL TABLE
+    spark
       .read
       .format("com.databricks.spark.csv")
       .option("header", "true") // Use first line of all files as header
       .option("inferSchema", "true") // Automatically infer data types
-      .load("s3n://jacmappings/mappings/saleschannel.csv")
-    saleschannel.createOrReplaceTempView("SalesChannel")
+      .load(aws + "saleschannel.csv")
+      .createOrReplaceTempView("SalesChannel")
     var lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10).getMillis / 1000
     val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
 
