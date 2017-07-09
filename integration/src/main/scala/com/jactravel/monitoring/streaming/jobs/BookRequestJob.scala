@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 
-object BookRequestJob extends ConfigService with BookRequestJobInfo {
+object BookRequestJob extends ConfigService  {
   case class BookRequestCount(
                                book_count: Long,
                                time: String,
