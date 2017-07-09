@@ -1,6 +1,6 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.PreBookRequestJobInfo
+import com.jactravel.monitoring.model.jobs.SearchRequestJobInfo
 import com.jactravel.monitoring.streaming.ConfigService
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
@@ -10,9 +10,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with BaseJob {
+object SearchRequestJob  extends ConfigService with SearchRequestJobInfo with BaseJob {
 
-  override val appName: String = "pre_book_request_job"
+  override val appName: String = "search_request_job"
 
   def main(args: Array[String]): Unit = {
 
@@ -58,44 +58,44 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
       .filter(query)
       .createOrReplaceTempView("QueryProxyRequest")
 
-    // PRE BOOK REQUEST
+    // SEARCH REQUEST
     spark
       .read
       .format("org.apache.spark.sql.cassandra")
       .options(Map(
-        "table" -> "pre_book_request_second",
+        "table" -> "search_request_second",
         "keyspace" -> "jactravel_monitoring_new"))
       .load()
       .filter(query)
-      .createOrReplaceTempView("PurePreBookRequest")
+      .createOrReplaceTempView("PureSearchRequest")
 
-    // RICH PRE BOOK REQUEST
+    // SEARCH REQUEST
     spark.sql(
-      """SELECT pbr.query_uuid,
-                brand_name,
-                trade_name,
-                trade_group,
-                trade_parent_group,
-                sales_channel,
-                (unix_timestamp(end_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss') - unix_timestamp(start_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.S')) AS response_time_ms,
-                pbr.error_stack_trace,
-                pbr.success,
-                xml_booking_login,
-                window(start_utc_timestamp, '5 minutes').end as time
-         FROM PurePreBookRequest AS pbr,
-              SalesChannel AS sc,
-              Trade AS t,
-              Brand AS b
-         LEFT JOIN QueryProxyRequest AS qpr
-         ON pbr.query_uuid == qpr.query_uuid
-         WHERE pbr.sales_channel_id == sc.sales_channel_id
-         AND pbr.trade_id == t.trade_id
-         AND pbr.brand_id == b.brand_id"""
-    ).createOrReplaceTempView("RichPreBookRequest")
+     """SELECT sr.query_uuid,
+               brand_name,
+               trade_name,
+               trade_group,
+               trade_parent_group,
+               sales_channel,
+              (unix_timestamp(request_info.end_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss') - unix_timestamp(request_info.start_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss')) AS response_time_ms,
+               sr.response_info.error_stack_trace,
+               sr.response_info.success,
+               xml_booking_login,
+               window(request_info.start_utc_timestamp, '5 minutes').end as time
+        FROM PureSearchRequest as sr,
+             SalesChannel as sc,
+             Trade as t,
+             Brand as b
+        LEFT JOIN QueryProxyRequest as qpr
+        ON sr.query_uuid == qpr.query_uuid
+        WHERE sr.request_info.sales_channel_id == sc.sales_channel_id
+        AND sr.request_info.trade_id == t.trade_id
+        AND sr.request_info.brand_id == b.brand_id""")
+      .createOrReplaceTempView("RichSearchRequest")
 
-    // PRE BOOK COUNT
-    val preBookCount = spark.sql(
-      """SELECT COUNT(query_uuid) as pre_book_count,
+    // SEARCH COUNT
+    val searchCount = spark.sql(
+    """SELECT COUNT(query_uuid) as search_count,
             time,
             brand_name,
             sales_channel,
@@ -103,7 +103,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_name,
             trade_parent_group,
             xmL_booking_login
-        FROM RichPreBookRequest
+        FROM RichSearchRequest
         GROUP BY
             time,
             brand_name,
@@ -113,11 +113,11 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[PreBookRequestCount]
+      .as[SearchRequestCount]
 
-    // PRE BOOK SUCCESS
-    val preBookSuccess = spark.sql(
-     """SELECT COUNT(query_uuid) as success_count,
+    // SEARCH SUCCESS
+    val searchSuccess = spark.sql("""
+        SELECT COUNT(query_uuid) as success_count,
             time,
             brand_name,
             sales_channel,
@@ -125,7 +125,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_name,
             trade_parent_group,
             xmL_booking_login
-        FROM RichPreBookRequest
+        FROM RichSearchRequest
         WHERE success IS NOT NULL
         GROUP BY
             time,
@@ -136,11 +136,11 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[PreBookRequestSuccessCount]
+      .as[SearchRequestSuccess]
 
-    // PRE BOOK ERROR
-    val preBookError = spark.sql(
-     """SELECT COUNT(query_uuid) as errors_count,
+    // SEARCH ERROR
+    val searchErrors = spark.sql("""
+        SELECT COUNT(query_uuid) as errors_count,
             time,
             brand_name,
             sales_channel,
@@ -148,7 +148,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_name,
             trade_parent_group,
             xml_booking_login
-        FROM RichPreBookRequest
+        FROM RichSearchRequest
         WHERE error_stack_trace IS NOT NULL
         GROUP BY
             time,
@@ -159,10 +159,10 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[PreBookRequestErrorsCount]
+      .as[SearchRequestErrors]
 
-    // BOOK RESPONSE TIME
-    val preBookResponseTime = spark.sql("""
+    // SEARCH RESPONSE TIME
+    val searchResponseTime = spark.sql("""
         SELECT time,
             brand_name,
             sales_channel,
@@ -173,7 +173,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             min(response_time_ms) as min_response_time_ms,
             max(response_time_ms) as max_response_time_ms,
             percentile_approx(response_time_ms, 0.5) as perc_response_time_ms
-        FROM RichPreBookRequest
+        FROM RichSearchRequest
         GROUP BY
             time,
             brand_name,
@@ -182,19 +182,19 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
             trade_name,
             trade_parent_group,
             xml_booking_login""")
-      .na.fill("stub", nullFilter)
-      .as[PreBookRequestResponseTime]
+      .na.fill("stub", Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
+      .as[SearchRequestResponseTime]
 
     // SAVING TO INFLUXDB
 
     // SAVING BOOK COUNT TO INFLUXDB
-    preBookCount.foreachPartition { partition =>
+    searchCount.foreachPartition { partition =>
 
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
       partition
-        .map(toPreBookCountPoint)
+        .map(toSearchCountPoint)
         .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
@@ -202,7 +202,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
     }
 
     // SAVING BOOK SUCCESS TO INFLUXDB
-    preBookSuccess.foreachPartition { partition =>
+    searchSuccess.foreachPartition { partition =>
 
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
@@ -216,7 +216,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
     }
 
     // SAVING BOOK ERROR TO INFLUXDB
-    preBookError.foreachPartition { partition =>
+    searchErrors.foreachPartition { partition =>
 
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
@@ -230,13 +230,13 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
     }
 
     // SAVING BOOK RESPONSE TO INFLUXDB
-    preBookResponseTime.foreachPartition { partition =>
+    searchResponseTime.foreachPartition { partition =>
 
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
       partition
-        .map(toPreBookResponseTimePoint)
+        .map(toResponseTimePoint)
         .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
@@ -245,5 +245,4 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo with B
 
     spark.stop()
   }
-
 }

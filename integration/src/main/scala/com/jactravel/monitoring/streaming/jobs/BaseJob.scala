@@ -25,7 +25,7 @@ trait BaseJob {
   val query = s"query_second in $in_condition"
 
   // Await timeout
-  val timeout = 1 second
+  val influxTimeout = 1 second
 
   // Spark conf
   val sparkConf = new SparkConf()
