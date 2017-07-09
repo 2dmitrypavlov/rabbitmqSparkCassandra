@@ -8,9 +8,9 @@ import com.paulgoldbaum.influxdbclient._
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.spark.sql.cassandra._
-
 import com.datastax.spark.connector.cql.CassandraConnectorConf
 import com.datastax.spark.connector.rdd.ReadConf
+import com.jactravel.monitoring.streaming.jobs.BookRequestJob.spark
 import com.paulgoldbaum.influxdbclient._
 import org.joda.time.{DateTime, DateTimeZone}
 import org.apache.spark.sql.functions._
@@ -71,7 +71,7 @@ object BookRequestJob2 extends ConfigService {
                                       perc_response_time_ms: Double
                                     )
   def main(args: Array[String]): Unit = {
-
+    import spark.implicits._
     val brand = spark
       .read
       .format("com.databricks.spark.csv")
