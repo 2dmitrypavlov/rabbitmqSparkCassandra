@@ -201,15 +201,24 @@ object BookRequestJob extends JobConfig("book-request-job") {
 
         Await.result(
           db.write(
-          Point("book_request_count")
-          .addTag("mtime", r.getTimestamp(1).toString)
-          .addTag("brand_name", r.getString(2))
-          .addTag("sales_channel", r.getString(3))
-          .addTag("trade_group", r.getString(4))
-          .addTag("trade_name", r.getString(5))
-          .addTag("trade_parent_group", r.getString(6))
-          .addTag("xml_booking_login", r.getString(7))
-          .addField("book_count", r.getLong(0))),
+//          Point("book_request_count")
+//          .addTag("mtime", r.getTimestamp(1).toString)
+//          .addTag("brand_name", r.getString(2))
+//          .addTag("sales_channel", r.getString(3))
+//          .addTag("trade_group", r.getString(4))
+//          .addTag("trade_name", r.getString(5))
+//          .addTag("trade_parent_group", r.getString(6))
+//          .addTag("xml_booking_login", r.getString(7))
+//          .addField("book_count", r.getLong(0))),
+            Point("book_request_count")
+              .addTag("mtime", "test")
+              .addTag("brand_name", "test")
+              .addTag("sales_channel", "test")
+              .addTag("trade_group", "test")
+              .addTag("trade_name", "test")
+              .addTag("trade_parent_group", "test")
+              .addTag("xml_booking_login", "test")
+              .addField("book_count", 10L)),
           influxTimeout)
       }
 
