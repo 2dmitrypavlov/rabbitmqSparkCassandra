@@ -48,10 +48,6 @@ private[streaming] trait ConfigService {
   val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
   val dbPassword = Try(config.getString("db.password")).getOrElse("xs9Zr6hfogrx")
 
-  val influxHost = Try(config.getString("influxdb.host")).getOrElse("52.87.0.147")
-  val influxPort = Try(config.getInt("influxdb.port")).getOrElse(8086)
-  val influxDBname = Try(config.getString("influxdb.db")).getOrElse("my_db")
-
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
   conf.set("spark.cassandra.auth.username", dbUseraname)
   conf.set("spark.cassandra.auth.password", dbPassword)

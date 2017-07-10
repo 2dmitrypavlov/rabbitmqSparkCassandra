@@ -376,7 +376,8 @@ message CMIRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_request_second (
+CREATE TABLE jactravel_monitoring_new.cmi_request_updated_second
+(
   query_second bigint,
   query_uuid text,
   supplier_ip text,
@@ -414,8 +415,8 @@ message CMIBatchRequest {
 }
 */
 
-CREATE TABLE jactravel_monitoring_new.cmi_batch_request_second (
-  query_second bigint
+CREATE TABLE jactravel_monitoring_new.cmi_batch_request_updated_second (
+  query_second bigint,
   query_uuid text,
   supplier_ip text,
   cmi_query_type int,

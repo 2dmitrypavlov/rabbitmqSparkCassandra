@@ -134,8 +134,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // PRE-BOOKING STREAM
     preBookingStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("pre_book_request")
-      //      rdd.take(1)
+
       rdd.map(l => PreBookRequest2(
         DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -286,7 +285,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
         , l.requestURL
         , l.errorStackTrace
       ))
-    }.saveToCassandra(keyspaceName, "cmi_request_second")
+    }.saveToCassandra(keyspaceName, "cmi_request_updated_second")
 
 
     cmiBatchRequestStream.transform { rdd =>
@@ -308,7 +307,7 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
           , l.errorStackTrace)
       }
 
-    }.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request")
+    }.repartition(numPar).saveToCassandra(keyspaceName, "cmi_batch_request_updated_second")
 
 
     ssc.start()
