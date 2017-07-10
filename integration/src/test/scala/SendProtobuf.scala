@@ -199,7 +199,6 @@ object SendProtobuf extends Constants {
       .setForwardedResponseUtcTimestamp("2017-05-06 00:00:02")
       .setRequestXML("xml")
       .setResponseXML("xml")
-      .setXmlBookingLogin("xml")
       .setSuccess("true")
       .setErrorMessage("msg")
       .setRequestProcessor(PlatformType.IVector)
