@@ -13,7 +13,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
 
   def main(args: Array[String]): Unit = {
 
-    val nullFilter = Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login")
+    val stringNullFilter = Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login")
+    val stringReplaceValue = "NullValue"
 
     import spark.implicits._
 
@@ -111,7 +112,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill(stringReplaceValue, stringNullFilter)
+     .na.fill(-1L, Seq("book_count"))
      .as[BookRequestCount]
 
     // BOOK SUCCESS
@@ -134,7 +136,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_logiN"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", stringNullFilter)
+     .na.fill(-1L, Seq("success_count"))
      .as[BookRequestSuccessCount]
 
     // BOOK ERROR
@@ -157,7 +160,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", stringNullFilter)
+     .na.fill(-1L, Seq("errors_count"))
      .as[BookRequestErrorsCount]
 
     // BOOK RESPONSE TIME
@@ -181,7 +185,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill("stub", nullFilter)
+    ).na.fill("stub", stringNullFilter)
+     .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms", "perc_response_time_ms"))
      .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
