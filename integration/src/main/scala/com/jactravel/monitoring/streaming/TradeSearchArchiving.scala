@@ -1,11 +1,10 @@
 package com.jactravel.monitoring.streaming
 
 import com.jactravel.monitoring.PlatformType
-import com.jactravel.monitoring.model._
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.cassandra._
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.{Minutes, StreamingContext}
@@ -92,11 +91,13 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
         val toProcessor = udf[String, Int](processorId =>
           PlatformType.valueOf(processorId).getValueDescriptor.getName)
 
-        val adultsCount = udf[Int, Array[Map[String, Int]]](rooms =>
-          rooms.foldLeft(0)(_ + _.getOrElse("adults", 0)))
+        val adultsCount = udf {
+          (rooms: Seq[Row]) => rooms.foldLeft(0)(_ + _.getAs[Int]("adults"))
+        }
 
-        val childrenCount = udf[Int, Array[Map[String, Int]]](rooms =>
-          rooms.foldLeft(0)(_ + _.getOrElse("children", 0)))
+        val childrenCount = udf {
+          (rooms: Seq[Row]) => rooms.foldLeft(0)(_ + _.getAs[Int]("children"))
+        }
 
         val df = dfRenamed
           .withColumn("search_date",
@@ -111,8 +112,8 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
             unix_timestamp($"request_info.end_utc_timestamp") - unix_timestamp($"request_info.start_utc_timestamp"))
           .withColumn("search_hour", hour($"search_date"))
           .withColumn("request_processor_name", toProcessor($"request_processor"))
-          .withColumn("adults", toProcessor($"request_info.rooms"))
-          .withColumn("children", toProcessor($"request_info.rooms"))
+          .withColumn("adults", adultsCount($"request_info.rooms"))
+          .withColumn("children", childrenCount($"request_info.rooms"))
           .selectExpr(
             "search_date"
             , "diff_request_time"
@@ -145,7 +146,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .sql(
             """SELECT search_date,
                trade_id,
-               xml_booking_login,
+               xml_booking_login as xml_book_login,
                search_hour,
                request_processor_name as request_processor,
                brand_id,
@@ -155,6 +156,8 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                geo_level2_id,
                arrival_date,
                duration,
+               adults,
+               children,
                success,
                SUM(property_reference_count) as property_reference_count,
                SUM(property_count) as property_count,
@@ -181,6 +184,8 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                geo_level2_id,
                arrival_date,
                duration,
+               adults,
+               children,
                success
               """)
 
