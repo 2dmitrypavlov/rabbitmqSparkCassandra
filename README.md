@@ -59,5 +59,5 @@ Ones you build the project generate your protobuf messages, and do the mapping f
   }
   ```
 
-# Run the streaming job you can :
+# Run streaming job :
 * ```AWS_ACCESS_KEY_ID="" AWS_SECRET_ACCESS_KEY="" nohup spark-submit --packages com.amazonaws:aws-java-sdk-pom:1.10.34,org.apache.hadoop:hadoop-aws:2.6.0 --master spark://52.202.173.248:7077 --executor-memory 10g --driver-memory 10g --num-executors 3 --executor-cores 10 --conf "spark.cores.max=20" --class com.jactravel.monitoring.streaming.ProcessBusiness uber-jactravel-monitoring.jar &```
