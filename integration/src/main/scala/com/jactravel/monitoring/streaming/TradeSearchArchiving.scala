@@ -31,7 +31,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
     conf.set("spark.cassandra.auth.password", dbPassword)
     conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
-    ssc = new StreamingContext(conf, Minutes(5))
+    ssc = new StreamingContext(conf, Minutes(1))
     ssc.sparkContext.setLogLevel("ERROR")
 
     val searchStream = ssc
@@ -193,7 +193,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
         tradeSearchArchiveDF
           .write
           .format(CassandraFormat)
-          .mode(SaveMode.Append)
+          .mode(SaveMode.Overwrite)
           .options(Map( "table" -> "trade_search_archive", "keyspace" -> keyspaceName))
           .save()
     }
