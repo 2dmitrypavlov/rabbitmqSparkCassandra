@@ -5,7 +5,7 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait SupplierBookRequestJobInfo {
+object SupplierBookRequestJobInfo {
   case class SupplierBookRequestInfo(
                                       success_rate: Double,
                                       book_count: Long,

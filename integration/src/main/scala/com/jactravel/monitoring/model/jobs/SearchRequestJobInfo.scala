@@ -5,7 +5,7 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait SearchRequestJobInfo {
+object SearchRequestJobInfo {
   case class SearchRequestCount(
                                  search_count: Long,
                                  time: String,

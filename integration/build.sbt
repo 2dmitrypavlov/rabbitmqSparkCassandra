@@ -27,7 +27,7 @@ lazy val root = (project in file(".")).
       "ch.qos.logback"              %  "logback-classic"           % "1.1.7",
       "com.stratio.receiver"        %  "spark-rabbitmq"            % "0.5.1",
       "org.apache.hadoop"           %  "hadoop-aws"                % "2.6.0" exclude("tomcat", "jasper-compiler") excludeAll ExclusionRule(organization = "javax.servlet"),
-      "com.paulgoldbaum"            %% "scala-influxdb-client"     % "0.5.2"
+      "com.paulgoldbaum"            %% "scala-influxdb-client"     % "0.5.1"
     )
 
     // spark influx

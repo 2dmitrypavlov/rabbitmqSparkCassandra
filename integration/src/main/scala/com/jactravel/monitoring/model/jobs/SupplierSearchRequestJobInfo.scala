@@ -5,7 +5,7 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait SupplierSearchRequestJobInfo {
+object SupplierSearchRequestJobInfo {
   case class SupplierSearchRequestInfo(
                                         time: String,
                                         source: String,

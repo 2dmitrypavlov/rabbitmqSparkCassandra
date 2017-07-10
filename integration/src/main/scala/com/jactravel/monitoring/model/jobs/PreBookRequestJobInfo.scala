@@ -5,7 +5,7 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait PreBookRequestJobInfo {
+object PreBookRequestJobInfo {
   case class PreBookRequestCount(
                                   pre_book_count: Long,
                                   time: String,

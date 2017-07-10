@@ -3,14 +3,9 @@ package com.jactravel.monitoring.streaming
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.datastax.spark.connector.cql.CassandraConnectorConf
-import com.datastax.spark.connector.rdd.ReadConf
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.cassandra._
 import org.apache.spark.streaming.StreamingContext
-import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -53,10 +48,6 @@ private[streaming] trait ConfigService {
   val dbUseraname = Try(config.getString("db.username")).getOrElse("cassandra")
   val dbPassword = Try(config.getString("db.password")).getOrElse("xs9Zr6hfogrx")
 
-  val influxHost = Try(config.getString("influxdb.host")).getOrElse("52.87.0.147")
-  val influxPort = Try(config.getInt("influxdb.port")).getOrElse(8086)
-  val influxDBname = Try(config.getString("influxdb.db")).getOrElse("my_db")
-
   conf.setIfMissing("spark.cassandra.connection.host", dbServer)
   conf.set("spark.cassandra.auth.username", dbUseraname)
   conf.set("spark.cassandra.auth.password", dbPassword)
@@ -65,27 +56,4 @@ private[streaming] trait ConfigService {
     * Cassandra Properties
     */
   val keyspaceName = Try(config.getString("db.keyspaceName")).getOrElse("jactravel_monitoring_new")
-
-  // Date query
-  val lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10).getMillis / 1000
-  val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
-  val range = lower to upper by 1
-  val in_condition = s"(${range.mkString(",")})"
-  val query = s"query_second in $in_condition"
-
-  // Await timeout
-  val influxTimeout = 1 second
-
-  // Spark conf
-//  val sparkConf = new SparkConf()
-//    .setAppName("request-job")
-//    .setIfMissing("spark.master", "local[*]")//"spark://52.202.173.248:7077")
-
-  // Spark Session
-  val spark = SparkSession
-    .builder()
-    .config(conf)
-    .getOrCreate()
-    .setCassandraConf(CassandraConnectorConf.KeepAliveMillisParam.option(10000))
-    .setCassandraConf("Cluster1", "ks1", ReadConf.SplitSizeInMBParam.option(128))
 }

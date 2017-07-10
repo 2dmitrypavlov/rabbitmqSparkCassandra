@@ -5,7 +5,8 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait CmiBatchRequestJobInfo {
+object CmiBatchRequestJobInfo {
+
   case class CmiRequestCount(
                               cmi_count: Long,
                               login: String,

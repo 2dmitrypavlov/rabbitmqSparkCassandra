@@ -1,7 +1,6 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.PreBookRequestJobInfo
-import com.jactravel.monitoring.streaming.ConfigService
+import com.jactravel.monitoring.model.jobs.PreBookRequestJobInfo._
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
@@ -10,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo {
+object PreBookRequestJob extends JobConfig("pre-book-request-job") {
 
   def main(args: Array[String]): Unit = {
 
@@ -230,7 +229,7 @@ object PreBookRequestJob extends ConfigService with PreBookRequestJobInfo {
     // SAVING BOOK RESPONSE TO INFLUXDB
     preBookResponseTime.foreachPartition { partition =>
 
-      import InfluxDB._
+
       // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 

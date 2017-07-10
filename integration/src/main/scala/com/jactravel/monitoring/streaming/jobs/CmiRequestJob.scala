@@ -1,7 +1,6 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.CmiRequestJobInfo
-import com.jactravel.monitoring.streaming.ConfigService
+import com.jactravel.monitoring.model.jobs.CmiRequestJobInfo._
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
@@ -10,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object CmiRequestJob extends ConfigService with CmiRequestJobInfo {
+object CmiRequestJob extends JobConfig("cmi-request-job") {
 
   def main(args: Array[String]): Unit = {
 

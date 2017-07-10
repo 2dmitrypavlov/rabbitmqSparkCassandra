@@ -5,7 +5,7 @@ import com.paulgoldbaum.influxdbclient.Point
 /**
   * Created by fayaz on 09.07.17.
   */
-trait SupplierPreBookRequestJobInfo {
+object SupplierPreBookRequestJobInfo {
   case class SupplierPreBookRequestInfo(
                                          pre_book_count: Long,
                                          processing_time_ms_50: Double,

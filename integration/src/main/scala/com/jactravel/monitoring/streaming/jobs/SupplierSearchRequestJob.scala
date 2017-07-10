@@ -1,7 +1,6 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.SupplierSearchRequestJobInfo
-import com.jactravel.monitoring.streaming.ConfigService
+import com.jactravel.monitoring.model.jobs.SupplierSearchRequestJobInfo._
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
@@ -10,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object SupplierSearchRequestJob extends ConfigService with SupplierSearchRequestJobInfo {
+object SupplierSearchRequestJob extends JobConfig("supplier-search-request-job") {
 
   def main(args: Array[String]): Unit = {
 
@@ -48,20 +47,20 @@ object SupplierSearchRequestJob extends ConfigService with SupplierSearchRequest
       .read
       .format("org.apache.spark.sql.cassandra")
       .options(Map(
-        "table" -> "book_request_second",
+        "table" -> "search_request_second",
         "keyspace" -> "jactravel_monitoring_new"))
       .load()
       .filter(query)
-      .createOrReplaceTempView("BookRequest")
+      .createOrReplaceTempView("PureSearchRequest")
 
     // SUPPLIER BOOK REQUEST
     spark
       .read
       .format("org.apache.spark.sql.cassandra")
-      .options(Map("table" -> "supplier_book_request_second", "keyspace" -> "jactravel_monitoring_new"))
+      .options(Map("table" -> "supplier_search_request_second", "keyspace" -> "jactravel_monitoring_new"))
       .load()
       .filter(query)
-      .createOrReplaceTempView("SupplierBookRequest")
+      .createOrReplaceTempView("PureSupplierSearchRequest")
 
     // QUERY PROXY REQUEST
     spark

@@ -1,7 +1,6 @@
 package com.jactravel.monitoring.streaming.jobs
 
-import com.jactravel.monitoring.model.jobs.SupplierPreBookRequestJobInfo
-import com.jactravel.monitoring.streaming.ConfigService
+import com.jactravel.monitoring.model.jobs.SupplierPreBookRequestJobInfo._
 import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
@@ -10,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by fayaz on 09.07.17.
   */
-object SupplierPreBookRequestJob extends ConfigService with SupplierPreBookRequestJobInfo {
+object SupplierPreBookRequestJob extends JobConfig("supplier-pre-book-request-job") {
 
   def main(args: Array[String]): Unit = {
 
