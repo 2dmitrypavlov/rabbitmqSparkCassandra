@@ -193,7 +193,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
         tradeSearchArchiveDF
           .write
           .format(CassandraFormat)
-          .mode(SaveMode.Overwrite)
+          .mode(SaveMode.Append)
           .options(Map( "table" -> "trade_search_archive", "keyspace" -> keyspaceName))
           .save()
     }
