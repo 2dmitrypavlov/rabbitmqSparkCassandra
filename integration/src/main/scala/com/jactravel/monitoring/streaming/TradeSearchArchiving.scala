@@ -4,7 +4,7 @@ import com.jactravel.monitoring.PlatformType
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.cassandra._
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{Row, SaveMode, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.{Minutes, StreamingContext}
@@ -193,6 +193,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
         tradeSearchArchiveDF
           .write
           .format(CassandraFormat)
+          .mode(SaveMode.Append)
           .options(Map( "table" -> "trade_search_archive", "keyspace" -> keyspaceName))
           .save()
     }
