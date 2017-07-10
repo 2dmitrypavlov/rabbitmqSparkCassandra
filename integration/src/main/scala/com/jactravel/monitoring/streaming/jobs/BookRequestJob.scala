@@ -186,7 +186,8 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_parent_group,
                   xml_booking_login"""
     ).na.fill("stub", stringNullFilter)
-     .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms", "perc_response_time_ms"))
+     .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms"))
+     .na.fill(-1.0, Seq("perc_response_time_ms"))
      .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
