@@ -146,7 +146,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .sql(
             """SELECT search_date,
                trade_id,
-               xml_booking_login as xml_book_login,
+               coalesce(xml_booking_login, 'unknown') as xml_book_login,
                search_hour,
                request_processor_name as request_processor,
                brand_id,
@@ -188,8 +188,8 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                children,
                success
               """)
-          .na.fill("unknown", Seq("xml_book_login"))
 
+        tradeSearchArchiveDF.show()
         // Save to Cassandra
         tradeSearchArchiveDF
           .write
