@@ -188,7 +188,9 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                children,
                success
               """)
+          .na.fill("unknown", Seq("xml_book_login"))
 
+        tradeSearchArchiveDF.where($"xml_book_login" === "unknown").show(30)
         // Save to Cassandra
         tradeSearchArchiveDF
           .write
