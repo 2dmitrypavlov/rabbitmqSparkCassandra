@@ -4,13 +4,14 @@ import com.jactravel.monitoring.PlatformType
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.cassandra._
-import org.apache.spark.sql.{Row, SaveMode, SparkSession}
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{Row, SaveMode, SparkSession}
 import org.apache.spark.streaming.dstream.ConstantInputDStream
 import org.apache.spark.streaming.{Minutes, StreamingContext}
 import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.language.postfixOps
+import scala.util.Try
 
 /**
   * Created by eugene on 5/30/17.
@@ -88,8 +89,9 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
             , dfSearchRequestFiltered("query_uuid") === dfQueryProxyRequestRenamed("query_uuid")
             , "left_outer")
 
-        val toProcessor = udf[String, Int](processorId =>
-          PlatformType.valueOf(processorId).getValueDescriptor.getName)
+        val toProcessor = udf[String, Int] { processorId =>
+          Try(PlatformType.valueOf(processorId).getValueDescriptor.getName) getOrElse PlatformType.UnknownPlatform.toString
+        }
 
         val adultsCount = udf {
           (rooms: Seq[Row]) => rooms.foldLeft(0)(_ + _.getAs[Int]("adults"))
@@ -195,7 +197,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .write
           .format(CassandraFormat)
           .mode(SaveMode.Append)
-          .options(Map( "table" -> "trade_search_archive", "keyspace" -> keyspaceName))
+          .options(Map("table" -> "trade_search_archive", "keyspace" -> keyspaceName))
           .save()
     }
 
