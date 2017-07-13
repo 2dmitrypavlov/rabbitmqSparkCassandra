@@ -70,12 +70,12 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .format("org.apache.spark.sql.cassandra")
           .options(Map("table" -> "query_proxy_request_second", "keyspace" -> keyspaceName))
           .load
-          .select($"query_second"
-            , $"query_uuid"
-            , $"xml_booking_login"
-            , $"request_processor"
-            , $"client_request_utc_timestamp"
-            , $"client_response_utc_timestamp")
+          .selectExpr("query_second"
+            , "query_uuid"
+            , "coalesce(xml_booking_login, 'unknown') as xml_book_login"
+            , "coalesce(request_processor, '0') as request_processor_number"
+            , "client_request_utc_timestamp"
+            , "client_response_utc_timestamp")
 
         val dfSearchRequestFiltered = dfSearchRequest
           .where($"query_second".isin(rangeSearch.toList: _*))
@@ -112,7 +112,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .withColumn("diff_response_time",
             unix_timestamp($"request_info.end_utc_timestamp") - unix_timestamp($"request_info.start_utc_timestamp"))
           .withColumn("search_hour", hour($"search_date"))
-          .withColumn("request_processor_name", toProcessor($"request_processor"))
+          .withColumn("request_processor", toProcessor($"request_processor_number"))
           .withColumn("adults", adultsCount($"request_info.rooms"))
           .withColumn("children", childrenCount($"request_info.rooms"))
           .selectExpr(
@@ -131,9 +131,9 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
             , "children"
             , "success as success"
             , "request_info.room_count as room_count"
-            , "request_processor_name"
-            , "xml_booking_login"
-            , "request_processor_name"
+            , "request_processor"
+            , "xml_book_login"
+            , "request_processor"
             , "property_reference_count"
             , "property_count"
             , "priced_room_count"
@@ -147,9 +147,9 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
           .sql(
             """SELECT search_date,
                trade_id,
-               coalesce(xml_booking_login, 'unknown') as xml_book_login,
+               xml_book_login,
                search_hour,
-               request_processor_name as request_processor,
+               request_processor,
                brand_id,
                sales_channel_id,
                search_geo_level,
