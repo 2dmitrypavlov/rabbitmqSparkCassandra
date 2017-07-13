@@ -31,7 +31,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
     conf.set("spark.cassandra.auth.password", dbPassword)
     conf.set("spark.cassandra.connection.keep_alive_ms", "60000")
 
-    ssc = new StreamingContext(conf, Minutes(5))
+    ssc = new StreamingContext(conf, Minutes(1))
     ssc.sparkContext.setLogLevel("ERROR")
 
     val searchStream = ssc
@@ -175,9 +175,9 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                GROUP BY
                search_date,
                trade_id,
-               xml_booking_login,
+               xml_book_login,
                search_hour,
-               request_processor_name,
+               request_processor,
                brand_id,
                sales_channel_id,
                search_geo_level,
@@ -190,7 +190,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
                success
               """)
 
-        tradeSearchArchiveDF.show()
+//        tradeSearchArchiveDF.show()
         // Save to Cassandra
         tradeSearchArchiveDF
           .write
