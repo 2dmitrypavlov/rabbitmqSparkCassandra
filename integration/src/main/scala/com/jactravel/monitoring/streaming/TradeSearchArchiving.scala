@@ -11,7 +11,6 @@ import org.apache.spark.streaming.{Minutes, StreamingContext}
 import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.language.postfixOps
-import scala.util.Try
 
 /**
   * Created by eugene on 5/30/17.
@@ -90,7 +89,7 @@ object TradeSearchArchiving extends LazyLogging with ConfigService with ProcessM
             , "left_outer")
 
         val toProcessor = udf[String, Int] { processorId =>
-          Try(PlatformType.valueOf(processorId).getValueDescriptor.getName) getOrElse PlatformType.UnknownPlatform.toString
+          Some(PlatformType.valueOf(processorId).getValueDescriptor.getName) getOrElse PlatformType.UnknownPlatform.toString
         }
 
         val adultsCount = udf {
