@@ -17,7 +17,7 @@ case class Proxy(queryUUID: String, xmlBookingLogin: String)
 object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonitoringStream {
   def convertJavaDateToSqlDate(date: java.util.Date) = new Date(date.getTime)
 
-  override val keyspaceName: String = "jactravel_monitoring_new"
+//  override val keyspaceName: String = "jactravel_monitoring_new"
 
   def main(args: Array[String]): Unit = {
 
