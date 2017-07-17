@@ -252,23 +252,24 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
     import com.pygmalios.reactiveinflux.Point
     val s=searchCount //.map(toSearchCountPoint)
 
-      s.rdd.map{src=>
+     val p= s.rdd.map{src=>
 
       com.pygmalios.reactiveinflux.Point(
         time        = DateTime.now(),
         measurement = "search_count",
         tags        = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
-          ,"trade_group" -> Try(src.trade_group).getOrElse("no_group"),
-          "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name"),
-          "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade"),
-          "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+          ,"trade_group" -> Try(src.trade_group).getOrElse("no_group")
+          ,"trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          ,"trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
+          ,"xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
                           ),
         fields      = Map(
-          "search_count" -> Try(src.search_count).getOrElse(1).asInstanceOf[Int]
+          "search_count" -> Try(src.search_count.toInt).getOrElse(1).asInstanceOf[Int]
                       )
       )
-    }.saveToInflux()
+    }
+    p.saveToInflux()
 
 //    "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
 //    "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
