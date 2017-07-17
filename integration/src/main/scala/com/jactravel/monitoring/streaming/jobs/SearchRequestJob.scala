@@ -5,6 +5,7 @@ import com.paulgoldbaum.influxdbclient.InfluxDB
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 /**
   * Created by fayaz on 09.07.17.
@@ -192,7 +193,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
       partition
         .map(toSearchCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
+        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
 
       // Close connection
       db.close()
@@ -206,7 +207,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
       partition
         .map(toSuccessCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
+        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
 
       // Close connection
       db.close()
@@ -220,7 +221,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
       partition
         .map(toErrorsCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
+        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
 
       // Close connection
       db.close()
@@ -234,7 +235,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
       partition
         .map(toResponseTimePoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
+        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
 
       // Close connection
       db.close()
