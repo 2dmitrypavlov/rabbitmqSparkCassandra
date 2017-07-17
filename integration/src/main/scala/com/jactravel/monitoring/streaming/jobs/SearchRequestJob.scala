@@ -125,7 +125,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-//      .as[SearchRequestCount]
+      .as[SearchRequestCount]
 
     // SEARCH SUCCESS
     val searchSuccess = spark.sql("""
@@ -201,7 +201,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
     implicit val params = ReactiveInfluxDbName("my_db")
     implicit val awaitAtMost = 1.second
-
+    import spark.implicits._
     import com.pygmalios.reactiveinflux.Point
 //    val point1 = com.pygmalios.reactiveinflux.Point(
 //      time        = DateTime.now(),
@@ -250,21 +250,34 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 //    "xml_booking_login" -> src.xml_booking_login
 //
     import com.pygmalios.reactiveinflux.Point
-    searchCount.rdd.map{src=>
+    val s=searchCount //.map(toSearchCountPoint)
+
+      s.rdd.map{src=>
+
       com.pygmalios.reactiveinflux.Point(
         time        = DateTime.now(),
         measurement = "search_count",
         tags        = Map(
-          "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
-          "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
-          "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
-          "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
-          "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
-        ),
+          "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
+          ,"trade_group" -> Try(src.trade_group).getOrElse("no_group"),
+          "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name"),
+          "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade"),
+          "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+                          ),
         fields      = Map(
-          "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
-    )
+          "search_count" -> Try(src.search_count).getOrElse(1).asInstanceOf[Int]
+                      )
+      )
     }.saveToInflux()
+
+//    "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
+//    "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
+//    "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
+//    "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
+//    "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
+//    ),
+//    fields      = Map(
+//      "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
 
 //    // SAVING BOOK COUNT TO INFLUXDB
 //    searchCount.foreachPartition { partition =>
