@@ -6,6 +6,7 @@ import com.paulgoldbaum.influxdbclient.Point
   * Created by fayaz on 09.07.17.
   */
 object BookRequestJobInfo {
+
   case class BookRequestCount(book_count: Long,
                               time: String,
                               brand_name: String,
@@ -63,28 +64,28 @@ object BookRequestJobInfo {
                                         xml_booking_login: Option[String] = None)
 
   case class BookRequestErrorsCountOpt(
-                                     errors_count: Option[Long] = None,
-                                     time: Option[String] = None,
-                                     brand_name: Option[String] = None,
-                                     sales_channel: Option[String] = None,
-                                     trade_group: Option[String] = None,
-                                     trade_name: Option[String] = None,
-                                     trade_parent_group: Option[String] = None,
-                                     xml_booking_login: Option[String] = None
-                                   )
+                                        errors_count: Option[Long] = None,
+                                        time: Option[String] = None,
+                                        brand_name: Option[String] = None,
+                                        sales_channel: Option[String] = None,
+                                        trade_group: Option[String] = None,
+                                        trade_name: Option[String] = None,
+                                        trade_parent_group: Option[String] = None,
+                                        xml_booking_login: Option[String] = None
+                                      )
 
   case class BookRequestResponseTimeOpt(
-                                      time: Option[String] = None,
-                                      brand_name: Option[String] = None,
-                                      sales_channel: Option[String] = None,
-                                      trade_group: Option[String] = None,
-                                      trade_name: Option[String] = None,
-                                      trade_parent_group: Option[String] = None,
-                                      xml_booking_login: Option[String] = None,
-                                      min_response_time_ms: Option[Long] = None,
-                                      max_response_time_ms: Option[Long] = None,
-                                      perc_response_time_ms: Option[Double] = None
-                                    )
+                                         time: Option[String] = None,
+                                         brand_name: Option[String] = None,
+                                         sales_channel: Option[String] = None,
+                                         trade_group: Option[String] = None,
+                                         trade_name: Option[String] = None,
+                                         trade_parent_group: Option[String] = None,
+                                         xml_booking_login: Option[String] = None,
+                                         min_response_time_ms: Option[Long] = None,
+                                         max_response_time_ms: Option[Long] = None,
+                                         perc_response_time_ms: Option[Double] = None
+                                       )
 
   def toBookCountPoint(brc: BookRequestCountOpt): Point = {
     Point("book_request_count")
