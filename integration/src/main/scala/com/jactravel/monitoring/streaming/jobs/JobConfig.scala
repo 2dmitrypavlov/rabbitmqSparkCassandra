@@ -28,7 +28,7 @@ private[jobs] class JobConfig(appName: String) {
   val influxDBname = Try(config.getString("influxdb.db")).getOrElse("my_db")
 
   // Date query
-  val lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10080).getMillis / 1000
+  val lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10).getMillis / 1000
   val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
   val range = lower to upper by 1
   val in_condition = s"(${range.mkString(",")})"
