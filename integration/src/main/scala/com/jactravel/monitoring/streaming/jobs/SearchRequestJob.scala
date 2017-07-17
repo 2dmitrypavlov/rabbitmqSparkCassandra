@@ -249,7 +249,7 @@ object SearchRequestJob extends JobConfig("seaarch-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_xml")
         ),
         fields = Map(
-          "search_count" -> Try(src.search_count.toInt).getOrElse(1).asInstanceOf[Int]
+          "search_count" -> Try(src.search_count.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
@@ -268,7 +268,7 @@ object SearchRequestJob extends JobConfig("seaarch-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales")
         ),
         fields = Map(
-          "success_count" -> Try(src.success_count.toInt).getOrElse(1).asInstanceOf[Int]
+          "success_count" -> Try(src.success_count.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
@@ -286,7 +286,7 @@ object SearchRequestJob extends JobConfig("seaarch-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales")
         ),
         fields = Map(
-          "errors_count" -> Try(src.errors_count.toInt).getOrElse(1).asInstanceOf[Int]
+          "errors_count" -> Try(src.errors_count.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
@@ -304,9 +304,9 @@ object SearchRequestJob extends JobConfig("seaarch-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales_channel")
         ),
         fields = Map(
-          "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
-          , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
-          , "perc_response_time" -> Try(src.perc_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
+          "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1)
+          , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1)
+          , "perc_response_time" -> Try(src.perc_response_time_ms.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
