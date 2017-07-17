@@ -137,7 +137,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   xml_booking_logiN"""
     ).na.fill(stringReplaceValue, stringNullFilter)
      .na.fill(-1L, Seq("success_count"))
-     .as[BookRequestSuccessCount]
+//     .as[BookRequestSuccessCount]
 
     // BOOK ERROR
     val bookError = spark.sql(
@@ -161,7 +161,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   xml_booking_login"""
     ).na.fill(stringReplaceValue, stringNullFilter)
      .na.fill(-1L, Seq("errors_count"))
-     .as[BookRequestErrorsCount]
+//     .as[BookRequestErrorsCount]
 
     // BOOK RESPONSE TIME
     val bookResponseTime = spark.sql(
@@ -187,7 +187,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
     ).na.fill(stringReplaceValue, stringNullFilter)
      .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms"))
      .na.fill(-1.0, Seq("perc_response_time_ms"))
-     .as[BookRequestResponseTime]
+//     .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
 
@@ -341,6 +341,6 @@ object BookRequestJob extends JobConfig("book-request-job") {
 //      db.close()
 //    }
 
-    spark.stop()
+//    spark.stop()
   }
 }
