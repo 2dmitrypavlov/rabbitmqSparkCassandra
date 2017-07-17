@@ -249,7 +249,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 //    "trade_parent_group" -> src.trade_parent_group,
 //    "xml_booking_login" -> src.xml_booking_login
 //
-    import com.pygmalios.reactiveinflux.Point._
+    import com.pygmalios.reactiveinflux.Point
     searchCount.rdd.map{src=>
       com.pygmalios.reactiveinflux.Point(
         time        = DateTime.now(),
@@ -263,7 +263,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
         fields      = Map(
           "search_count" -> src.getAs[Int]("search_count.toString"))
     )
-    }
+    }.saveToInflux()
 
 //    // SAVING BOOK COUNT TO INFLUXDB
 //    searchCount.foreachPartition { partition =>
