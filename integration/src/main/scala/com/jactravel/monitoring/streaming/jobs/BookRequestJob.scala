@@ -193,7 +193,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
 
     // SAVING BOOK COUNT TO INFLUXDB
 
-    bookCount.foreachPartition { partititon =>
+    bookCount.limit(10).foreachPartition { partititon =>
 
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
