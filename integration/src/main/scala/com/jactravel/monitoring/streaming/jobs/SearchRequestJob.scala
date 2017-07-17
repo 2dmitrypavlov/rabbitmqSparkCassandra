@@ -1,36 +1,22 @@
 package com.jactravel.monitoring.streaming.jobs
 
 import com.jactravel.monitoring.model.jobs.SearchRequestJobInfo._
-import com.paulgoldbaum.influxdbclient.{InfluxDB, Point}
 
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 import com.pygmalios.reactiveinflux._
-//import com.pygmalios.reactiveinflux.spark._
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.rdd.RDD
-import org.joda.time.DateTime
-// Provide settings for reactiveinflux
-import scala.concurrent.duration._
-
-import com.pygmalios.reactiveinflux._
 import com.pygmalios.reactiveinflux.spark._
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.rdd.RDD
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
+
 /**
   * Created by fayaz on 09.07.17.
   */
-object SearchRequestJob  extends JobConfig("seaarch-request-job") {
+object SearchRequestJob extends JobConfig("seaarch-request-job") {
 
   def main(args: Array[String]): Unit = {
 
-    val nullFilter = Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login")
-
-    import spark.implicits._
+    val nullFilter = Seq("time", "brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login")
 
     // BRAND TABLE
     spark
@@ -83,7 +69,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
     import spark.implicits._
     // SEARCH REQUEST
     spark.sql(
-     """SELECT sr.query_uuid,
+      """SELECT sr.query_uuid,
                brand_name,
                trade_name,
                trade_group,
@@ -107,7 +93,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 
     // SEARCH COUNT
     val searchCount = spark.sql(
-    """SELECT COUNT(query_uuid) as search_count,
+      """SELECT COUNT(query_uuid) as search_count,
             time,
             brand_name,
             sales_channel,
@@ -128,7 +114,8 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
       .as[SearchRequestCount]
 
     // SEARCH SUCCESS
-    val searchSuccess = spark.sql("""
+    val searchSuccess = spark.sql(
+      """
         SELECT COUNT(query_uuid) as success_count,
             time,
             brand_name,
@@ -151,7 +138,8 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
       .as[SearchRequestSuccess]
 
     // SEARCH ERROR
-    val searchErrors = spark.sql("""
+    val searchErrors = spark.sql(
+      """
         SELECT COUNT(query_uuid) as errors_count,
             time,
             brand_name,
@@ -174,7 +162,8 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
       .as[SearchRequestErrors]
 
     // SEARCH RESPONSE TIME
-    val searchResponseTime = spark.sql("""
+    val searchResponseTime = spark.sql(
+      """
         SELECT time,
             brand_name,
             sales_channel,
@@ -194,149 +183,201 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
             trade_name,
             trade_parent_group,
             xml_booking_login""")
-      .na.fill("stub", Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
+      .na.fill("stub", Seq("time", "brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
       .as[SearchRequestResponseTime]
 
     // SAVING TO INFLUXDB
 
     implicit val params = ReactiveInfluxDbName("my_db")
     implicit val awaitAtMost = 1.second
-    import spark.implicits._
-    import com.pygmalios.reactiveinflux.Point
-//    val point1 = com.pygmalios.reactiveinflux.Point(
-//      time        = DateTime.now(),
-//      measurement = "measurement1",
-//      tags        = Map(
-//        "tagKey1" -> "tagValue1",
-//        "tagKey2" -> "tagValue2"),
-//      fields      = Map(
-//        "fieldKey1" -> "fieldValue1",
-//        "fieldKey2" -> 10.7)
-//    )
+    //    val point1 = com.pygmalios.reactiveinflux.Point(
+    //      time        = DateTime.now(),
+    //      measurement = "measurement1",
+    //      tags        = Map(
+    //        "tagKey1" -> "tagValue1",
+    //        "tagKey2" -> "tagValue2"),
+    //      fields      = Map(
+    //        "fieldKey1" -> "fieldValue1",
+    //        "fieldKey2" -> 10.7)
+    //    )
 
-// val rdd=searchCount.map{p=>
-//   com.pygmalios.reactiveinflux.Point(
-//        time        = DateTime.now(),
-//        measurement = "measurement1",
-//        tags        = Map(
-//          "tagKey1" -> "tagValue1",
-//          "tagKey2" -> "tagValue2"),
-//        fields      = Map(
-//          "fieldKey1" -> "fieldValue1",
-//          "fieldKey2" -> 10.7))
-//    }.rdd
-//
-//  rdd.saveToInflux()
+    // val rdd=searchCount.map{p=>
+    //   com.pygmalios.reactiveinflux.Point(
+    //        time        = DateTime.now(),
+    //        measurement = "measurement1",
+    //        tags        = Map(
+    //          "tagKey1" -> "tagValue1",
+    //          "tagKey2" -> "tagValue2"),
+    //        fields      = Map(
+    //          "fieldKey1" -> "fieldValue1",
+    //          "fieldKey2" -> 10.7))
+    //    }.rdd
+    //
+    //  rdd.saveToInflux()
 
-//    def toSearchCountPoint(src: SearchRequestCount): Point = {
-//      Point("search_request_count")
-//        .addTag("mtime", src.time)
-//        .addTag("brand_name", src.brand_name)
-//        .addTag("sales_channel", src.sales_channel)
-//        .addTag("trade_group", src.trade_group)
-//        .addTag("trade_name", src.trade_name)
-//        .addTag("trade_parent_group", src.trade_parent_group)
-//        .addTag("xml_booking_login", src.xml_booking_login)
-//        .addField("search_count", src.search_count)
-//    }
+    //    def toSearchCountPoint(src: SearchRequestCount): Point = {
+    //      Point("search_request_count")
+    //        .addTag("mtime", src.time)
+    //        .addTag("brand_name", src.brand_name)
+    //        .addTag("sales_channel", src.sales_channel)
+    //        .addTag("trade_group", src.trade_group)
+    //        .addTag("trade_name", src.trade_name)
+    //        .addTag("trade_parent_group", src.trade_parent_group)
+    //        .addTag("xml_booking_login", src.xml_booking_login)
+    //        .addField("search_count", src.search_count)
+    //    }
 
-//    search_count: Long,
-//    time: String,
-//    brand_name: String,
-//    "brand_name" -> src.brand_name,
-//    "trade_group" -> src.trade_group,
-//    "trade_name" -> src.trade_name,
-//    "trade_parent_group" -> src.trade_parent_group,
-//    "xml_booking_login" -> src.xml_booking_login
-//
-    import com.pygmalios.reactiveinflux.Point
-    val s=searchCount //.map(toSearchCountPoint)
-
-     val p= s.rdd.map{src=>
-
+    //    search_count: Long,
+    //    time: String,
+    //    brand_name: String,
+    //    "brand_name" -> src.brand_name,
+    //    "trade_group" -> src.trade_group,
+    //    "trade_name" -> src.trade_name,
+    //    "trade_parent_group" -> src.trade_parent_group,
+    //    "xml_booking_login" -> src.xml_booking_login
+    //
+    searchCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
-        time        = DateTime.now(),
-        measurement = "search_count",
-        tags        = Map(
+        time = DateTime.now(),
+        measurement = "search_request_count",
+        tags = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
-          ,"trade_group" -> Try(src.trade_group).getOrElse("no_group")
-          ,"trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
-          ,"trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
-          ,"xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
-                          ),
-        fields      = Map(
+          , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
+          , "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          , "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
+          , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+          , "sales_channel" -> Try(src.sales_channel).getOrElse("no_xml")
+        ),
+        fields = Map(
           "search_count" -> Try(src.search_count.toInt).getOrElse(1).asInstanceOf[Int]
-                      )
+        )
       )
-    }
-    p.saveToInflux()
-
-//    "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
-//    "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
-//    "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
-//    "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
-//    "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
-//    ),
-//    fields      = Map(
-//      "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
-
-//    // SAVING BOOK COUNT TO INFLUXDB
-//    searchCount.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toSearchCountPoint)
-//        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
-//
-//      // Close connection
-//      db.close()
-//    }
+    }.saveToInflux()
 
 
-//    // SAVING BOOK SUCCESS TO INFLUXDB
-//    searchSuccess.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toSuccessCountPoint)
-//        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
-//
-//      // Close connection
-//      db.close()
-//    }
-//
-//    // SAVING BOOK ERROR TO INFLUXDB
-//    searchErrors.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toErrorsCountPoint)
-//        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
-//
-//      // Close connection
-//      db.close()
-//    }
-//
-//    // SAVING BOOK RESPONSE TO INFLUXDB
-//    searchResponseTime.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toResponseTimePoint)
-//        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
-//
-//      // Close connection
-//      db.close()
-//    }
+    searchSuccess.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "search_success_count",
+        tags = Map(
+          "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
+          , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
+          , "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          , "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
+          , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+          , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales")
+        ),
+        fields = Map(
+          "success_count" -> Try(src.success_count.toInt).getOrElse(1).asInstanceOf[Int]
+        )
+      )
+    }.saveToInflux()
 
-//    spark.stop()
+    searchErrors.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "search_errors_count",
+        tags = Map(
+          "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
+          , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
+          , "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          , "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
+          , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+          , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales")
+        ),
+        fields = Map(
+          "errors_count" -> Try(src.errors_count.toInt).getOrElse(1).asInstanceOf[Int]
+        )
+      )
+    }.saveToInflux()
+
+    searchResponseTime.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "search_response_time",
+        tags = Map(
+          "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
+          , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
+          , "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          , "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade")
+          , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+          , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales_channel")
+        ),
+        fields = Map(
+          "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
+          , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
+          , "perc_response_time" -> Try(src.perc_response_time_ms.toInt).getOrElse(1).asInstanceOf[Int]
+        )
+      )
+    }.saveToInflux()
+
+
+    //    "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
+    //    "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
+    //    "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
+    //    "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
+    //    "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
+    //    ),
+    //    fields      = Map(
+    //      "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
+
+    //    // SAVING BOOK COUNT TO INFLUXDB
+    //    searchCount.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toSearchCountPoint)
+    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+
+
+    //    // SAVING BOOK SUCCESS TO INFLUXDB
+    //    searchSuccess.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toSuccessCountPoint)
+    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+    //
+    //    // SAVING BOOK ERROR TO INFLUXDB
+    //    searchErrors.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toErrorsCountPoint)
+    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+    //
+    //    // SAVING BOOK RESPONSE TO INFLUXDB
+    //    searchResponseTime.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toResponseTimePoint)
+    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+
+    //    spark.stop()
   }
 }
