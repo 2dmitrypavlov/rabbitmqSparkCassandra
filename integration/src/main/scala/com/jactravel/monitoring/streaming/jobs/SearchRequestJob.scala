@@ -255,13 +255,14 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
         time        = DateTime.now(),
         measurement = "search_count",
         tags        = Map(
-          "brand_name" -> src.getAs("brand_name").toString,
-          "trade_group" -> src.getAs("trade_group").toString,
-          "trade_name" -> src.getAs("trade_name").toString,
-          "trade_parent_group" -> src.getAs("trade_parent_group").toString,
-          "xml_booking_login" -> src.getAs("xml_booking_login").toString),
+          "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
+          "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
+          "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
+          "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
+          "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
+        ),
         fields      = Map(
-          "search_count" -> src.getAs[Int]("search_count.toString"))
+          "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
     )
     }.saveToInflux()
 
