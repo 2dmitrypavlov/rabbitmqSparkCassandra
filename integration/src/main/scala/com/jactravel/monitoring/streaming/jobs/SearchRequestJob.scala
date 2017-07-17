@@ -125,7 +125,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[SearchRequestCount]
+//      .as[SearchRequestCount]
 
     // SEARCH SUCCESS
     val searchSuccess = spark.sql("""
@@ -195,7 +195,7 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
-//      .as[SearchRequestResponseTime]
+      .as[SearchRequestResponseTime]
 
     // SAVING TO INFLUXDB
 
@@ -249,18 +249,19 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
 //    "trade_parent_group" -> src.trade_parent_group,
 //    "xml_booking_login" -> src.xml_booking_login
 //
-    searchCount.map{src=>
+    import com.pygmalios.reactiveinflux.Point._
+    searchCount.rdd.map{src=>
       com.pygmalios.reactiveinflux.Point(
         time        = DateTime.now(),
         measurement = "search_count",
         tags        = Map(
-          "brand_name" -> src.brand_name,
-          "trade_group" -> src.trade_group,
-          "trade_name" -> src.trade_name,
-          "trade_parent_group" -> src.trade_parent_group,
-          "xml_booking_login" -> src.xml_booking_login),
+          "brand_name" -> src.getAs("brand_name").toString,
+          "trade_group" -> src.getAs("trade_group").toString,
+          "trade_name" -> src.getAs("trade_name").toString,
+          "trade_parent_group" -> src.getAs("trade_parent_group").toString,
+          "xml_booking_login" -> src.getAs("xml_booking_login").toString),
         fields      = Map(
-          "search_count" -> src.search_count.toString)
+          "search_count" -> src.getAs[Int]("search_count.toString"))
     )
     }
 
