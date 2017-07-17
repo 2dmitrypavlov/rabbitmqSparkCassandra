@@ -69,7 +69,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
 
     // RICH BOOK REQUEST
     spark.sql(
-          """SELECT
+      """SELECT
                 br.query_uuid AS query_uuid,
                 brand_name,
                 trade_name,
@@ -95,7 +95,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
 
     // BOOK COUNT
     val bookCount = spark.sql(
-            """SELECT COUNT(query_uuid) as book_count,
+      """SELECT COUNT(query_uuid) as book_count,
                   time,
                   brand_name,
                   sales_channel,
@@ -113,11 +113,12 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_parent_group,
                   xml_booking_login"""
     ).na.fill(stringReplaceValue, stringNullFilter)
-     .na.fill(-1L, Seq("book_count"))
+      .na.fill(-1L, Seq("book_count"))
+      .as[BookRequestCountOpt]
 
     // BOOK SUCCESS
     val bookSuccess = spark.sql(
-           """SELECT COUNT(query_uuid) as success_count,
+      """SELECT COUNT(query_uuid) as success_count,
                   time,
                   brand_name,
                   sales_channel,
@@ -135,13 +136,13 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_logiN"""
-    ).na.fill(stringReplaceValue, stringNullFilter)
-     .na.fill(-1L, Seq("success_count"))
-//     .as[BookRequestSuccessCount]
+    ).na.fill("stub", stringNullFilter)
+      .na.fill(-1L, Seq("success_count"))
+      .as[BookRequestSuccessCountOpt]
 
     // BOOK ERROR
     val bookError = spark.sql(
-           """SELECT COUNT(query_uuid) as errors_count,
+      """SELECT COUNT(query_uuid) as errors_count,
                   time,
                   brand_name,
                   sales_channel,
@@ -159,13 +160,13 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill(stringReplaceValue, stringNullFilter)
-     .na.fill(-1L, Seq("errors_count"))
-//     .as[BookRequestErrorsCount]
+    ).na.fill("stub", stringNullFilter)
+      .na.fill(-1L, Seq("errors_count"))
+      .as[BookRequestErrorsCountOpt]
 
     // BOOK RESPONSE TIME
     val bookResponseTime = spark.sql(
-           """SELECT time,
+      """SELECT time,
                   brand_name,
                   sales_channel,
                   trade_group,
@@ -184,163 +185,69 @@ object BookRequestJob extends JobConfig("book-request-job") {
                   trade_name,
                   trade_parent_group,
                   xml_booking_login"""
-    ).na.fill(stringReplaceValue, stringNullFilter)
-     .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms"))
-     .na.fill(-1.0, Seq("perc_response_time_ms"))
-//     .as[BookRequestResponseTime]
+    ).na.fill("stub", stringNullFilter)
+      .na.fill(-1L, Seq("min_response_time_ms", "max_response_time_ms"))
+      .na.fill(-1.0, Seq("perc_response_time_ms"))
+      .as[BookRequestResponseTimeOpt]
 
     // SAVING TO INFLUXDB
 
     // SAVING BOOK COUNT TO INFLUXDB
+    bookCount.foreachPartition { partition =>
 
-    bookCount.limit(10).foreachPartition { partititon =>
-
+      // Open connection to Influxdb
       val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
-      partititon.foreach { r =>
-
-        Await.result(
-          db.write(
-//          Point("book_request_count")
-//          .addTag("mtime", r.getTimestamp(1).toString)
-//          .addTag("brand_name", r.getString(2))
-//          .addTag("sales_channel", r.getString(3))
-//          .addTag("trade_group", r.getString(4))
-//          .addTag("trade_name", r.getString(5))
-//          .addTag("trade_parent_group", r.getString(6))
-//          .addTag("xml_booking_login", r.getString(7))
-//          .addField("book_count", r.getLong(0))),
-            Point("book_request_count")
-              .addTag("mtime", "test")
-              .addTag("brand_name", "test")
-              .addTag("sales_channel", "test")
-              .addTag("trade_group", "test")
-              .addTag("trade_name", "test")
-              .addTag("trade_parent_group", "test")
-              .addTag("xml_booking_login", "test")
-              .addField("book_count", 10L)),
-          influxTimeout)
-      }
+      partition
+        .map(toBookCountPoint)
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
       // Close connection
       db.close()
     }
-//    bookCount.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(b =>
-//          Point("book_request_count")
-//          .addTag("mtime", b.time)
-//          .addTag("brand_name", b.brand_name)
-//          .addTag("sales_channel", b.sales_channel)
-//          .addTag("trade_group", b.trade_group)
-//          .addTag("trade_name", b.trade_name)
-//          .addTag("trade_parent_group", b.trade_parent_group)
-//          .addTag("xml_booking_login", b.xml_booking_login)
-//          .addField("book_count", b.book_count)
-//        )
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
 
-//    // Open connection to Influxdb
-//    val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//    bookCount
-//      .map(b =>
-//        Point("book_request_count")
-//          .addTag("mtime", b.time)
-//          .addTag("brand_name", b.brand_name)
-//          .addTag("sales_channel", b.sales_channel)
-//          .addTag("trade_group", b.trade_group)
-//          .addTag("trade_name", b.trade_name)
-//          .addTag("trade_parent_group", b.trade_parent_group)
-//          .addTag("xml_booking_login", b.xml_booking_login)
-//          .addField("book_count", b.book_count)
-//      )
-//      .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//    db.clone()
+    // SAVING BOOK SUCCESS TO INFLUXDB
+    bookSuccess.foreachPartition { partition =>
 
+      // Open connection to Influxdb
+      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
 
-//    // SAVING BOOK SUCCESS TO INFLUXDB
-//    bookSuccess.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(b =>
-//          Point("book_success_count")
-//            .addTag("mtime", b.time.getOrElse("NoneValue"))
-//            .addTag("brand_name", b.brand_name.getOrElse("NoneValue"))
-//            .addTag("sales_channel", b.sales_channel.getOrElse("NoneValue"))
-//            .addTag("trade_group", b.trade_group.getOrElse("NoneValue"))
-//            .addTag("trade_name", b.trade_name.getOrElse("NoneValue"))
-//            .addTag("trade_parent_group", b.trade_parent_group.getOrElse("NoneValue"))
-//            .addTag("xml_booking_login", b.xml_booking_login.getOrElse("NoneValue"))
-//            .addField("success_count", b.success_count.getOrElse(-1L))
-//        )
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
-//
-//    // SAVING BOOK ERROR TO INFLUXDB
-//    bookError.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(b =>
-//          Point("book_errors_count")
-//            .addTag("mtime", b.time.getOrElse("NoneValue"))
-//            .addTag("brand_name", b.brand_name.getOrElse("NoneValue"))
-//            .addTag("sales_channel", b.sales_channel.getOrElse("NoneValue"))
-//            .addTag("trade_group", b.trade_group.getOrElse("NoneValue"))
-//            .addTag("trade_name", b.trade_name.getOrElse("NoneValue"))
-//            .addTag("trade_parent_group", b.trade_parent_group.getOrElse("NoneValue"))
-//            .addTag("xml_booking_login", b.xml_booking_login.getOrElse("NoneValue"))
-//            .addField("errors_count", b.errors_count.getOrElse(-1L))
-//        )
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
-//
-//    // SAVING BOOK RESPONSE TO INFLUXDB
-//    bookResponseTime.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(b =>
-//          Point("book_response_time")
-//            .addTag("mtime", b.time.getOrElse("NoneValue"))
-//            .addTag("brand_name", b.brand_name.getOrElse("NoneValue"))
-//            .addTag("sales_channel", b.sales_channel.getOrElse("NoneValue"))
-//            .addTag("trade_group", b.trade_group.getOrElse("NoneValue"))
-//            .addTag("trade_name", b.trade_name.getOrElse("NoneValue"))
-//            .addTag("trade_parent_group", b.trade_parent_group.getOrElse("NoneValue"))
-//            .addTag("xml_booking_login", b.xml_booking_login.getOrElse("NoneValue"))
-//            .addField("min_response_time", b.min_response_time_ms.getOrElse(-1L))
-//            .addField("max_response_time", b.max_response_time_ms.getOrElse(-1L))
-//            .addField("perc_response_time", b.perc_response_time_ms.getOrElse(-1.0)))
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
+      partition
+        .map(toSuccessCountPoint)
+        .foreach(p => Await.result(db.write(p), influxTimeout))
 
-//    spark.stop()
+      // Close connection
+      db.close()
+    }
+
+    // SAVING BOOK ERROR TO INFLUXDB
+    bookError.foreachPartition { partition =>
+
+      // Open connection to Influxdb
+      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+
+      partition
+        .map(toErrorsCountPoint)
+        .foreach(p => Await.result(db.write(p), influxTimeout))
+
+      // Close connection
+      db.close()
+    }
+
+    // SAVING BOOK RESPONSE TO INFLUXDB
+    bookResponseTime.foreachPartition { partition =>
+
+      // Open connection to Influxdb
+      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+
+      partition
+        .map(toResponseTimePoint)
+        .foreach(p => Await.result(db.write(p), influxTimeout))
+
+      // Close connection
+      db.close()
+    }
+
+    spark.stop()
   }
 }
