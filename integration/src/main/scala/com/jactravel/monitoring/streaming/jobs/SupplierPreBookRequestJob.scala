@@ -134,6 +134,6 @@ object SupplierPreBookRequestJob extends JobConfig("supplier-pre-book-request-jo
       db.close()
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }

@@ -29,7 +29,7 @@ private[jobs] class JobConfig(appName: String) {
 
   // Date query
   val lower = DateTime.now(DateTimeZone.UTC).minusMinutes(10080).getMillis / 1000
-  val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(10000).getMillis / 1000
+  val upper = DateTime.now(DateTimeZone.UTC).minusMinutes(5).getMillis / 1000
   val range = lower to upper by 1
   val in_condition = s"(${range.mkString(",")})"
   val query = s"query_second in $in_condition"

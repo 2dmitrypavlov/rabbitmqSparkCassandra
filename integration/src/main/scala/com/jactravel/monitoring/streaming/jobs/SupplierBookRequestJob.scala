@@ -134,6 +134,6 @@ object SupplierBookRequestJob extends JobConfig("supplier-book-request-job") {
 
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }

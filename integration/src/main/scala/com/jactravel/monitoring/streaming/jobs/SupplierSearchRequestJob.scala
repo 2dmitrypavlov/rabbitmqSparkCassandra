@@ -153,6 +153,6 @@ object SupplierSearchRequestJob extends JobConfig("supplier-search-request-job")
       db.close()
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }

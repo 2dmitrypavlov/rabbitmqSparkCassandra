@@ -127,6 +127,6 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
 
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }

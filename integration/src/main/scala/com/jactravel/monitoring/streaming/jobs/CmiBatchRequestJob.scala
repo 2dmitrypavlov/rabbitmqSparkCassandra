@@ -146,6 +146,6 @@ object CmiBatchRequestJob extends JobConfig("cmi-batch-request-job") {
       db.close()
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }

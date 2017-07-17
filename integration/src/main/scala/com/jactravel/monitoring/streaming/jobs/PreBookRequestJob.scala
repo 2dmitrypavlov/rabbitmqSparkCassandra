@@ -241,7 +241,7 @@ object PreBookRequestJob extends JobConfig("pre-book-request-job") {
       db.close()
     }
 
-    spark.stop()
+//    spark.stop()
   }
 
 }

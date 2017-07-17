@@ -240,6 +240,6 @@ object SearchRequestJob  extends JobConfig("seaarch-request-job") {
       db.close()
     }
 
-    spark.stop()
+//    spark.stop()
   }
 }
