@@ -3,6 +3,7 @@ package com.jactravel.monitoring.streaming
 import java.sql.Date
 
 import com.jactravel.monitoring.model._
+import com.jactravel.monitoring.model.rabbit._
 import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.spark.sql.SparkSession

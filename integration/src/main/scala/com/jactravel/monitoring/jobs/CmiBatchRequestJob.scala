@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
 import com.jactravel.monitoring.model.jobs.CmiBatchRequestJobInfo._
 import com.paulgoldbaum.influxdbclient.Point
@@ -119,8 +119,6 @@ object CmiBatchRequestJob extends JobConfig("cmi-batch-request-job") {
     }
 
 
-    implicit val params = ReactiveInfluxDbName(influxDBname)
-    implicit val awaitAtMost = 1.second
     //    val point1 = com.pygmalios.reactiveinflux.Point(
     //      time        = DateTime.now(),
     //      measurement = "measurement1",

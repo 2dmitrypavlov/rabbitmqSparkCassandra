@@ -1,10 +1,11 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
 import com.jactravel.monitoring.model.jobs.SupplierSearchRequestJobInfo._
-import com.paulgoldbaum.influxdbclient.InfluxDB
+import com.pygmalios.reactiveinflux._
+import com.pygmalios.reactiveinflux.spark._
+import org.joda.time.DateTime
 
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 /**
   * Created by fayaz on 09.07.17.
@@ -137,21 +138,51 @@ object SupplierSearchRequestJob extends JobConfig("supplier-search-request-job")
       .na.fill("stub", Seq("time","brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
       .as[SupplierSearchRequestInfo]
 
+
+
+
+
     // SAVING TO INFLUXDB
-
+    supplierGraph.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "supplier_search_request",
+        tags = Map(
+          "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
+          , "source" -> Try(src.source).getOrElse("no_source")
+          , "trade_group" -> Try(src.trade_group).getOrElse("no_trade_group")
+          , "trade_parent_group" -> Try(src.trade_parent_group).getOrElse("no_trade_parent_group")
+          , "trade_name" -> Try(src.trade_name).getOrElse("no_trade_name")
+          , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
+        ),
+        fields = Map(
+          "search_count" -> Try(src.search_number.toInt).getOrElse(1)
+          , "error_count" -> Try(src.error_number.toInt).getOrElse(1)
+          , "success_count" -> Try(src.success_number.toInt).getOrElse(1)
+          , "max_property_сount" -> Try(src.max_property_number.toInt).getOrElse(1)
+          , "min_property_сount" -> Try(src.min_property_number.toInt).getOrElse(1)
+          , "search_timeout_count" -> Try(src.search_timeout_number.toInt).getOrElse(1)
+          , "avg_response_time" -> Try(src.avg_response_time).getOrElse(1.0)
+          , "avg_property_number" -> Try(src.avg_property_number).getOrElse(1.0)
+          , "max_response_time" -> Try(src.max_response_time.toInt).getOrElse(1)
+          , "min_response_time" -> Try(src.min_response_time.toInt).getOrElse(1)
+          , "search_timeout_count" -> Try(src.search_timeout_number.toInt).getOrElse(1)
+        )
+      )
+    }.saveToInflux()
     // SAVING SUPPLIER GRAPH TO INFLUXDB
-    supplierGraph.foreachPartition { partition =>
-
-      // Open connection to Influxdb
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-
-      partition
-        .map(toPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
-
-      // Close connection
-      db.close()
-    }
+//    supplierGraph.foreachPartition { partition =>
+//
+//      // Open connection to Influxdb
+//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+//
+//      partition
+//        .map(toPoint)
+//        .foreach(p => Await.result(db.write(p), influxTimeout))
+//
+//      // Close connection
+//      db.close()
+//    }
 
 //    spark.stop()
   }

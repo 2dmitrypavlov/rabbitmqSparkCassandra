@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
 import com.jactravel.monitoring.model.jobs.BookRequestJobInfo._
 import com.pygmalios.reactiveinflux._
@@ -193,9 +193,6 @@ object BookRequestJob extends JobConfig("book-request-job") {
       .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
-    implicit val params = ReactiveInfluxDbName(influxDBname)
-    implicit val awaitAtMost = 1.second
-
 
     bookCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(

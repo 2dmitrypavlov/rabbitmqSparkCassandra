@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.model
+package com.jactravel.monitoring.model.rabbit
 
 /**
   * Created by admin on 7/6/17.
@@ -21,10 +21,3 @@ trait CommonRequest {
     s"[QueryUUID = $queryUuid, brandName = $brandName, tradeName = $tradeName, timeIn = $timeIn]"
   }
 }
-
-case class QueryProxyRequestExt(
-                                 override val queryUuid: String,
-                                 tableName: Option[String] = None
-                               ) extends CommonRequest
-
-case class RichBookRequest ( override val queryUuid: String ) extends CommonRequest

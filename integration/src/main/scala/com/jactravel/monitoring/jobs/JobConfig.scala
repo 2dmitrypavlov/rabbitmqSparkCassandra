@@ -1,7 +1,9 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
 import com.datastax.spark.connector.cql.CassandraConnectorConf
 import com.datastax.spark.connector.rdd.ReadConf
+import SearchRequestJob.influxDBname
+import com.pygmalios.reactiveinflux.ReactiveInfluxDbName
 import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
@@ -52,4 +54,6 @@ private[jobs] class JobConfig(appName: String) {
     .getOrCreate()
     .setCassandraConf(CassandraConnectorConf.KeepAliveMillisParam.option(10000))
     .setCassandraConf("Cluster1", "ks1", ReadConf.SplitSizeInMBParam.option(128))
+  implicit val params = ReactiveInfluxDbName(influxDBname)
+  implicit val awaitAtMost = 1.second
 }

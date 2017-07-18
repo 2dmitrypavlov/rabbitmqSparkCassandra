@@ -1,22 +1,23 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
-import com.jactravel.monitoring.model.jobs.SearchRequestJobInfo._
-
-import scala.util.Try
+import com.jactravel.monitoring.model.jobs.PreBookRequestJobInfo._
 import com.pygmalios.reactiveinflux._
 import com.pygmalios.reactiveinflux.spark._
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
+import scala.util.Try
 
 /**
   * Created by fayaz on 09.07.17.
   */
-object SearchRequestJob extends JobConfig("search-request-job") {
+object PreBookRequestJob extends JobConfig("pre-book-request-job") {
 
   def main(args: Array[String]): Unit = {
 
     val nullFilter = Seq("time", "brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login")
+
+    import spark.implicits._
 
     // BRAND TABLE
     spark
@@ -56,44 +57,44 @@ object SearchRequestJob extends JobConfig("search-request-job") {
       .filter(query)
       .createOrReplaceTempView("QueryProxyRequest")
 
-    // SEARCH REQUEST
+    // PRE BOOK REQUEST
     spark
       .read
       .format("org.apache.spark.sql.cassandra")
       .options(Map(
-        "table" -> "search_request_second",
+        "table" -> "pre_book_request_second",
         "keyspace" -> "jactravel_monitoring_new"))
       .load()
       .filter(query)
-      .createOrReplaceTempView("PureSearchRequest")
-    import spark.implicits._
-    // SEARCH REQUEST
-    spark.sql(
-      """SELECT sr.query_uuid,
-               brand_name,
-               trade_name,
-               trade_group,
-               trade_parent_group,
-               sales_channel,
-              (unix_timestamp(request_info.end_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss') - unix_timestamp(request_info.start_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss')) AS response_time_ms,
-               sr.response_info.error_stack_trace,
-               sr.response_info.success,
-               xml_booking_login,
-               window(request_info.start_utc_timestamp, '5 minutes').end as time
-        FROM PureSearchRequest as sr,
-             SalesChannel as sc,
-             Trade as t,
-             Brand as b
-        LEFT JOIN QueryProxyRequest as qpr
-        ON sr.query_uuid == qpr.query_uuid
-        WHERE sr.request_info.sales_channel_id == sc.sales_channel_id
-        AND sr.request_info.trade_id == t.trade_id
-        AND sr.request_info.brand_id == b.brand_id""")
-      .createOrReplaceTempView("RichSearchRequest")
+      .createOrReplaceTempView("PurePreBookRequest")
 
-    // SEARCH COUNT
-    val searchCount = spark.sql(
-      """SELECT COUNT(query_uuid) as search_count,
+    // RICH PRE BOOK REQUEST
+    spark.sql(
+      """SELECT pbr.query_uuid,
+                brand_name,
+                trade_name,
+                trade_group,
+                trade_parent_group,
+                sales_channel,
+                (unix_timestamp(end_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.sss') - unix_timestamp(start_utc_timestamp, 'yyyy-MM-dd HH:mm:ss.S')) AS response_time_ms,
+                pbr.error_stack_trace,
+                pbr.success,
+                xml_booking_login,
+                window(start_utc_timestamp, '5 minutes').end as time
+         FROM PurePreBookRequest AS pbr,
+              SalesChannel AS sc,
+              Trade AS t,
+              Brand AS b
+         LEFT JOIN QueryProxyRequest AS qpr
+         ON pbr.query_uuid == qpr.query_uuid
+         WHERE pbr.sales_channel_id == sc.sales_channel_id
+         AND pbr.trade_id == t.trade_id
+         AND pbr.brand_id == b.brand_id"""
+    ).createOrReplaceTempView("RichPreBookRequest")
+
+    // PRE BOOK COUNT
+    val preBookCount = spark.sql(
+      """SELECT COUNT(query_uuid) as pre_book_count,
             time,
             brand_name,
             sales_channel,
@@ -101,7 +102,7 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_name,
             trade_parent_group,
             xmL_booking_login
-        FROM RichSearchRequest
+        FROM RichPreBookRequest
         GROUP BY
             time,
             brand_name,
@@ -111,12 +112,11 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[SearchRequestCount]
+      .as[PreBookRequestCount]
 
-    // SEARCH SUCCESS
-    val searchSuccess = spark.sql(
-      """
-        SELECT COUNT(query_uuid) as success_count,
+    // PRE BOOK SUCCESS
+    val preBookSuccess = spark.sql(
+      """SELECT COUNT(query_uuid) as success_count,
             time,
             brand_name,
             sales_channel,
@@ -124,7 +124,7 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_name,
             trade_parent_group,
             xmL_booking_login
-        FROM RichSearchRequest
+        FROM RichPreBookRequest
         WHERE success IS NOT NULL
         GROUP BY
             time,
@@ -135,12 +135,11 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[SearchRequestSuccess]
+      .as[PreBookRequestSuccessCount]
 
-    // SEARCH ERROR
-    val searchErrors = spark.sql(
-      """
-        SELECT COUNT(query_uuid) as errors_count,
+    // PRE BOOK ERROR
+    val preBookError = spark.sql(
+      """SELECT COUNT(query_uuid) as errors_count,
             time,
             brand_name,
             sales_channel,
@@ -148,7 +147,7 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_name,
             trade_parent_group,
             xml_booking_login
-        FROM RichSearchRequest
+        FROM RichPreBookRequest
         WHERE error_stack_trace IS NOT NULL
         GROUP BY
             time,
@@ -159,10 +158,10 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_parent_group,
             xml_booking_login""")
       .na.fill("stub", nullFilter)
-      .as[SearchRequestErrors]
+      .as[PreBookRequestErrorsCount]
 
-    // SEARCH RESPONSE TIME
-    val searchResponseTime = spark.sql(
+    // BOOK RESPONSE TIME
+    val preBookResponseTime = spark.sql(
       """
         SELECT time,
             brand_name,
@@ -174,7 +173,7 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             min(response_time_ms) as min_response_time_ms,
             max(response_time_ms) as max_response_time_ms,
             percentile_approx(response_time_ms, 0.5) as perc_response_time_ms
-        FROM RichSearchRequest
+        FROM RichPreBookRequest
         GROUP BY
             time,
             brand_name,
@@ -183,63 +182,16 @@ object SearchRequestJob extends JobConfig("search-request-job") {
             trade_name,
             trade_parent_group,
             xml_booking_login""")
-      .na.fill("stub", Seq("time", "brand_name", "sales_channel", "trade_parent_group", "trade_name", "trade_group", "xml_booking_login"))
-      .as[SearchRequestResponseTime]
+      .na.fill("stub", nullFilter)
+      .as[PreBookRequestResponseTime]
+
 
     // SAVING TO INFLUXDB
 
-    implicit val params = ReactiveInfluxDbName(influxDBname)
-    implicit val awaitAtMost = 1.second
-    //    val point1 = com.pygmalios.reactiveinflux.Point(
-    //      time        = DateTime.now(),
-    //      measurement = "measurement1",
-    //      tags        = Map(
-    //        "tagKey1" -> "tagValue1",
-    //        "tagKey2" -> "tagValue2"),
-    //      fields      = Map(
-    //        "fieldKey1" -> "fieldValue1",
-    //        "fieldKey2" -> 10.7)
-    //    )
-
-    // val rdd=searchCount.map{p=>
-    //   com.pygmalios.reactiveinflux.Point(
-    //        time        = DateTime.now(),
-    //        measurement = "measurement1",
-    //        tags        = Map(
-    //          "tagKey1" -> "tagValue1",
-    //          "tagKey2" -> "tagValue2"),
-    //        fields      = Map(
-    //          "fieldKey1" -> "fieldValue1",
-    //          "fieldKey2" -> 10.7))
-    //    }.rdd
-    //
-    //  rdd.saveToInflux()
-
-    //    def toSearchCountPoint(src: SearchRequestCount): Point = {
-    //      Point("search_request_count")
-    //        .addTag("mtime", src.time)
-    //        .addTag("brand_name", src.brand_name)
-    //        .addTag("sales_channel", src.sales_channel)
-    //        .addTag("trade_group", src.trade_group)
-    //        .addTag("trade_name", src.trade_name)
-    //        .addTag("trade_parent_group", src.trade_parent_group)
-    //        .addTag("xml_booking_login", src.xml_booking_login)
-    //        .addField("search_count", src.search_count)
-    //    }
-
-    //    search_count: Long,
-    //    time: String,
-    //    brand_name: String,
-    //    "brand_name" -> src.brand_name,
-    //    "trade_group" -> src.trade_group,
-    //    "trade_name" -> src.trade_name,
-    //    "trade_parent_group" -> src.trade_parent_group,
-    //    "xml_booking_login" -> src.xml_booking_login
-    //
-    searchCount.rdd.map { src =>
+    preBookCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "search_request_count",
+        measurement = "pre_book_request_count",
         tags = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
           , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
@@ -249,16 +201,15 @@ object SearchRequestJob extends JobConfig("search-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_xml")
         ),
         fields = Map(
-          "search_count" -> Try(src.search_count.toInt).getOrElse(1)
+          "pre_book_count" -> Try(src.pre_book_count.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
 
-
-    searchSuccess.rdd.map { src =>
+    preBookSuccess.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "search_success_count",
+        measurement = "pre_book_success_count",
         tags = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
           , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
@@ -273,10 +224,10 @@ object SearchRequestJob extends JobConfig("search-request-job") {
       )
     }.saveToInflux()
 
-    searchErrors.rdd.map { src =>
+    preBookError.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "search_errors_count",
+        measurement = "pre_book_errors_count",
         tags = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
           , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
@@ -291,10 +242,10 @@ object SearchRequestJob extends JobConfig("search-request-job") {
       )
     }.saveToInflux()
 
-    searchResponseTime.rdd.map { src =>
+    preBookResponseTime.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "search_response_time",
+        measurement = "pre_book_response_time",
         tags = Map(
           "brand_name" -> Try(src.brand_name).getOrElse("no_brand")
           , "trade_group" -> Try(src.trade_group).getOrElse("no_group")
@@ -312,67 +263,58 @@ object SearchRequestJob extends JobConfig("search-request-job") {
     }.saveToInflux()
 
 
-    //    "brand_name" -> Try(src.getAs("brand_name")).getOrElse("no_brand"),
-    //    "trade_group" -> Try(src.getAs("trade_group")).getOrElse("no_group"),
-    //    "trade_name" -> Try(src.getAs("trade_name")).getOrElse("no_trade_name"),
-    //    "trade_parent_group" -> Try(src.getAs[String]("trade_parent_group")).getOrElse("no_trade"),
-    //    "xml_booking_login" -> Try(src.getAs("xml_booking_login")).getOrElse("no_xml")
-    //    ),
-    //    fields      = Map(
-    //      "search_count" -> Try(src.getAs[Int]("search_count")).getOrElse(11111111))
-
     //    // SAVING BOOK COUNT TO INFLUXDB
-    //    searchCount.foreachPartition { partition =>
+    //    preBookCount.foreachPartition { partition =>
     //
     //      // Open connection to Influxdb
     //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
     //
     //      partition
-    //        .map(toSearchCountPoint)
-    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //        .map(toPreBookCountPoint)
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
     //
     //      // Close connection
     //      db.close()
     //    }
-
-
+    //
     //    // SAVING BOOK SUCCESS TO INFLUXDB
-    //    searchSuccess.foreachPartition { partition =>
+    //    preBookSuccess.foreachPartition { partition =>
     //
     //      // Open connection to Influxdb
     //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
     //
     //      partition
     //        .map(toSuccessCountPoint)
-    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
     //
     //      // Close connection
     //      db.close()
     //    }
     //
     //    // SAVING BOOK ERROR TO INFLUXDB
-    //    searchErrors.foreachPartition { partition =>
+    //    preBookError.foreachPartition { partition =>
     //
     //      // Open connection to Influxdb
     //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
     //
     //      partition
     //        .map(toErrorsCountPoint)
-    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
     //
     //      // Close connection
     //      db.close()
     //    }
     //
     //    // SAVING BOOK RESPONSE TO INFLUXDB
-    //    searchResponseTime.foreachPartition { partition =>
+    //    preBookResponseTime.foreachPartition { partition =>
+    //
     //
     //      // Open connection to Influxdb
     //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
     //
     //      partition
-    //        .map(toResponseTimePoint)
-    //        .foreach(p => Try(Await.result(db.write(p), influxTimeout)))
+    //        .map(toPreBookResponseTimePoint)
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
     //
     //      // Close connection
     //      db.close()
@@ -380,4 +322,5 @@ object SearchRequestJob extends JobConfig("search-request-job") {
 
     //    spark.stop()
   }
+
 }

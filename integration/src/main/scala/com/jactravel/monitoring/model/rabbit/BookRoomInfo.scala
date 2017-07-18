@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.model
+package com.jactravel.monitoring.model.rabbit
 
 /**
   * Created by admin on 6/13/17.

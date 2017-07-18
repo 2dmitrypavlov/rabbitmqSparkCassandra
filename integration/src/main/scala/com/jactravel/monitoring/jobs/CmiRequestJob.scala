@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.streaming.jobs
+package com.jactravel.monitoring.jobs
 
 import com.jactravel.monitoring.model.jobs.CmiRequestJobInfo._
 import com.pygmalios.reactiveinflux.spark._
@@ -93,8 +93,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       .na.fill("stub", Seq("login", "property_code", "cmi_query_type"))
       .as[CmiRequestResponseTime]
 
-    implicit val params = ReactiveInfluxDbName(influxDBname)
-    implicit val awaitAtMost = 1.second
+
     cmiCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),

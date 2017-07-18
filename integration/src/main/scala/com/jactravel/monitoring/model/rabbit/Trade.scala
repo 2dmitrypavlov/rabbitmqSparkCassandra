@@ -1,4 +1,4 @@
-package com.jactravel.monitoring.model
+package com.jactravel.monitoring.model.rabbit
 
 /**
   * Created by admin on 7/5/17.
@@ -15,13 +15,3 @@ case class Trade(
 
 
                 )
-
-case class Brand(
-                  brand_id: Int,
-                  brand_name: String
-                )
-
-case class SalesChannel(
-                         sales_channel_id: Int,
-                         sales_channel: String
-                       )
