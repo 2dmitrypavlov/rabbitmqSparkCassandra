@@ -122,7 +122,6 @@ object SupplierBookRequestJob extends JobConfig("supplier-book-request-job") {
 
     // SAVING TO INFLUXDB
 
-
     supplierBookRequestGraph.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),

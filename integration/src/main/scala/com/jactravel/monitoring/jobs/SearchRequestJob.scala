@@ -188,53 +188,6 @@ object SearchRequestJob extends JobConfig("search-request-job") {
 
     // SAVING TO INFLUXDB
 
-
-    //    val point1 = com.pygmalios.reactiveinflux.Point(
-    //      time        = DateTime.now(),
-    //      measurement = "measurement1",
-    //      tags        = Map(
-    //        "tagKey1" -> "tagValue1",
-    //        "tagKey2" -> "tagValue2"),
-    //      fields      = Map(
-    //        "fieldKey1" -> "fieldValue1",
-    //        "fieldKey2" -> 10.7)
-    //    )
-
-    // val rdd=searchCount.map{p=>
-    //   com.pygmalios.reactiveinflux.Point(
-    //        time        = DateTime.now(),
-    //        measurement = "measurement1",
-    //        tags        = Map(
-    //          "tagKey1" -> "tagValue1",
-    //          "tagKey2" -> "tagValue2"),
-    //        fields      = Map(
-    //          "fieldKey1" -> "fieldValue1",
-    //          "fieldKey2" -> 10.7))
-    //    }.rdd
-    //
-    //  rdd.saveToInflux()
-
-    //    def toSearchCountPoint(src: SearchRequestCount): Point = {
-    //      Point("search_request_count")
-    //        .addTag("mtime", src.time)
-    //        .addTag("brand_name", src.brand_name)
-    //        .addTag("sales_channel", src.sales_channel)
-    //        .addTag("trade_group", src.trade_group)
-    //        .addTag("trade_name", src.trade_name)
-    //        .addTag("trade_parent_group", src.trade_parent_group)
-    //        .addTag("xml_booking_login", src.xml_booking_login)
-    //        .addField("search_count", src.search_count)
-    //    }
-
-    //    search_count: Long,
-    //    time: String,
-    //    brand_name: String,
-    //    "brand_name" -> src.brand_name,
-    //    "trade_group" -> src.trade_group,
-    //    "trade_name" -> src.trade_name,
-    //    "trade_parent_group" -> src.trade_parent_group,
-    //    "xml_booking_login" -> src.xml_booking_login
-    //
     searchCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
@@ -303,7 +256,7 @@ object SearchRequestJob extends JobConfig("search-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_sales_channel")
         ),
         fields = Map(
-          "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1)
+          "min_response_time" -> Try(Math.abs(src.min_response_time_ms.toInt)).getOrElse(1)
           , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1)
           , "perc_response_time" -> Try(src.perc_response_time_ms.toInt).getOrElse(1)
         )

@@ -207,7 +207,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
           , "sales_channel" -> Try(src.sales_channel).getOrElse("no_xml")
         ),
         fields = Map(
-          "search_count" -> Try(src.book_count.toInt).getOrElse(1)
+          "book_count" -> Try(src.book_count.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
