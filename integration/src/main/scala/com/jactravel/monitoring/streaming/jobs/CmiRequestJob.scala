@@ -1,10 +1,12 @@
 package com.jactravel.monitoring.streaming.jobs
 
 import com.jactravel.monitoring.model.jobs.CmiRequestJobInfo._
-import com.paulgoldbaum.influxdbclient.InfluxDB
+import com.pygmalios.reactiveinflux.spark._
+import com.pygmalios.reactiveinflux.{ReactiveInfluxDbName, _}
+import org.joda.time.DateTime
 
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.util.Try
 
 /**
   * Created by fayaz on 09.07.17.
@@ -13,7 +15,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
 
   def main(args: Array[String]): Unit = {
 
-    val nullFilter = Seq("login","property_code", "cmi_query_type")
+    val nullFilter = Seq("login", "property_code", "cmi_query_type")
 
     import spark.implicits._
 
@@ -29,7 +31,8 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       .createOrReplaceTempView("PureCmiRequest")
 
     // RICH CMI REQUEST
-    spark.sql("""
+    spark.sql(
+      """
         SELECT
            cm.query_uuid,
            cm.login,
@@ -42,7 +45,8 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       .createOrReplaceTempView("RichCmiRequest")
 
     // CMI COUNT
-    val cmiCount = spark.sql("""
+    val cmiCount = spark.sql(
+      """
       SELECT COUNT(query_uuid) as cmi_count,
           login,
           property_code,
@@ -57,7 +61,8 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       .as[CmiRequestCount]
 
     // CMI SUCCESS COUNT
-    val cmiSuccessCount = spark.sql("""
+    val cmiSuccessCount = spark.sql(
+      """
       SELECT COUNT(query_uuid) as cmi_success_count,
           login,
           property_code,
@@ -72,7 +77,8 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       .as[CmiRequestSuccessCount]
 
     // CMI RESPONSE TIME
-    val cmiResponseTime = spark.sql("""
+    val cmiResponseTime = spark.sql(
+      """
       SELECT login,
           property_code,
           cmi_query_type,
@@ -84,49 +90,98 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
           login,
           property_code,
           cmi_query_type""")
-      .na.fill("stub", Seq("login","property_code", "cmi_query_type"))
+      .na.fill("stub", Seq("login", "property_code", "cmi_query_type"))
       .as[CmiRequestResponseTime]
 
-    cmiCount.foreachPartition { partition =>
+    implicit val params = ReactiveInfluxDbName(influxDBname)
+    implicit val awaitAtMost = 1.second
+    cmiCount.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "cmi_bacth_request_count",
+        tags = Map(
+          "login" -> Try(src.login).getOrElse("no_login")
+          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
+        ),
+        fields = Map(
+          "cmi_count" -> Try(src.cmi_count.toInt).getOrElse(1)
+        )
+      )
+    }.saveToInflux()
+    cmiSuccessCount.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "cmi_batch_request_success_count",
+        tags = Map(
+          "login" -> Try(src.login).getOrElse("no_login")
+          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
+        ),
+        fields = Map(
+          "cmi_success_count" -> Try(src.cmi_success_count.toInt).getOrElse(1)
+        )
+      )
+    }.saveToInflux()
 
-      // Open connection to Influxdb
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    cmiResponseTime.rdd.map { src =>
+      com.pygmalios.reactiveinflux.Point(
+        time = DateTime.now(),
+        measurement = "cmi_batch_request_response_time",
+        tags = Map(
+          "login" -> Try(src.login).getOrElse("no_login")
+          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
+        ),
+        fields = Map(
+          "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1)
+          , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1)
+          , "perc_response_time" -> Try(src.perc_response_time_ms.toDouble).getOrElse(1)
+        )
+      )
+    }.saveToInflux()
 
-      partition
-        .map(toCmiCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
 
-      // Close connection
-      db.close()
-    }
+    //    cmiCount.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toCmiCountPoint)
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+    //
+    //    cmiSuccessCount.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toCmiSuccessCountPoint)
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
+    //
+    //      // Close connection
+    //      db.close()
+    //    }
+    //
+    //    cmiResponseTime.foreachPartition { partition =>
+    //
+    //      // Open connection to Influxdb
+    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
+    //
+    //      partition
+    //        .map(toResponseTimePoint)
+    //        .foreach(p => Await.result(db.write(p), influxTimeout))
+    //
+    //      // Close connection
+    //      db.close()
+    //
+    //    }
 
-    cmiSuccessCount.foreachPartition { partition =>
-
-      // Open connection to Influxdb
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-
-      partition
-        .map(toCmiSuccessCountPoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
-
-      // Close connection
-      db.close()
-    }
-
-    cmiResponseTime.foreachPartition { partition =>
-
-      // Open connection to Influxdb
-      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-
-      partition
-        .map(toResponseTimePoint)
-        .foreach(p => Await.result(db.write(p), influxTimeout))
-
-      // Close connection
-      db.close()
-
-    }
-
-//    spark.stop()
+    //    spark.stop()
   }
 }
