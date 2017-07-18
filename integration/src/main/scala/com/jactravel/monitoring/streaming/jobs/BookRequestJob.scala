@@ -193,7 +193,7 @@ object BookRequestJob extends JobConfig("book-request-job") {
       .as[BookRequestResponseTime]
 
     // SAVING TO INFLUXDB
-    implicit val params = ReactiveInfluxDbName("my_db")
+    implicit val params = ReactiveInfluxDbName(influxDBname)
     implicit val awaitAtMost = 1.second
 
 

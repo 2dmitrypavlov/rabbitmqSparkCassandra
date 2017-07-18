@@ -188,7 +188,7 @@ object SearchRequestJob extends JobConfig("seaarch-request-job") {
 
     // SAVING TO INFLUXDB
 
-    implicit val params = ReactiveInfluxDbName("my_db")
+    implicit val params = ReactiveInfluxDbName(influxDBname)
     implicit val awaitAtMost = 1.second
     //    val point1 = com.pygmalios.reactiveinflux.Point(
     //      time        = DateTime.now(),
