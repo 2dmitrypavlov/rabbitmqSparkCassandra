@@ -2,7 +2,6 @@ package com.jactravel.monitoring.streaming
 
 import java.sql.Date
 
-import com.jactravel.monitoring.model._
 import com.jactravel.monitoring.model.rabbit._
 import com.jactravel.monitoring.util.DateTimeUtils
 import com.typesafe.scalalogging.LazyLogging
@@ -18,21 +17,18 @@ case class Proxy(queryUUID: String, xmlBookingLogin: String)
 object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonitoringStream {
   def convertJavaDateToSqlDate(date: java.util.Date) = new Date(date.getTime)
 
-//  override val keyspaceName: String = "jactravel_monitoring_new"
 
   def main(args: Array[String]): Unit = {
 
     val spark = SparkSession
       .builder()
       .config(conf)
-      //.enableHiveSupport()
       .getOrCreate()
     import com.datastax.spark.connector.streaming._
 
 
     ///use get or create to use check point
     ssc = new StreamingContext(spark.sparkContext, Seconds(20))
-    //Milliseconds(50))
     val numPar = 200
 
     val queryProxyStream1 = RabbitMQUtils.createStream[QueryProxyRequest](ssc
@@ -81,31 +77,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
       , messageCmiBatchRequestHandler).repartition(numPar)
 
     ssc.remember(Seconds(120))
-    //every
-    //    val brand = spark
-    //      .read
-    //      .format("com.databricks.spark.csv")
-    //      .option("header", "true") // Use first line of all files as header
-    //      .option("inferSchema", "true") // Automatically infer data types
-    //      .load(aws + "brand.csv")
-    //    brand.createOrReplaceTempView("Brand")
-    //    val trade = spark
-    //      .read
-    //      .format("com.databricks.spark.csv")
-    //      .option("header", "true") // Use first line of all files as header
-    //      .option("inferSchema", "true") // Automatically infer data types
-    //      .load(aws + "trade.csv")
-    //    trade.createOrReplaceTempView("Trade")
-    //    val saleschannel = spark
-    //      .read
-    //      .format("com.databricks.spark.csv")
-    //      .option("header", "true") // Use first line of all files as header
-    //      .option("inferSchema", "true") // Automatically infer data types
-    //      .load(aws + "saleschannel.csv")
-    //    saleschannel.createOrReplaceTempView("SalesChannel")
-
-    //    queryProxyStream.repartition(numPar).saveToCassandra(keyspaceName, "query_proxy_request_time")
-    //    searchRequestStream.repartition(numPar).saveToCassandra(keyspaceName, "search_request_time")
 
     // BOOKING STREAM
     bookingStream.transform { rdd =>
@@ -159,8 +130,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // SEARCH REQUEST STREAM
     searchRequestStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("search_request")
-      //      rdd.take(1)
       rdd.map(l => SearchRequest2(
         DateTimeUtils.parseDate(l.requestInfo.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -172,8 +141,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // SUPPLIER BOOK REQUEST STREAM
     supplierBookhRequestStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_book_request")
-      //      rdd.take(1)
       rdd.map(l => SupplierBookRequest2(
         DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -194,8 +161,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // SUPPLIER PRE BOOK REQUEST STREAM
     supplierPreBookRequestStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_pre_book_request")
-      //      rdd.take(1)
       rdd.map(l => SupplierPreBookRequest2(
         DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -216,8 +181,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // SUPPLIER SEARCH REQUEST STREAM
     supplierSearchRequestStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("supplier_search_request")
-      //      rdd.take(1)
       rdd.map(l => SupplierSearchRequest2(
         DateTimeUtils.parseDate(l.startUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -238,8 +201,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // QUERY PROXY REQUEST STREAM
     queryProxyStream.transform { rdd =>
-      //          spark.createDataFrame(rdd, QueryProxyRequest2.getClass).createOrReplaceTempView("QueryProxyRequest")
-      //          rdd.take(1)
       rdd.map(l => QueryProxyRequest3(
         l.clientRequestUtcTimestamp.getTime / 1000L
         , l.queryUUID
@@ -264,8 +225,6 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
 
     // CMI REQUEST STREAMING
     cmiRequestStream.transform { rdd =>
-      //      spark.createDataFrame(rdd).createOrReplaceTempView("cmi_request")
-      //      rdd.take(1)
       rdd.map(l => CmiRequest2(
         DateTimeUtils.parseDate(l.clientRequestUtcTimestamp).getTime / 1000L
         , l.queryUUID
@@ -322,17 +281,11 @@ object ProcessBusiness extends LazyLogging with ConfigService with ProcessMonito
     Map(
       "hosts" -> hosts
       , "queueName" -> queueName
-      //      , "exchangeName" -> exchangeName
-      //      , "exchangeType" -> exchangeType
       , "vHost" -> vHost
       , "userName" -> username
       , "password" -> password
       , "routingKey" -> queueName
-      // ,"maxMessagesPerPartition"->"1"
-      //, "maxMessagesPerPartition" -> "100"
-      //, "levelParallelism" -> "100"
       , "rememberDuration" -> "3000000"
-      //, "maxReceiveTime" -> "500"
       , "storageLevel" -> "MEMORY_AND_DISK"
 
     )
