@@ -156,20 +156,21 @@ object SupplierSearchRequestJob extends JobConfig("supplier-search-request-job")
           , "xml_booking_login" -> Try(src.xml_booking_login).getOrElse("no_xml")
         ),
         fields = Map(
-          "search_count" -> Try(src.search_number.toInt).getOrElse(1)
+          "client_search_сount" -> Try(src.client_search_number.toInt).getOrElse(1)
           , "error_count" -> Try(src.error_number.toInt).getOrElse(1)
           , "success_count" -> Try(src.success_number.toInt).getOrElse(1)
           , "max_property_сount" -> Try(src.max_property_number.toInt).getOrElse(1)
           , "min_property_сount" -> Try(src.min_property_number.toInt).getOrElse(1)
           , "search_timeout_count" -> Try(src.search_timeout_number.toInt).getOrElse(1)
           , "avg_response_time" -> Try(src.avg_response_time).getOrElse(1.0)
-          , "avg_property_number" -> Try(src.avg_property_number).getOrElse(1.0)
+          , "avg_property_сount" -> Try(src.avg_property_number).getOrElse(1.0)
           , "max_response_time" -> Try(src.max_response_time.toInt).getOrElse(1)
           , "min_response_time" -> Try(src.min_response_time.toInt).getOrElse(1)
-          , "search_timeout_count" -> Try(src.search_timeout_number.toInt).getOrElse(1)
+          , "search_count" -> Try(src.search_number.toInt).getOrElse(1)
         )
       )
     }.saveToInflux()
+    //      .addField("search_count", ssri.search_number)
     // SAVING SUPPLIER GRAPH TO INFLUXDB
 //    supplierGraph.foreachPartition { partition =>
 //
