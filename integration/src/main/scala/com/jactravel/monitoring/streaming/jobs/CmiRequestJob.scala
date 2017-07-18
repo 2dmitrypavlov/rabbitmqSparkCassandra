@@ -98,7 +98,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
     cmiCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "cmi_bacth_request_count",
+        measurement = "cmi_request_count",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
           , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
@@ -112,7 +112,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
     cmiSuccessCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "cmi_batch_request_success_count",
+        measurement = "cmi_request_success_count",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
           , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
@@ -127,7 +127,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
     cmiResponseTime.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
-        measurement = "cmi_batch_request_response_time",
+        measurement = "cmi_request_response_time",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
           , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
