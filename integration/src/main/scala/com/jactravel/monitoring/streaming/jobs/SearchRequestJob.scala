@@ -12,7 +12,7 @@ import scala.concurrent.duration._
 /**
   * Created by fayaz on 09.07.17.
   */
-object SearchRequestJob extends JobConfig("seaarch-request-job") {
+object SearchRequestJob extends JobConfig("search-request-job") {
 
   def main(args: Array[String]): Unit = {
 

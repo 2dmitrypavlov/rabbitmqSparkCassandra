@@ -101,7 +101,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
         measurement = "cmi_bacth_request_count",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
-          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
           , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
         ),
         fields = Map(
@@ -115,7 +115,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
         measurement = "cmi_batch_request_success_count",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
-          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
           , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
         ),
         fields = Map(
@@ -130,7 +130,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
         measurement = "cmi_batch_request_response_time",
         tags = Map(
           "login" -> Try(src.login).getOrElse("no_login")
-          , "property_code" -> Try(src.property_code).getOrElse("no_property_code")
+          , "property_code" -> Try(if(src.property_code.isEmpty) "no" else src.property_code ).getOrElse("no_property_code")
           , "cmi_query_type" -> Try(src.cmi_query_type.toString).getOrElse("no_cmi_query_type")
         ),
         fields = Map(
