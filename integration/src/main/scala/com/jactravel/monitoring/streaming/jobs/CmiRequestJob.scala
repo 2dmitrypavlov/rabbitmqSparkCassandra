@@ -136,7 +136,7 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
         fields = Map(
           "min_response_time" -> Try(src.min_response_time_ms.toInt).getOrElse(1)
           , "max_response_time" -> Try(src.max_response_time_ms.toInt).getOrElse(1)
-          , "perc_response_time" -> Try(src.perc_response_time_ms.toDouble).getOrElse(1)
+          , "perc_response_time" -> Try(src.perc_response_time_ms.toDouble).getOrElse(1.0)
         )
       )
     }.saveToInflux()
