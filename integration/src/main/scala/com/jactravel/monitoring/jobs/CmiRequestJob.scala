@@ -140,47 +140,5 @@ object CmiRequestJob extends JobConfig("cmi-request-job") {
       )
     }.saveToInflux()
 
-
-    //    cmiCount.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toCmiCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    cmiSuccessCount.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toCmiSuccessCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    cmiResponseTime.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toResponseTimePoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //
-    //    }
-
-    //    spark.stop()
   }
 }

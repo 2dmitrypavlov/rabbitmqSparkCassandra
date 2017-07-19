@@ -170,21 +170,5 @@ object SupplierSearchRequestJob extends JobConfig("supplier-search-request-job")
         )
       )
     }.saveToInflux()
-    //      .addField("search_count", ssri.search_number)
-    // SAVING SUPPLIER GRAPH TO INFLUXDB
-//    supplierGraph.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toPoint)
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
-
-//    spark.stop()
   }
 }

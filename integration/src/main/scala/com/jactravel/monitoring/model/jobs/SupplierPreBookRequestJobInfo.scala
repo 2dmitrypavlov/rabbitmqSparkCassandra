@@ -18,17 +18,4 @@ object SupplierPreBookRequestJobInfo {
                                          sales_channel: String
                                        )
 
-//  def toPoint(spbri: SupplierPreBookRequestInfo): Point = {
-//    Point("supplier_pre_book_request")
-//      .addTag("source", spbri.source)
-//      .addTag("xml_booking_login", spbri.xml_booking_login)
-//      .addTag("trade_name", spbri.trade_name)
-//      .addTag("brand_name", spbri.brand_name)
-//      .addTag("sales_channel", spbri.sales_channel)
-//      .addField("pre_book_count", spbri.pre_book_count)
-//      .addField("processing_time_ms_50", spbri.processing_time_ms_50)
-//      .addField("processing_time_ms_95", spbri.processing_time_ms_95)
-//      .addField("processing_time_ms_99", spbri.processing_time_ms_99)
-//
-//  }
 }

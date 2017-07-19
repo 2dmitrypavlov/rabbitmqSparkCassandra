@@ -119,54 +119,6 @@ object CmiBatchRequestJob extends JobConfig("cmi-batch-request-job") {
     }
 
 
-    //    val point1 = com.pygmalios.reactiveinflux.Point(
-    //      time        = DateTime.now(),
-    //      measurement = "measurement1",
-    //      tags        = Map(
-    //        "tagKey1" -> "tagValue1",
-    //        "tagKey2" -> "tagValue2"),
-    //      fields      = Map(
-    //        "fieldKey1" -> "fieldValue1",
-    //        "fieldKey2" -> 10.7)
-    //    )
-
-    // val rdd=searchCount.map{p=>
-    //   com.pygmalios.reactiveinflux.Point(
-    //        time        = DateTime.now(),
-    //        measurement = "measurement1",
-    //        tags        = Map(
-    //          "tagKey1" -> "tagValue1",
-    //          "tagKey2" -> "tagValue2"),
-    //        fields      = Map(
-    //          "fieldKey1" -> "fieldValue1",
-    //          "fieldKey2" -> 10.7))
-    //    }.rdd
-    //
-    //  rdd.saveToInflux()
-
-    //    def toSearchCountPoint(src: SearchRequestCount): Point = {
-    //      Point("search_request_count")
-    //        .addTag("mtime", src.time)
-    //        .addTag("brand_name", src.brand_name)
-    //        .addTag("sales_channel", src.sales_channel)
-    //        .addTag("trade_group", src.trade_group)
-    //        .addTag("trade_name", src.trade_name)
-    //        .addTag("trade_parent_group", src.trade_parent_group)
-    //        .addTag("xml_booking_login", src.xml_booking_login)
-    //        .addField("search_count", src.search_count)
-    //    }
-
-    //    search_count: Long,
-    //    time: String,
-    //    brand_name: String,
-    //    "brand_name" -> src.brand_name,
-    //    "trade_group" -> src.trade_group,
-    //    "trade_name" -> src.trade_name,
-    //    "trade_parent_group" -> src.trade_parent_group,
-    //    "xml_booking_login" -> src.xml_booking_login
-    //
-
-
     cmiBatchCount.rdd.map { src =>
       com.pygmalios.reactiveinflux.Point(
         time = DateTime.now(),
@@ -214,48 +166,6 @@ object CmiBatchRequestJob extends JobConfig("cmi-batch-request-job") {
         )
       )
     }.saveToInflux()
-    // SAVING BOOK COUNT TO INFLUXDB
-    //    cmiBatchCount.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toCmiCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    // SAVING BOOK SUCCESS TO INFLUXDB
-    //    cmiBatchSuccessCount.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toCmiSuccessCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    // SAVING BOOK ERROR TO INFLUXDB
-    //    cmiBatchResponseTime.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toResponseTimePoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
 
-    //    spark.stop()
   }
 }

@@ -139,20 +139,5 @@ object SupplierPreBookRequestJob extends JobConfig("supplier-pre-book-request-jo
         )
       )
     }.saveToInflux()
-//    // SAVING SUPPLIER GRAPH TO INFLUXDB
-//    supplierPreBookGraph.foreachPartition { partition =>
-//
-//      // Open connection to Influxdb
-//      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-//
-//      partition
-//        .map(toPoint)
-//        .foreach(p => Await.result(db.write(p), influxTimeout))
-//
-//      // Close connection
-//      db.close()
-//    }
-
-//    spark.stop()
   }
 }

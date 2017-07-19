@@ -263,64 +263,6 @@ object PreBookRequestJob extends JobConfig("pre-book-request-job") {
     }.saveToInflux()
 
 
-    //    // SAVING BOOK COUNT TO INFLUXDB
-    //    preBookCount.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toPreBookCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    // SAVING BOOK SUCCESS TO INFLUXDB
-    //    preBookSuccess.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toSuccessCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    // SAVING BOOK ERROR TO INFLUXDB
-    //    preBookError.foreachPartition { partition =>
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toErrorsCountPoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-    //
-    //    // SAVING BOOK RESPONSE TO INFLUXDB
-    //    preBookResponseTime.foreachPartition { partition =>
-    //
-    //
-    //      // Open connection to Influxdb
-    //      val db = InfluxDB.connect(influxHost, influxPort).selectDatabase(influxDBname)
-    //
-    //      partition
-    //        .map(toPreBookResponseTimePoint)
-    //        .foreach(p => Await.result(db.write(p), influxTimeout))
-    //
-    //      // Close connection
-    //      db.close()
-    //    }
-
-    //    spark.stop()
   }
 
 }
